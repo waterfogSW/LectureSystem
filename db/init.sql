@@ -43,30 +43,33 @@ CREATE TABLE enrollments -- 내역
 
 -- 뷰
 CREATE VIEW active_students AS
-SELECT * FROM students
+SELECT *
+FROM students
 WHERE is_deleted = FALSE;
 
 CREATE VIEW active_lectures AS
-SELECT * FROM lectures
+SELECT *
+FROM lectures
 WHERE is_deleted = FALSE;
 
 CREATE VIEW active_instructors AS
-SELECT * FROM instructors
+SELECT *
+FROM instructors
 WHERE is_deleted = FALSE;
 
 CREATE VIEW active_enrollments AS
-SELECT * FROM enrollments
+SELECT *
+FROM enrollments
 WHERE is_deleted = FALSE;
 
 -- 인덱스
-CREATE INDEX idx_students_email ON students(email);
-CREATE INDEX idx_lectures_instructor_id ON lectures(instructor_id);
-CREATE INDEX idx_lectures_title ON lectures(title);
-CREATE INDEX idx_lectures_category ON lectures(category);
-CREATE INDEX idx_lectures_is_published ON lectures(is_published);
-CREATE INDEX idx_lectures_created_at ON lectures(created_at);
-CREATE INDEX idx_instructors_name ON instructors(name);
-CREATE INDEX idx_enrollments_student_id ON enrollments(student_id);
-CREATE INDEX idx_enrollments_lecture_id ON enrollments(lecture_id);
-CREATE INDEX idx_enrollments_student_lecture ON enrollments(student_id, lecture_id);
-
+CREATE INDEX idx_students_email ON students (email);
+CREATE INDEX idx_lectures_instructor_id ON lectures (instructor_id);
+CREATE INDEX idx_lectures_title ON lectures (title);
+CREATE INDEX idx_lectures_category ON lectures (category);
+CREATE INDEX idx_lectures_is_published ON lectures (is_published);
+CREATE INDEX idx_lectures_created_at ON lectures (created_at);
+CREATE INDEX idx_instructors_name ON instructors (name);
+CREATE INDEX idx_enrollments_student_id ON enrollments (student_id);
+CREATE INDEX idx_enrollments_lecture_id ON enrollments (lecture_id);
+CREATE INDEX idx_enrollments_student_lecture ON enrollments (student_id, lecture_id);
