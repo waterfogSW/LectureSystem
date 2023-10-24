@@ -5,7 +5,7 @@ CREATE TABLE students -- 수강생
     email      VARCHAR(255) NOT NULL,                                                       -- 이메일
     created_at TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,                             -- 생성일
     updated_at TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, -- 수정일
-    is_deleted BOOLEAN      NOT NULL DEFAULT FALSE                                          -- 삭제 여부
+    is_deleted TINYINT(1)   NOT NULL DEFAULT FALSE                                          -- 삭제 여부
 );
 
 CREATE TABLE lectures -- 강의
@@ -16,10 +16,10 @@ CREATE TABLE lectures -- 강의
     description   TEXT         NOT NULL,                                                       -- 강의 설명
     price         INT          NOT NULL,                                                       -- 강의 가격
     category      VARCHAR(255) NOT NULL,                                                       -- 강의 카테고리
-    is_published  BOOLEAN      NOT NULL DEFAULT FALSE,                                         -- 강의 공개 여부
+    is_published  TINYINT(1)   NOT NULL DEFAULT FALSE,                                         -- 강의 공개 여부
     created_at    TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,                             -- 생성일
     updated_at    TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, -- 수정일
-    is_deleted    BOOLEAN      NOT NULL DEFAULT FALSE                                          -- 삭제 여부
+    is_deleted    TINYINT(1)   NOT NULL DEFAULT FALSE                                          -- 삭제 여부
 );
 
 CREATE TABLE instructors -- 강사
@@ -28,7 +28,7 @@ CREATE TABLE instructors -- 강사
     name       VARCHAR(255) NOT NULL,                                                       -- 강사 이름
     created_at TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,                             -- 생성일
     updated_at TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, -- 수정일
-    is_deleted BOOLEAN      NOT NULL DEFAULT FALSE                                          -- 삭제 여부
+    is_deleted TINYINT(1)   NOT NULL DEFAULT FALSE                                          -- 삭제 여부
 );
 
 CREATE TABLE enrollments -- 내역
@@ -38,7 +38,7 @@ CREATE TABLE enrollments -- 내역
     lecture_id BIGINT(20) NOT NULL,                                                       -- 강의 아이디
     created_at TIMESTAMP  NOT NULL DEFAULT CURRENT_TIMESTAMP,                             -- 생성일
     updated_at TIMESTAMP  NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, -- 수정일
-    is_deleted BOOLEAN    NOT NULL DEFAULT FALSE                                          -- 삭제 여부
+    is_deleted TINYINT(1) NOT NULL DEFAULT FALSE                                          -- 삭제 여부
 );
 
 -- 뷰
