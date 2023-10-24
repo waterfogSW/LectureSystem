@@ -2,7 +2,7 @@ import { BaseModel } from './base.model';
 
 export class Lecture extends BaseModel {
 
-  private readonly _instructor: number;
+  private readonly _instructorId: number;
   private readonly _title: string;
   private readonly _description: string;
   private readonly _price: number;
@@ -19,7 +19,7 @@ export class Lecture extends BaseModel {
     is_published: boolean,
   ) {
     super(id);
-    this._instructor = instructor;
+    this._instructorId = instructor;
     this._title = title;
     this._description = description;
     this._price = price;
