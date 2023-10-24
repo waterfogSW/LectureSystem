@@ -5,6 +5,10 @@ export class Student extends BaseModel {
   private readonly _nickname: string;
   private readonly _email: string;
 
+  public get nickname(): string {
+    return this._nickname;
+  }
+
   constructor(
     nickname: string,
     email: string,
