@@ -9,6 +9,10 @@ export class Student extends BaseModel {
     return this._nickname;
   }
 
+  public get email(): string {
+    return this._email;
+  }
+
   constructor(
     nickname: string,
     email: string,
