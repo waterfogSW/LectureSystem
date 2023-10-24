@@ -16,7 +16,7 @@ server.setConfig((app: Application): void => {
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: true }));
   routerConfig(app);
-  app.use(errorHandler)
+  app.use(errorHandler);
 });
 const app: Application = server.build();
 

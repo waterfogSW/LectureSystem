@@ -1,6 +1,6 @@
 import { Student } from '../model/student.model';
 import { injectable } from 'inversify';
-import { FieldPacket, OkPacket, PoolConnection, ResultSetHeader, RowDataPacket } from 'mysql2/promise';
+import { FieldPacket, PoolConnection, ResultSetHeader, RowDataPacket } from 'mysql2/promise';
 
 @injectable()
 export class StudentRepository {
@@ -8,7 +8,7 @@ export class StudentRepository {
     student: Student,
     connection: PoolConnection,
   ): Promise<Student> {
-    const existEmail: boolean = await this.existsByEmail(student.email, connection)
+    const existEmail: boolean = await this.existsByEmail(student.email, connection);
     if (existEmail) {
       throw new Error('Email already exists');
     }
@@ -17,7 +17,7 @@ export class StudentRepository {
     const [inserted]: [ResultSetHeader, FieldPacket[]] = await connection.execute<ResultSetHeader>(
       insertQuery,
       [student.nickname, student.email],
-    )
+    );
 
     return new Student(
       student.nickname,

@@ -1,5 +1,5 @@
-import fs from 'fs'
-import path from 'path'
+import fs from 'fs';
+import path from 'path';
 
 export function loadEnvVars() {
   const envFilePath = path.resolve(process.cwd(), '.env');
