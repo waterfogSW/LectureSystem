@@ -4,6 +4,7 @@ import { StudentRepository } from '../repository/student.repository';
 import TYPES from '../common/type/types';
 import { PoolConnection } from 'mysql2/promise';
 import { transactional } from '../common/decorator/transactional.decorator';
+import { InvalidInputError } from '../common/error/invalid-input.error';
 
 @injectable()
 export class StudentService {
@@ -19,6 +20,11 @@ export class StudentService {
     connection?: PoolConnection,
   ): Promise<Student> {
     const student: Student = new Student(nickname, email);
+    const existsEmail: boolean = await this._studentRepository.existsByEmail(email, connection!);
+    if (existsEmail) {
+      throw new InvalidInputError('Email already exists');
+    }
+
     return await this._studentRepository.save(student, connection!);
   }
 

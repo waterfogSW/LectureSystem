@@ -8,11 +8,6 @@ export class StudentRepository {
     student: Student,
     connection: PoolConnection,
   ): Promise<Student> {
-    const existEmail: boolean = await this.existsByEmail(student.email, connection);
-    if (existEmail) {
-      throw new Error('Email already exists');
-    }
-
     const insertQuery = 'INSERT INTO active_students (nickname, email) VALUES (?, ?)';
     const [inserted]: [ResultSetHeader, FieldPacket[]] = await connection.execute<ResultSetHeader>(
       insertQuery,
