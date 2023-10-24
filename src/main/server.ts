@@ -1,7 +1,7 @@
 import { interfaces } from 'inversify';
 import express, { Application } from 'express';
 import Container = interfaces.Container;
-import { ConfigFunction } from './common/interfaces';
+import { ConfigFunction } from './common/type/config-function.type';
 
 export class Server {
   private readonly _container: Container;
