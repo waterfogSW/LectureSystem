@@ -1,7 +1,9 @@
 import { BaseModel } from './base.model';
+import { IsNumber } from 'class-validator';
 
 export class Lecture extends BaseModel {
 
+  @IsNumber()
   private readonly _instructorId: number;
   private readonly _title: string;
   private readonly _description: string;
@@ -28,7 +30,7 @@ export class Lecture extends BaseModel {
   }
 }
 
-export enum LectureCategory {
+export const enum LectureCategory {
   WEB = 'WEB',
   APP = 'APP',
   GAME = 'GAME',
