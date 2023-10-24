@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
-import { NotfoundError } from '../error/notfound.error';
+import { NotfoundError } from '../error/not-found.error';
 import { HttpStatus } from '../constant/http-status.constant';
+import { InvalidInputError } from '../error/invalid-input.error';
 
 export function errorHandler(
   error: Error,
@@ -12,6 +13,11 @@ export function errorHandler(
     handleNotFoundError((error: any) => {
       response
         .status(HttpStatus.NOT_FOUND)
+        .json({ message: error.message });
+    }),
+    handleInvalidInputError((error: any) => {
+      response
+        .status(HttpStatus.BAD_REQUEST)
         .json({ message: error.message });
     }),
     handleError((error: any) => {
@@ -27,6 +33,12 @@ const handleNotFoundError = (handler: (error: any) => void) => (error: any): voi
     handler(error);
   }
 };
+
+const handleInvalidInputError = (handler: (error: any) => void) => (error: any): void => {
+  if(error instanceof InvalidInputError) {
+    handler(error);
+  }
+}
 
 const handleError = (handler: (error: any) => void) => (error: any): void => {
   if (error instanceof Error) {
