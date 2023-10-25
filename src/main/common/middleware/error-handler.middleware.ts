@@ -1,65 +1,39 @@
 import { NextFunction, Request, Response } from 'express';
 import { NotfoundError } from '../error/not-found.error';
-import { HttpStatus } from '../constant/http-status.constant';
+import { HTTP_STATUS, HttpStatus } from '../constant/http-status.constant';
 import { InvalidInputError } from '../error/invalid-input.error';
 import { ValidationError } from 'class-validator';
 
-export function errorHandler(
+interface ErrorStatusMapping {
+  type: any;
+  status: HttpStatus;
+}
+
+const errorStatusMappings: ErrorStatusMapping[] = [
+  { type: NotfoundError, status: HTTP_STATUS.NOT_FOUND },
+  { type: InvalidInputError, status: HTTP_STATUS.BAD_REQUEST },
+  { type: ValidationError, status: HTTP_STATUS.BAD_REQUEST },
+  { type: Error, status: HTTP_STATUS.INTERNAL_SERVER_ERROR },
+];
+
+export function ErrorHandler(
   error: Error,
   request: Request,
   response: Response,
   next: NextFunction,
 ): void {
-  pipeErrorHandlers(
-    handleNotFoundError((error: any) => {
+  console.log(`[${ new Date().toISOString() }] ${ error }`);
+
+  for (const handler of errorStatusMappings) {
+    if (error instanceof handler.type) {
       response
-        .status(HttpStatus.NOT_FOUND)
+        .status(handler.status)
         .json({ message: error.message });
-    }),
-    handleInvalidInputError((error: any) => {
-      response
-        .status(HttpStatus.BAD_REQUEST)
-        .json({ message: error.message });
-    }),
-    handleValidationError((error: any) => {
-      response
-        .status(HttpStatus.BAD_REQUEST)
-        .json({ message: error.message });
-    }),
-    handleError((error: any) => {
-      response
-        .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .json({ message: error.message });
-    }),
-  )(error);
+      return;
+    }
+  }
+
+  response
+    .status(HTTP_STATUS.INTERNAL_SERVER_ERROR)
+    .json({ message: '서버 오류' });
 }
-
-const handleNotFoundError = (handler: (error: any) => void) => (error: any): void => {
-  if (error instanceof NotfoundError) {
-    handler(error);
-  }
-};
-
-const handleInvalidInputError = (handler: (error: any) => void) => (error: any): void => {
-  if (error instanceof InvalidInputError) {
-    handler(error);
-  }
-};
-
-const handleValidationError = (handler: (error: any) => void) => (error: any): void => {
-  if (error instanceof ValidationError) {
-    handler(error);
-  }
-};
-
-const handleError = (handler: (error: any) => void) => (error: any): void => {
-  if (error instanceof Error) {
-    handler(error);
-  }
-};
-
-const pipeErrorHandlers = (...handlers: ((error: any) => void)[]) => (error: any): void => {
-  for (const handler of handlers) {
-    handler(error);
-  }
-};
