@@ -25,4 +25,15 @@ export class StudentController {
       .status(HTTP_STATUS.CREATED)
       .json(body);
   }
+
+  public async deleteStudent(
+    request: Request,
+    response: Response,
+  ): Promise<void> {
+    const { id } = request.params;
+    await this._studentService.deleteStudent(parseInt(id));
+    response
+      .status(HTTP_STATUS.OK)
+      .send();
+  }
 }

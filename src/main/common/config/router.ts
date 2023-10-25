@@ -9,6 +9,7 @@ const studentController: StudentController = containerConfig.get<StudentControll
 
 export const routerConfig = (app: Application): void => {
   app.post('/api/students', asyncRouterWrapper(studentController.createStudent.bind(studentController)));
+  app.delete('/api/students/:id', asyncRouterWrapper(studentController.deleteStudent.bind(studentController)));
 };
 
 const asyncRouterWrapper = (fn: (
