@@ -7,22 +7,24 @@ import { ParsedQs } from 'qs';
 
 const studentController: StudentController = containerConfig.get<StudentController>(TYPES.StudentController);
 
-export const routerConfig = (app: Application): void => {
-  app.post('/api/students', asyncRouterWrapper(studentController.createStudent.bind(studentController)));
-  app.delete('/api/students/:id', asyncRouterWrapper(studentController.deleteStudent.bind(studentController)));
+export const configureRoutes = (app: Application): void => {
+  app.post('/api/students', withAsync(studentController.createStudent.bind(studentController)));
+  app.delete('/api/students/:id', withAsync(studentController.deleteStudent.bind(studentController)));
 };
 
-const asyncRouterWrapper = (fn: (
+type asyncRouterFunction = (
   req: Request<ParamsDictionary, any, any, ParsedQs>,
   res: Response,
   next: NextFunction,
-) => Promise<any>) => async (
+) => Promise<void>;
+
+const withAsync = (targetFunction: asyncRouterFunction) => async (
   req: Request<ParamsDictionary, any, any, ParsedQs>,
   res: Response,
   next: NextFunction,
 ): Promise<void> => {
   try {
-    await fn(req, res, next);
+    await targetFunction(req, res, next);
   } catch (error) {
     next(error);
   }
