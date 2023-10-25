@@ -1,4 +1,4 @@
-import { BaseModel } from './base.model';
+import { BaseModel } from './BaseModel';
 
 export class Instructor extends BaseModel {
 

@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
-import { NotfoundError } from '../error/not-found.error';
-import { HTTP_STATUS, HttpStatus } from '../constant/http-status.constant';
-import { InvalidInputError } from '../error/invalid-input.error';
+import { NotFoundError } from '../error/NotFoundError';
+import { HTTP_STATUS, HttpStatus } from '../constant/httpStatus';
+import { InvalidInputError } from '../error/InvalidInputError';
 import { ValidationError } from 'class-validator';
 
 interface ErrorStatusMapping {
@@ -10,7 +10,7 @@ interface ErrorStatusMapping {
 }
 
 const errorStatusMappings: ErrorStatusMapping[] = [
-  { type: NotfoundError, status: HTTP_STATUS.NOT_FOUND },
+  { type: NotFoundError, status: HTTP_STATUS.NOT_FOUND },
   { type: InvalidInputError, status: HTTP_STATUS.BAD_REQUEST },
   { type: ValidationError, status: HTTP_STATUS.BAD_REQUEST },
   { type: Error, status: HTTP_STATUS.INTERNAL_SERVER_ERROR },

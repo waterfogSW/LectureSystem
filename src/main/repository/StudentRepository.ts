@@ -1,4 +1,4 @@
-import { Student } from '../model/student.model';
+import { Student } from '../model/Student';
 import { injectable } from 'inversify';
 import { FieldPacket, PoolConnection, ResultSetHeader, RowDataPacket } from 'mysql2/promise';
 

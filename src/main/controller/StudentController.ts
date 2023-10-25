@@ -1,10 +1,10 @@
 import { inject, injectable } from 'inversify';
-import { StudentService } from '../service/student.service';
-import TYPES from '../common/type/types';
+import { StudentService } from '../service/StudentService';
+import TYPES from '../common/constant/bindingTypes';
 import { Request, Response } from 'express';
-import { HTTP_STATUS } from '../common/constant/http-status.constant';
-import { Student } from '../model/student.model';
-import { StudentDTOMapper } from './mapper/StudentDTOMapper';
+import { HTTP_STATUS } from '../common/constant/httpStatus';
+import { Student } from '../model/Student';
+import { StudentDTOMapper } from '../mapper/StudentDTOMapper';
 import { StudentCreateResponse } from './dto/StudentCreateResponse';
 
 @injectable()

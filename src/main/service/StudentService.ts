@@ -1,10 +1,10 @@
 import { inject, injectable } from 'inversify';
-import { Student } from '../model/student.model';
-import { StudentRepository } from '../repository/student.repository';
-import TYPES from '../common/type/types';
+import { Student } from '../model/Student';
+import { StudentRepository } from '../repository/StudentRepository';
+import TYPES from '../common/constant/bindingTypes';
 import { PoolConnection } from 'mysql2/promise';
-import { transactional } from '../common/decorator/transactional.decorator';
-import { InvalidInputError } from '../common/error/invalid-input.error';
+import { transactional } from '../common/decorator/transactional';
+import { InvalidInputError } from '../common/error/InvalidInputError';
 
 @injectable()
 export class StudentService {

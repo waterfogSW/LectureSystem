@@ -1,4 +1,4 @@
-const TYPES = {
+const BindingTypes = {
   ConnectionPool: Symbol('ConnectionPool'),
   StudentController: Symbol('StudentController'),
   StudentService: Symbol('StudentService'),
@@ -6,4 +6,4 @@ const TYPES = {
   StudentDTOMapper: Symbol('StudentDTOMapper'),
 };
 
-export default TYPES;
+export default BindingTypes;

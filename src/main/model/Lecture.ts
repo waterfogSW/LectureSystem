@@ -1,4 +1,4 @@
-import { BaseModel } from './base.model';
+import { BaseModel } from './BaseModel';
 import { IsNumber } from 'class-validator';
 
 export class Lecture extends BaseModel {
