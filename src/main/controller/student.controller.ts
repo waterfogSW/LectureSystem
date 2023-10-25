@@ -21,7 +21,7 @@ export class StudentController {
     const { nickname, email } = req.body;
     const student: Student = await this._studentService.createStudent(nickname, email);
     const response: StudentCreateResponse = StudentCreateResponse.from(student);
-    res.status(HttpStatus.OK).json(response);
+    res.status(HttpStatus.CREATED).json(response);
   }
 
 }
