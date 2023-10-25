@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import { NotfoundError } from '../error/not-found.error';
 import { HttpStatus } from '../constant/http-status.constant';
 import { InvalidInputError } from '../error/invalid-input.error';
+import { ValidationError } from 'class-validator';
 
 export function errorHandler(
   error: Error,
@@ -16,6 +17,11 @@ export function errorHandler(
         .json({ message: error.message });
     }),
     handleInvalidInputError((error: any) => {
+      response
+        .status(HttpStatus.BAD_REQUEST)
+        .json({ message: error.message });
+    }),
+    handleValidationError((error: any) => {
       response
         .status(HttpStatus.BAD_REQUEST)
         .json({ message: error.message });
@@ -35,10 +41,16 @@ const handleNotFoundError = (handler: (error: any) => void) => (error: any): voi
 };
 
 const handleInvalidInputError = (handler: (error: any) => void) => (error: any): void => {
-  if(error instanceof InvalidInputError) {
+  if (error instanceof InvalidInputError) {
     handler(error);
   }
-}
+};
+
+const handleValidationError = (handler: (error: any) => void) => (error: any): void => {
+  if (error instanceof ValidationError) {
+    handler(error);
+  }
+};
 
 const handleError = (handler: (error: any) => void) => (error: any): void => {
   if (error instanceof Error) {
