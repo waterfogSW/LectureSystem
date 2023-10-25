@@ -1,6 +1,6 @@
 import { Student } from '../model/Student';
 import { injectable } from 'inversify';
-import { FieldPacket, PoolConnection, ResultSetHeader, RowDataPacket } from 'mysql2/promise';
+import { type FieldPacket, type PoolConnection, type ResultSetHeader, type RowDataPacket } from 'mysql2/promise';
 
 @injectable()
 export class StudentRepository {
@@ -32,5 +32,4 @@ export class StudentRepository {
     );
     return exist[0].exist === 1;
   }
-
 }

@@ -1,6 +1,6 @@
-import { NextFunction, Request, Response } from 'express';
+import { type NextFunction, type Request, type Response } from 'express';
 import { NotFoundError } from '../error/NotFoundError';
-import { HTTP_STATUS, HttpStatus } from '../constant/httpStatus';
+import { HTTP_STATUS, type HttpStatus } from '../constant/httpStatus';
 import { InvalidInputError } from '../error/InvalidInputError';
 import { ValidationError } from 'class-validator';
 

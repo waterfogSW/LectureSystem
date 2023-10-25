@@ -1,5 +1,4 @@
 export abstract class BaseModel {
-
   private readonly _id?: number;
   private readonly _createdAt: Date;
   private readonly _updatedAt: Date;

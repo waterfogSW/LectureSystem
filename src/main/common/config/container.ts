@@ -9,13 +9,13 @@ import { StudentDTOMapper } from '../../mapper/StudentDTOMapper';
 const container: Container = new Container({ defaultScope: 'Singleton' });
 
 const bindings = [
-  {type: TYPES.ConnectionPool, to: ConnectionPool},
-  {type: TYPES.StudentController, to: StudentController},
-  {type: TYPES.StudentDTOMapper, to: StudentDTOMapper},
-  {type: TYPES.StudentService, to: StudentService},
-  {type: TYPES.StudentRepository, to: StudentRepository},
+  { type: TYPES.ConnectionPool, to: ConnectionPool },
+  { type: TYPES.StudentController, to: StudentController },
+  { type: TYPES.StudentDTOMapper, to: StudentDTOMapper },
+  { type: TYPES.StudentService, to: StudentService },
+  { type: TYPES.StudentRepository, to: StudentRepository },
 ];
 
-bindings.forEach(({type, to}) => container.bind(type).to(to));
+bindings.forEach(({ type, to }) => container.bind(type).to(to));
 
 export default container;

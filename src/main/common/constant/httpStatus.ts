@@ -1,4 +1,4 @@
-export type HttpStatus = typeof HTTP_STATUS[keyof typeof HTTP_STATUS];
+export type HttpStatus = typeof HTTP_STATUS[keyof typeof HTTP_STATUS]
 export const HTTP_STATUS = {
   OK: 200,
   CREATED: 201,

@@ -8,7 +8,6 @@ import { InvalidInputError } from '../common/error/InvalidInputError';
 
 @injectable()
 export class StudentService {
-
   constructor(
     @inject(TYPES.StudentRepository) private readonly _studentRepository: StudentRepository,
   ) {}
@@ -27,5 +26,4 @@ export class StudentService {
 
     return await this._studentRepository.save(student, connection!);
   }
-
 }

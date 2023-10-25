@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 
-import { Application } from 'express';
+import { type Application } from 'express';
 import { Server } from './server';
 import * as bodyParser from 'body-parser';
 import containerConfig from './common/config/container';
@@ -21,4 +21,3 @@ const app: Application = server.build();
 app.listen(port, (): void => {
   console.log(`Server is listening on :${ port }`);
 });
-

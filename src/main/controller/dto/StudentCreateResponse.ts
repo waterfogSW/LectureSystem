@@ -1,5 +1,5 @@
 export interface StudentCreateResponse {
-    id: number;
-    nickname: string;
-    email: string;
+  id: number;
+  nickname: string;
+  email: string;
 }

@@ -1,7 +1,6 @@
 import { BaseModel } from './BaseModel';
 
 export class Student extends BaseModel {
-
   private readonly _nickname: string;
   private readonly _email: string;
 
@@ -22,5 +21,4 @@ export class Student extends BaseModel {
   public get email(): string {
     return this._email;
   }
-
 }

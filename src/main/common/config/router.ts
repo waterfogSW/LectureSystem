@@ -12,11 +12,17 @@ export const routerConfig = (app: Application): void => {
 };
 
 const asyncRouterWrapper = (fn: (
-  arg0: Request<ParamsDictionary, any, any, ParsedQs>,
-  arg1: Response,
-  arg2: NextFunction,
-) => Promise<any>) => async (
-  req: Request,
+  req: Request<ParamsDictionary, any, any, ParsedQs>,
   res: Response,
   next: NextFunction,
-): Promise<any> => await fn(req, res, next).catch(next);
+) => Promise<any>) => async (
+  req: Request<ParamsDictionary, any, any, ParsedQs>,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
+  try {
+    await fn(req, res, next);
+  } catch (error) {
+    next(error);
+  }
+};

@@ -1,5 +1,5 @@
-import { ConnectionPool } from '../config/database';
-import { PoolConnection } from 'mysql2/promise';
+import { type ConnectionPool } from '../config/database';
+import { type PoolConnection } from 'mysql2/promise';
 import containerConfig from '../config/container';
 import TYPES from '../constant/bindingTypes';
 

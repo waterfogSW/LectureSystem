@@ -1,7 +1,6 @@
 import { BaseModel } from './BaseModel';
 
 export class Instructor extends BaseModel {
-
   private readonly _name: string;
 
   constructor(
@@ -11,5 +10,4 @@ export class Instructor extends BaseModel {
     super(id);
     this._name = name;
   }
-
 }
