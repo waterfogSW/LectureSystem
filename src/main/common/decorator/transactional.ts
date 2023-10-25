@@ -1,6 +1,6 @@
-import { type ConnectionPool } from '../config/database';
+import { type ConnectionPool } from '../config/databaseConfig';
 import { type PoolConnection } from 'mysql2/promise';
-import containerConfig from '../config/container';
+import containerConfig from '../config/containerConfig';
 import TYPES from '../constant/bindingTypes';
 
 export function transactional() {

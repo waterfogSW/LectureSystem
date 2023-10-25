@@ -3,7 +3,7 @@ import 'reflect-metadata';
 import { type Application } from 'express';
 import { Server } from './server';
 import * as bodyParser from 'body-parser';
-import containerConfig from './common/config/container';
+import containerConfig from './common/config/containerConfig';
 import { configureRoutes } from './common/config/routeConfig';
 import { ErrorHandler } from './common/middleware/ErrorHandler';
 

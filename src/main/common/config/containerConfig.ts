@@ -3,7 +3,7 @@ import { StudentController } from '../../controller/StudentController';
 import { StudentService } from '../../service/StudentService';
 import { StudentRepository } from '../../repository/StudentRepository';
 import TYPES from '../constant/bindingTypes';
-import { ConnectionPool } from './database';
+import { ConnectionPool } from './databaseConfig';
 import { StudentDTOMapper } from '../../mapper/StudentDTOMapper';
 
 const container: Container = new Container({ defaultScope: 'Singleton' });

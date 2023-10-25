@@ -1,7 +1,7 @@
 import { Application, NextFunction, Request, Response } from 'express';
 import TYPES from '../constant/bindingTypes';
 import { StudentController } from '../../controller/StudentController';
-import containerConfig from './container';
+import containerConfig from './containerConfig';
 import { ParamsDictionary } from 'express-serve-static-core';
 import { ParsedQs } from 'qs';
 
