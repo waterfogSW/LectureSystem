@@ -8,7 +8,7 @@ export class StudentRepository {
     student: Student,
     connection: PoolConnection,
   ): Promise<Student> {
-    const insertQuery = 'INSERT INTO active_students (nickname, email) VALUES (?, ?)';
+    const insertQuery: string = 'INSERT INTO active_students (nickname, email) VALUES (?, ?)';
     const [inserted]: [ResultSetHeader, FieldPacket[]] = await connection.execute<ResultSetHeader>(
       insertQuery,
       [student.nickname, student.email],
@@ -25,7 +25,7 @@ export class StudentRepository {
     id: number,
     connection: PoolConnection,
   ): Promise<Student | null> {
-    const selectQuery = 'SELECT * FROM active_students WHERE id = ?';
+    const selectQuery: string = 'SELECT * FROM active_students WHERE id = ?';
     const [students]: [RowDataPacket[], FieldPacket[]] = await connection.execute<RowDataPacket[]>(
       selectQuery,
       [id],
@@ -45,7 +45,7 @@ export class StudentRepository {
     email: string,
     connection: PoolConnection,
   ): Promise<boolean> {
-    const existQuery = 'SELECT EXISTS(SELECT * FROM active_students WHERE email = ?) as exist';
+    const existQuery: string = 'SELECT EXISTS(SELECT * FROM active_students WHERE email = ?) as exist';
     const [exist]: [RowDataPacket[], FieldPacket[]] = await connection.execute<RowDataPacket[]>(
       existQuery,
       [email],
@@ -57,7 +57,7 @@ export class StudentRepository {
     id: number,
     connection: PoolConnection,
   ): Promise<boolean> {
-    const deleteQuery = 'UPDATE students SET is_deleted = 1 WHERE id = ?';
+    const deleteQuery: string = 'UPDATE students SET is_deleted = 1 WHERE id = ?';
     const [deleted]: [ResultSetHeader, FieldPacket[]] = await connection.execute<ResultSetHeader>(
       deleteQuery,
       [id],
