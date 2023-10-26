@@ -2,7 +2,6 @@ import { type NextFunction, type Request, type Response } from 'express';
 import { NotFoundException } from '../exception/NotFoundException';
 import { HTTP_STATUS, type HttpStatus } from '../constant/HttpStatus';
 import { IllegalArgumentException } from '../exception/IllegalArgumentException';
-import { ValidationError } from 'class-validator';
 
 interface ErrorStatusMapping {
   type: any;
