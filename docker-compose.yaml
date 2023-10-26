@@ -8,4 +8,5 @@ services:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: lecture_system
     volumes:
-      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+      - ./db/test-data.sql:/docker-entrypoint-initdb.d/test-data.sql
