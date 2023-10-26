@@ -1,11 +1,11 @@
 import { Application, NextFunction, Request, Response } from 'express';
-import TYPES from '../constant/bindingTypes';
 import { StudentController } from '../../controller/StudentController';
-import containerConfig from './containerConfig';
 import { ParamsDictionary } from 'express-serve-static-core';
 import { ParsedQs } from 'qs';
+import { container } from './containerConfig';
+import { BindingTypes } from '../constant/BindingTypes';
 
-const studentController: StudentController = containerConfig.get<StudentController>(TYPES.StudentController);
+const studentController: StudentController = container.get<StudentController>(BindingTypes.StudentController);
 
 export const configureRoutes = (app: Application): void => {
   app.post('/api/students', withAsync(studentController.createStudent.bind(studentController)));

@@ -3,12 +3,12 @@ import 'reflect-metadata';
 import { type Application } from 'express';
 import { Server } from './server';
 import * as bodyParser from 'body-parser';
-import containerConfig from './common/config/containerConfig';
 import { configureRoutes } from './common/config/routeConfig';
 import { ExceptionHandler } from './common/middleware/ExceptionHandler';
+import { container } from './common/config/containerConfig';
 
 const port: string = process.env.PORT || String(3000);
-const server: Server = new Server(containerConfig);
+const server: Server = new Server(container);
 
 server.setConfig((app: Application): void => {
   app.use(bodyParser.json());

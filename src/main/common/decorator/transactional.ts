@@ -1,7 +1,7 @@
 import { type ConnectionPool } from '../config/databaseConfig';
 import { type PoolConnection } from 'mysql2/promise';
-import containerConfig from '../config/containerConfig';
-import TYPES from '../constant/bindingTypes';
+import { container } from '../config/containerConfig';
+import { BindingTypes } from '../constant/BindingTypes';
 
 export function transactional() {
   return function (
@@ -12,7 +12,7 @@ export function transactional() {
     const originalMethod = descriptor.value;
 
     descriptor.value = async function (...args: any[]): Promise<any> {
-      const connectionPool: ConnectionPool = containerConfig.get<ConnectionPool>(TYPES.ConnectionPool);
+      const connectionPool: ConnectionPool = container.get<ConnectionPool>(BindingTypes.ConnectionPool);
       const connection: PoolConnection = await connectionPool.getConnection();
 
       try {

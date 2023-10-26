@@ -1,16 +1,16 @@
 import { inject, injectable } from 'inversify';
 import { Student } from '../model/Student';
 import { StudentRepository } from '../repository/StudentRepository';
-import TYPES from '../common/constant/bindingTypes';
 import { PoolConnection } from 'mysql2/promise';
 import { transactional } from '../common/decorator/transactional';
 import { IllegalArgumentException } from '../common/exception/IllegalArgumentException';
 import { NotFoundException } from '../common/exception/NotFoundException';
+import { BindingTypes } from '../common/constant/BindingTypes';
 
 @injectable()
 export class StudentService {
   constructor(
-    @inject(TYPES.StudentRepository) private readonly _studentRepository: StudentRepository,
+    @inject(BindingTypes.StudentRepository) private readonly _studentRepository: StudentRepository,
   ) {}
 
   @transactional()
