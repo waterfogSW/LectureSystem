@@ -6,7 +6,7 @@ import { container } from './ContainerConfig';
 import { BindingTypes } from '../constant/BindingTypes';
 
 const studentController: StudentController = container.get<StudentController>(BindingTypes.StudentController);
-
+const lectureController: StudentController = container.get<StudentController>(BindingTypes.LectureController);
 export const configureRoutes = (app: Application): void => {
   app.post('/api/students', withAsync(studentController.createStudent.bind(studentController)));
   app.delete('/api/students/:id', withAsync(studentController.deleteStudent.bind(studentController)));
