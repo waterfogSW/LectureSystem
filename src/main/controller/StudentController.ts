@@ -1,7 +1,7 @@
 import { inject, injectable } from 'inversify';
 import { StudentService } from '../service/StudentService';
 import { type Request, type Response } from 'express';
-import { HTTP_STATUS } from '../common/constant/httpStatus';
+import { HTTP_STATUS } from '../common/constant/HttpStatus';
 import { type Student } from '../model/Student';
 import { StudentDTOMapper } from '../mapper/StudentDTOMapper';
 import { type StudentCreateResponse } from './dto/StudentCreateResponse';
