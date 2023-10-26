@@ -4,7 +4,7 @@ import { StudentService } from '../../main/service/StudentService';
 import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { MockFactory } from '../util/MockFactory';
 import { Student } from '../../main/model/Student';
-import { InvalidInputError } from '../../main/common/error/InvalidInputError';
+import { IllegalArgumentException } from '../../main/common/exception/IllegalArgumentException';
 
 
 describe('수강생 서비스는', () => {
@@ -47,7 +47,7 @@ describe('수강생 서비스는', () => {
     const promise: Promise<Student> = service.createStudent(nickname, email);
 
     // then
-    await expect(promise).rejects.toThrowError(InvalidInputError);
+    await expect(promise).rejects.toThrowError(IllegalArgumentException);
   });
 });
 

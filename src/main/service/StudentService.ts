@@ -4,8 +4,8 @@ import { StudentRepository } from '../repository/StudentRepository';
 import TYPES from '../common/constant/bindingTypes';
 import { PoolConnection } from 'mysql2/promise';
 import { transactional } from '../common/decorator/transactional';
-import { InvalidInputError } from '../common/error/InvalidInputError';
-import { NotFoundError } from '../common/error/NotFoundError';
+import { IllegalArgumentException } from '../common/exception/IllegalArgumentException';
+import { NotFoundException } from '../common/exception/NotFoundException';
 
 @injectable()
 export class StudentService {
@@ -22,7 +22,7 @@ export class StudentService {
     const student: Student = new Student(nickname, email);
     const existsEmail: boolean = await this._studentRepository.existsByEmail(email, connection!);
     if (existsEmail) {
-      throw new InvalidInputError('이미 사용중인 이메일 입니다');
+      throw new IllegalArgumentException('이미 사용중인 이메일 입니다');
     }
 
     return await this._studentRepository.save(student, connection!);
@@ -35,7 +35,7 @@ export class StudentService {
   ):Promise<void> {
     const student: Student | null = await this._studentRepository.findById(id, connection!);
     if (student === null) {
-      throw new NotFoundError(`존재하지 않는 학생(id=${id})입니다`);
+      throw new NotFoundException(`존재하지 않는 학생(id=${id})입니다`);
     }
 
     await this._studentRepository.delete(id, connection!);

@@ -1,7 +1,7 @@
 import { type NextFunction, type Request, type Response } from 'express';
-import { NotFoundError } from '../error/NotFoundError';
+import { NotFoundException } from '../exception/NotFoundException';
 import { HTTP_STATUS, type HttpStatus } from '../constant/httpStatus';
-import { InvalidInputError } from '../error/InvalidInputError';
+import { IllegalArgumentException } from '../exception/IllegalArgumentException';
 import { ValidationError } from 'class-validator';
 
 interface ErrorStatusMapping {
@@ -10,13 +10,12 @@ interface ErrorStatusMapping {
 }
 
 const errorStatusMappings: ErrorStatusMapping[] = [
-  { type: NotFoundError, status: HTTP_STATUS.NOT_FOUND },
-  { type: InvalidInputError, status: HTTP_STATUS.BAD_REQUEST },
-  { type: ValidationError, status: HTTP_STATUS.BAD_REQUEST },
+  { type: NotFoundException, status: HTTP_STATUS.NOT_FOUND },
+  { type: IllegalArgumentException, status: HTTP_STATUS.BAD_REQUEST },
   { type: Error, status: HTTP_STATUS.INTERNAL_SERVER_ERROR },
 ];
 
-export function ErrorHandler(
+export function ExceptionHandler(
   error: Error,
   request: Request,
   response: Response,
