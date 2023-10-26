@@ -15,9 +15,9 @@ export class StudentRepository {
     );
 
     return new Student(
+      inserted.insertId,
       student.nickname,
       student.email,
-      inserted.insertId,
     );
   }
 

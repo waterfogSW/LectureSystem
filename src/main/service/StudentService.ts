@@ -19,7 +19,7 @@ export class StudentService {
     email: string,
     connection?: PoolConnection,
   ): Promise<Student> {
-    const student: Student = new Student(nickname, email);
+    const student: Student = Student.create(nickname, email);
     const existsEmail: boolean = await this._studentRepository.existsByEmail(email, connection!);
     if (existsEmail) {
       throw new IllegalArgumentException('이미 사용중인 이메일 입니다');

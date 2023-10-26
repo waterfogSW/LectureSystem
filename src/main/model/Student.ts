@@ -1,17 +1,28 @@
-import { BaseModel } from './BaseModel';
+import { BaseModel, Id } from '../common/model/BaseModel';
+import { IsEmail, IsString, Length, validateSync, ValidationError } from 'class-validator';
+import { IllegalArgumentException } from '../common/exception/IllegalArgumentException';
 
 export class Student extends BaseModel {
+
+  @IsString()
+  @Length(1, 20)
   private readonly _nickname: string;
+
+  @IsEmail()
   private readonly _email: string;
 
   constructor(
+    id: Id,
     nickname: string,
     email: string,
-    id?: number,
   ) {
     super(id);
     this._nickname = nickname;
     this._email = email;
+    const errors: ValidationError[] = validateSync(this);
+    if (errors.length > 0) {
+      throw new IllegalArgumentException(errors[0].toString());
+    }
   }
 
   public get nickname(): string {
@@ -20,5 +31,12 @@ export class Student extends BaseModel {
 
   public get email(): string {
     return this._email;
+  }
+
+  static create(
+    nickname: string,
+    email: string,
+  ): Student {
+    return new Student(undefined, nickname, email);
   }
 }
