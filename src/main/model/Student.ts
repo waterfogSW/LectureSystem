@@ -5,7 +5,7 @@ import { IllegalArgumentException } from '../common/exception/IllegalArgumentExc
 export class Student extends BaseModel {
 
   @IsString()
-  @Length(1, 20)
+  @Length(3, 20)
   private readonly _nickname: string;
 
   @IsEmail()
