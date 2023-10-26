@@ -5,6 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals
 import { MockFactory } from '../util/MockFactory';
 import { Student } from '../../main/model/Student';
 import { IllegalArgumentException } from '../../main/common/exception/IllegalArgumentException';
+import { NotFoundException } from '../../main/common/exception/NotFoundException';
 
 
 describe('수강생 서비스는', () => {
@@ -48,6 +49,32 @@ describe('수강생 서비스는', () => {
 
     // then
     await expect(promise).rejects.toThrowError(IllegalArgumentException);
+  });
+
+  it('존재하는 수강생을 삭제한다.', async () => {
+    // given
+    const id: number = 1;
+    const student: Student = new Student(id, 'test', 'test@example.com');
+
+    repository.findById.mockResolvedValue(student);
+
+    // when
+    await service.deleteStudent(id);
+
+    // then
+    expect(repository.delete).toBeCalledTimes(1);
+  });
+
+  it('존재하지 않는 수강생을 삭제하려고 하면 예외를 던진다.', async () => {
+    // given
+    const id: number = 1;
+    repository.findById.mockResolvedValue(null);
+
+    // when
+    const promise: Promise<void> = service.deleteStudent(id);
+
+    // then
+    await expect(promise).rejects.toThrowError(NotFoundException);
   });
 });
 
