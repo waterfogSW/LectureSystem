@@ -27,7 +27,7 @@ describe('수강생 서비스는', () => {
     const email: string = 'test@example.com';
 
     repository.existsByEmail.mockResolvedValue(false);
-    repository.save.mockResolvedValue(new Student(nickname, email, 1));
+    repository.save.mockResolvedValue(new Student(1, nickname, email));
 
     // when
     await service.createStudent(nickname, email);
