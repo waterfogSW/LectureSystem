@@ -1,21 +1,8 @@
 import { BaseModel, Id } from '../common/model/BaseModel';
-import {
-  IsBoolean,
-  IsEnum,
-  IsNumber,
-  IsPositive,
-  IsString,
-  Length,
-  validateSync,
-  ValidationError,
-} from 'class-validator';
+import { IsBoolean, IsEnum, IsNumber, IsPositive, IsString, Length } from 'class-validator';
 import { LectureCategory, LectureCategoryNames } from './LectureCategory';
-import { IllegalArgumentException } from '../common/exception/IllegalArgumentException';
 
 export class Lecture extends BaseModel {
-
-  @IsNumber()
-  private readonly _instructorId: Id;
 
   @IsString()
   @Length(1, 20)
@@ -23,48 +10,72 @@ export class Lecture extends BaseModel {
 
   @IsString()
   @Length(1, 5000)
-  private readonly _description: string;
+  private readonly _introduction: string;
+
+  @IsNumber()
+  private readonly _instructorId: Id;
+
+  @IsEnum(LectureCategory)
+  private readonly _category: LectureCategoryNames;
 
   @IsNumber()
   @IsPositive()
   private readonly _price: number;
 
-  @IsEnum(LectureCategory)
-  private readonly _category: LectureCategoryNames;
-
   @IsBoolean()
   private readonly _is_published: boolean;
 
+
   constructor(
     id: Id,
-    instructor: number,
     title: string,
-    description: string,
-    price: number,
+    introduction: string,
+    instructorId: number,
     category: LectureCategoryNames,
+    price: number,
     is_published?: boolean,
   ) {
     super(id);
-    this._instructorId = instructor;
+    this._instructorId = instructorId;
     this._title = title;
-    this._description = description;
+    this._introduction = introduction;
     this._price = price;
     this._category = category;
     this._is_published = is_published || false;
-    const errors: ValidationError[] = validateSync(this);
-    if (errors.length > 0) {
-      throw new IllegalArgumentException(errors[0].toString());
-    }
+  }
+
+  public get title(): string {
+    return this._title;
+  }
+
+  public get introduction(): string {
+    return this._introduction;
+  }
+
+  public get instructorId(): Id {
+    return this._instructorId;
+  }
+
+  public get category(): LectureCategoryNames {
+    return this._category;
+  }
+
+  public get price(): number {
+    return this._price;
+  }
+
+  get is_published(): boolean {
+    return this._is_published;
   }
 
   public static create(
-    instructorId: number,
     title: string,
-    description: string,
-    price: number,
+    introduction: string,
+    instructorId: number,
     category: LectureCategoryNames,
+    price: number,
   ): Lecture {
-    return new Lecture(undefined, instructorId, title, description, price, category);
+    return new Lecture(undefined, title, introduction, instructorId, category, price);
   }
 
 }

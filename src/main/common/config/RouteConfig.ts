@@ -4,12 +4,17 @@ import { ParamsDictionary } from 'express-serve-static-core';
 import { ParsedQs } from 'qs';
 import { container } from './ContainerConfig';
 import { BindingTypes } from '../constant/BindingTypes';
+import { LectureController } from '../../controller/LectureController';
 
 const studentController: StudentController = container.get<StudentController>(BindingTypes.StudentController);
-const lectureController: StudentController = container.get<StudentController>(BindingTypes.LectureController);
+const lectureController: LectureController = container.get<LectureController>(BindingTypes.LectureController);
 export const configureRoutes = (app: Application): void => {
+  // student
   app.post('/api/students', withAsync(studentController.createStudent.bind(studentController)));
   app.delete('/api/students/:id', withAsync(studentController.deleteStudent.bind(studentController)));
+
+  // lecture
+  app.post('/api/lectures', withAsync(lectureController.createLecture.bind(lectureController)));
 };
 
 type asyncRouterFunction = (
