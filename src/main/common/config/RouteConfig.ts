@@ -2,7 +2,7 @@ import { Application, NextFunction, Request, Response } from 'express';
 import { StudentController } from '../../controller/StudentController';
 import { ParamsDictionary } from 'express-serve-static-core';
 import { ParsedQs } from 'qs';
-import { container } from './containerConfig';
+import { container } from './ContainerConfig';
 import { BindingTypes } from '../constant/BindingTypes';
 
 const studentController: StudentController = container.get<StudentController>(BindingTypes.StudentController);

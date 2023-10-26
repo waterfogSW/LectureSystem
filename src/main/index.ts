@@ -3,9 +3,9 @@ import 'reflect-metadata';
 import { type Application } from 'express';
 import { Server } from './server';
 import * as bodyParser from 'body-parser';
-import { configureRoutes } from './common/config/routeConfig';
+import { configureRoutes } from './common/config/RouteConfig';
 import { ExceptionHandler } from './common/middleware/ExceptionHandler';
-import { container } from './common/config/containerConfig';
+import { container } from './common/config/ContainerConfig';
 
 const port: string = process.env.PORT || String(3000);
 const server: Server = new Server(container);

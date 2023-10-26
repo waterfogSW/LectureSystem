@@ -2,7 +2,7 @@ import { Container } from 'inversify';
 import { StudentController } from '../../controller/StudentController';
 import { StudentService } from '../../service/StudentService';
 import { StudentRepository } from '../../repository/StudentRepository';
-import { ConnectionPool } from './databaseConfig';
+import { ConnectionPool } from './DatabaseConfig';
 import { StudentDTOMapper } from '../../mapper/StudentDTOMapper';
 import { BindingTypes } from '../constant/BindingTypes';
 
