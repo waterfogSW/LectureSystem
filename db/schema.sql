@@ -11,11 +11,11 @@ CREATE TABLE students -- 수강생
 CREATE TABLE lectures -- 강의
 (
     id            BIGINT(20)   NOT NULL AUTO_INCREMENT PRIMARY KEY,                            -- 강의 아이디
-    instructor_id BIGINT(20)   NOT NULL,                                                       -- 강사 아이디
     title         VARCHAR(255) NOT NULL,                                                       -- 강의 제목
-    description   TEXT         NOT NULL,                                                       -- 강의 설명
-    price         INT          NOT NULL,                                                       -- 강의 가격
+    introduction  TEXT         NOT NULL,                                                       -- 강의 소개
+    instructor_id BIGINT(20)   NOT NULL,                                                       -- 강사 아이디
     category      VARCHAR(255) NOT NULL,                                                       -- 강의 카테고리
+    price         INT          NOT NULL,                                                       -- 강의 가격
     is_published  TINYINT(1)   NOT NULL DEFAULT FALSE,                                         -- 강의 공개 여부
     created_at    TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,                             -- 생성일
     updated_at    TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, -- 수정일
