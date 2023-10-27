@@ -1,6 +1,6 @@
 import { BaseModel, Id } from '../common/model/BaseModel';
 import { IsEmail, IsString, Length, validateSync, ValidationError } from 'class-validator';
-import { IllegalArgumentException } from '../common/exception/IllegalArgumentException';
+import { validateClass } from '../common/util/ClassValidateUtil';
 
 export class Student extends BaseModel {
 
@@ -19,7 +19,7 @@ export class Student extends BaseModel {
     super(id);
     this._nickname = nickname;
     this._email = email;
-    this.validate();
+    validateClass(this);
   }
 
   public get nickname(): string {
@@ -35,12 +35,5 @@ export class Student extends BaseModel {
     email: string,
   ): Student {
     return new Student(undefined, nickname, email);
-  }
-
-  private validate(): void {
-    const errors: ValidationError[] = validateSync(this);
-    if (errors.length > 0) {
-      throw new IllegalArgumentException(errors[0].toString());
-    }
   }
 }
