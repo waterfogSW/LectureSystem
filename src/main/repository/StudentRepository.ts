@@ -18,6 +18,8 @@ export class StudentRepository {
       inserted.insertId,
       student.nickname,
       student.email,
+      student.createdAt,
+      student.updatedAt,
     );
   }
 
@@ -35,9 +37,11 @@ export class StudentRepository {
     }
     const student: RowDataPacket = students[0];
     return new Student(
+      student.id,
       student.nickname,
       student.email,
-      student.id,
+      new Date(student.created_at),
+      new Date(student.updated_at),
     );
   }
 

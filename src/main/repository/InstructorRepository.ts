@@ -22,6 +22,8 @@ export class InstructorRepository {
     return new Instructor(
       instructor.id,
       instructor.name,
+      new Date(instructor.created_at),
+      new Date(instructor.updated_at),
     );
   }
 }

@@ -23,6 +23,8 @@ export class LectureRepository {
       lecture.instructorId!,
       lecture.category,
       lecture.price,
+      lecture.createdAt,
+      lecture.updatedAt,
     );
   }
 
