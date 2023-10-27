@@ -7,6 +7,10 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: lecture_system
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --skip-character-set-client-handshake
     volumes:
       - ./db/schema.sql:/docker-entrypoint-initdb.d/schema.sql
       - ./db/test-data.sql:/docker-entrypoint-initdb.d/test-data.sql
