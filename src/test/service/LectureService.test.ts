@@ -8,6 +8,7 @@ import { Lecture } from '../../main/model/Lecture';
 import { Instructor } from '../../main/model/Instructor';
 import { NotFoundException } from '../../main/common/exception/NotFoundException';
 import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals';
+import { LectureCreateRequest } from '../../main/controller/dto/LectureCreateRequest';
 
 describe('LectureService', () => {
   let lectureService: LectureService;
@@ -32,6 +33,7 @@ describe('LectureService', () => {
       const instructorId = 1;
       const category = 'WEB';
       const price = 10000;
+      const request: LectureCreateRequest = new LectureCreateRequest(title, introduction, instructorId, category, price);
 
       const mockInstructor: Instructor = new Instructor(instructorId, 'Instructor Name');
       instructorRepository.findById.mockResolvedValue(mockInstructor);
@@ -40,7 +42,7 @@ describe('LectureService', () => {
       lectureRepository.save.mockResolvedValue(mockLecture);
 
       // when
-      const result: Lecture = await lectureService.createLecture(title, introduction, instructorId, category, price);
+      const result: Lecture = await lectureService.createLecture(request);
 
       // then
       expect(instructorRepository.findById).toBeCalledTimes(1);
@@ -53,11 +55,12 @@ describe('LectureService', () => {
       const instructorId = 999; // 존재하지 않는 강사 ID
       const category = 'WEB';
       const price = 10000;
+      const request: LectureCreateRequest = new LectureCreateRequest(title, introduction, instructorId, category, price);
 
       instructorRepository.findById.mockResolvedValue(null);
 
       // when
-      const promise: Promise<Lecture> = lectureService.createLecture(title, introduction, instructorId, category, price);
+      const promise: Promise<Lecture> = lectureService.createLecture(request);
 
       // then
       await expect(promise).rejects.toThrow(new NotFoundException(`존재하지 않는 강사 ID(${ instructorId }) 입니다`));

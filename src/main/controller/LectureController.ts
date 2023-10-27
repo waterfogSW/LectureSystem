@@ -20,8 +20,8 @@ export class LectureController {
     request: Request,
     response: Response,
   ): Promise<void> {
-    const { title, introduction, instructorId, category, price } = request.body as LectureCreateRequest;
-    const lecture: Lecture = await this._lectureService.createLecture(title, introduction, instructorId, category, price);
+    const lectureCreateRequest: LectureCreateRequest = this._lectureDTOMapper.toLectureCreateRequest(request);
+    const lecture: Lecture = await this._lectureService.createLecture(lectureCreateRequest);
     const body: LectureCreateResponse = this._lectureDTOMapper.toLectureCreateResponse(lecture);
     response
       .status(HTTP_STATUS.CREATED)

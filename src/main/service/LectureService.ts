@@ -7,6 +7,7 @@ import { transactional } from '../common/decorator/transactional';
 import { InstructorRepository } from '../repository/InstructorRepository';
 import { Instructor } from '../model/Instructor';
 import { NotFoundException } from '../common/exception/NotFoundException';
+import { LectureCreateRequest } from '../controller/dto/LectureCreateRequest';
 
 
 @injectable()
@@ -19,13 +20,10 @@ export class LectureService {
 
   @transactional()
   public async createLecture(
-    title: string,
-    introduction: string,
-    instructorId: number,
-    category: string,
-    price: number,
+    request: LectureCreateRequest,
     connection?: PoolConnection,
   ): Promise<Lecture> {
+    const { title, introduction, instructorId, category, price }: LectureCreateRequest = request;
     const instructor: Instructor | null = await this._instructorRepository.findById(instructorId, connection!);
     if (instructor === null) {
       throw new NotFoundException(`존재하지 않는 강사 ID(${ instructorId }) 입니다`);
