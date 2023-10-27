@@ -10,8 +10,10 @@ export class Instructor extends BaseModel {
   constructor(
     id: Id,
     name: string,
+    createdAt?: Date,
+    updatedAt?: Date,
   ) {
-    super(id);
+    super(id, createdAt, updatedAt);
     this._name = name;
     const errors: ValidationError[] = validateSync(this);
     if (errors.length > 0) {

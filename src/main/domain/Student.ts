@@ -15,8 +15,10 @@ export class Student extends BaseModel {
     id: Id,
     nickname: string,
     email: string,
+    createdAt?: Date,
+    updatedAt?: Date,
   ) {
-    super(id);
+    super(id, createdAt, updatedAt);
     this._nickname = nickname;
     this._email = email;
     validateClass(this);

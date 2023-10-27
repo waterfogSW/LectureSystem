@@ -15,10 +15,14 @@ export abstract class BaseModel {
   @IsDate({ message: '수정일은 Date 타입이어야 합니다.' })
   private readonly _updatedAt: Date;
 
-  protected constructor(id: Id) {
+  protected constructor(
+    id: Id,
+    createdAt?: Date,
+    updatedAt?: Date,
+  ) {
     this._id = id;
-    this._createdAt = new Date();
-    this._updatedAt = new Date();
+    this._createdAt = createdAt || new Date();
+    this._updatedAt = updatedAt || new Date();
   }
 
   public get id(): Id {

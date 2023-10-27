@@ -43,9 +43,11 @@ export class Lecture extends BaseModel {
     instructorId: number,
     category: string,
     price: number,
+    createdAt?: Date,
+    updatedAt?: Date,
     is_published?: boolean,
   ) {
-    super(id);
+    super(id, createdAt, updatedAt);
     this._instructorId = instructorId;
     this._title = title;
     this._introduction = introduction;
