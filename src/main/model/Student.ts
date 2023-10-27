@@ -19,10 +19,7 @@ export class Student extends BaseModel {
     super(id);
     this._nickname = nickname;
     this._email = email;
-    const errors: ValidationError[] = validateSync(this);
-    if (errors.length > 0) {
-      throw new IllegalArgumentException(errors[0].toString());
-    }
+    this.validate();
   }
 
   public get nickname(): string {
@@ -38,5 +35,12 @@ export class Student extends BaseModel {
     email: string,
   ): Student {
     return new Student(undefined, nickname, email);
+  }
+
+  private validate(): void {
+    const errors: ValidationError[] = validateSync(this);
+    if (errors.length > 0) {
+      throw new IllegalArgumentException(errors[0].toString());
+    }
   }
 }
