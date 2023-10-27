@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import { StudentController } from '../../main/controller/StudentController';
 import { StudentService } from '../../main/service/StudentService';
 import { StudentDTOMapper } from '../../main/controller/mapper/StudentDTOMapper';
-import { Student } from '../../main/model/Student';
+import { Student } from '../../main/domain/Student';
 import { MockFactory } from '../util/MockFactory';
 import { Request, Response } from 'express';
 import { HTTP_STATUS } from '../../main/common/constant/HttpStatus';

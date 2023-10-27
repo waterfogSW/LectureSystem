@@ -1,5 +1,5 @@
 import { describe, expect, it } from '@jest/globals';
-import { Student } from '../../main/model/Student';
+import { Student } from '../../main/domain/Student';
 import { IllegalArgumentException } from '../../main/common/exception/IllegalArgumentException';
 
 

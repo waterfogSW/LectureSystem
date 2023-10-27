@@ -1,5 +1,5 @@
 import { injectable } from 'inversify';
-import { type Student } from '../../model/Student';
+import { type Student } from '../../domain/Student';
 import { type StudentCreateResponse } from '../dto/StudentCreateResponse';
 import { StudentCreateRequest } from '../dto/StudentCreateRequest';
 import { Request } from 'express';

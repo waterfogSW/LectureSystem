@@ -1,6 +1,6 @@
 import { inject, injectable } from 'inversify';
 import { FieldPacket, PoolConnection, RowDataPacket } from 'mysql2/promise';
-import { Instructor } from '../model/Instructor';
+import { Instructor } from '../domain/Instructor';
 
 
 @injectable()

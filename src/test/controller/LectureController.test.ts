@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import { LectureController } from '../../main/controller/LectureController';
 import { LectureService } from '../../main/service/LectureService';
 import { LectureDTOMapper } from '../../main/controller/mapper/LectureDTOMapper';
-import { Lecture } from '../../main/model/Lecture';
+import { Lecture } from '../../main/domain/Lecture';
 import { MockFactory } from '../util/MockFactory';
 import { Request, Response } from 'express';
 import { HTTP_STATUS } from '../../main/common/constant/HttpStatus';

@@ -1,5 +1,5 @@
 import { injectable } from 'inversify';
-import { Lecture } from '../model/Lecture';
+import { Lecture } from '../domain/Lecture';
 import { FieldPacket, PoolConnection, ResultSetHeader } from 'mysql2/promise';
 
 @injectable()
@@ -15,7 +15,7 @@ export class LectureRepository {
       saveQuery,
       [lecture.title, lecture.introduction, lecture.instructorId, lecture.category, lecture.price],
     );
-    
+
     return new Lecture(
       inserted.insertId,
       lecture.title,

@@ -3,7 +3,7 @@ import { StudentRepository } from '../../main/repository/StudentRepository';
 import { StudentService } from '../../main/service/StudentService';
 import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { MockFactory } from '../util/MockFactory';
-import { Student } from '../../main/model/Student';
+import { Student } from '../../main/domain/Student';
 import { IllegalArgumentException } from '../../main/common/exception/IllegalArgumentException';
 import { NotFoundException } from '../../main/common/exception/NotFoundException';
 import { StudentCreateRequest } from '../../main/controller/dto/StudentCreateRequest';

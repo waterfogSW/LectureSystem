@@ -1,5 +1,5 @@
 import { describe, expect, it } from '@jest/globals';
-import { Lecture } from '../../main/model/Lecture';
+import { Lecture } from '../../main/domain/Lecture';
 import { IllegalArgumentException } from '../../main/common/exception/IllegalArgumentException';
 
 
@@ -87,5 +87,5 @@ describe('Lecture', () => {
     // when, then
     expect(() => Lecture.create(title, introduction, instructorId, category, price)).toThrowError(IllegalArgumentException);
   });
-  
+
 });

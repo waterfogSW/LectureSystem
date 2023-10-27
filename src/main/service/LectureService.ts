@@ -1,11 +1,11 @@
 import { inject, injectable } from 'inversify';
 import { LectureRepository } from '../repository/LectureRepository';
 import { BindingTypes } from '../common/constant/BindingTypes';
-import { Lecture } from '../model/Lecture';
+import { Lecture } from '../domain/Lecture';
 import { PoolConnection } from 'mysql2/promise';
 import { transactional } from '../common/decorator/transactional';
 import { InstructorRepository } from '../repository/InstructorRepository';
-import { Instructor } from '../model/Instructor';
+import { Instructor } from '../domain/Instructor';
 import { NotFoundException } from '../common/exception/NotFoundException';
 import { LectureCreateRequest } from '../controller/dto/LectureCreateRequest';
 

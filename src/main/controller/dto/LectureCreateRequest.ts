@@ -1,5 +1,5 @@
 import { IsEnum, IsNumber, IsString } from 'class-validator';
-import { LectureCategory, LectureCategoryNames } from '../../model/LectureCategory';
+import { LectureCategory, LectureCategoryNames } from '../../domain/LectureCategory';
 import { validateClass } from '../../common/util/ClassValidateUtil';
 
 export class LectureCreateRequest {

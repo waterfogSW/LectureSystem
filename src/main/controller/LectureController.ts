@@ -2,7 +2,7 @@ import { inject, injectable } from 'inversify';
 import { BindingTypes } from '../common/constant/BindingTypes';
 import { LectureService } from '../service/LectureService';
 import { LectureDTOMapper } from './mapper/LectureDTOMapper';
-import { Lecture } from '../model/Lecture';
+import { Lecture } from '../domain/Lecture';
 import { LectureCreateResponse } from './dto/LectureCreateResponse';
 import { type Request, type Response } from 'express';
 import { HTTP_STATUS } from '../common/constant/HttpStatus';

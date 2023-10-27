@@ -1,5 +1,5 @@
 import { inject, injectable } from 'inversify';
-import { Student } from '../model/Student';
+import { Student } from '../domain/Student';
 import { StudentRepository } from '../repository/StudentRepository';
 import { PoolConnection } from 'mysql2/promise';
 import { transactional } from '../common/decorator/transactional';

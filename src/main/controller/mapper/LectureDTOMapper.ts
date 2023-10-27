@@ -1,6 +1,6 @@
 import { injectable } from 'inversify';
 import { LectureCreateResponse } from '../dto/LectureCreateResponse';
-import { Lecture } from '../../model/Lecture';
+import { Lecture } from '../../domain/Lecture';
 import { Request } from 'express';
 import { LectureCreateRequest } from '../dto/LectureCreateRequest';
 
