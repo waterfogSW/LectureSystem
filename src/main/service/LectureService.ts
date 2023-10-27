@@ -2,7 +2,6 @@ import { inject, injectable } from 'inversify';
 import { LectureRepository } from '../repository/LectureRepository';
 import { BindingTypes } from '../common/constant/BindingTypes';
 import { Lecture } from '../model/Lecture';
-import { LectureCategoryNames } from '../model/LectureCategory';
 import { PoolConnection } from 'mysql2/promise';
 import { transactional } from '../common/decorator/transactional';
 
@@ -19,7 +18,7 @@ export class LectureService {
     title: string,
     introduction: string,
     instructorId: number,
-    category: LectureCategoryNames,
+    category: string,
     price: number,
     connection?: PoolConnection,
   ): Promise<Lecture> {

@@ -1,6 +1,17 @@
 import { BaseModel, Id } from '../common/model/BaseModel';
-import { IsBoolean, IsEnum, IsNumber, IsPositive, IsString, Length } from 'class-validator';
+import {
+  IsBoolean,
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsPositive,
+  IsString,
+  Length,
+  validateSync,
+  ValidationError,
+} from 'class-validator';
 import { LectureCategory, LectureCategoryNames } from './LectureCategory';
+import { IllegalArgumentException } from '../common/exception/IllegalArgumentException';
 
 export class Lecture extends BaseModel {
 
@@ -15,6 +26,7 @@ export class Lecture extends BaseModel {
   @IsNumber()
   private readonly _instructorId: Id;
 
+  @IsNotEmpty()
   @IsEnum(LectureCategory)
   private readonly _category: LectureCategoryNames;
 
@@ -31,7 +43,7 @@ export class Lecture extends BaseModel {
     title: string,
     introduction: string,
     instructorId: number,
-    category: LectureCategoryNames,
+    category: string,
     price: number,
     is_published?: boolean,
   ) {
@@ -40,8 +52,9 @@ export class Lecture extends BaseModel {
     this._title = title;
     this._introduction = introduction;
     this._price = price;
-    this._category = category;
+    this._category = category.toUpperCase() as LectureCategoryNames;
     this._is_published = is_published || false;
+    this.validate();
   }
 
   public get title(): string {
@@ -72,10 +85,17 @@ export class Lecture extends BaseModel {
     title: string,
     introduction: string,
     instructorId: number,
-    category: LectureCategoryNames,
+    category: string,
     price: number,
   ): Lecture {
     return new Lecture(undefined, title, introduction, instructorId, category, price);
+  }
+
+  private validate(): void {
+    const errors: ValidationError[] = validateSync(this);
+    if (errors.length > 0) {
+      throw new IllegalArgumentException(errors[0].toString());
+    }
   }
 
 }

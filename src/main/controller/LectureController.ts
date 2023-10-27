@@ -6,6 +6,7 @@ import { Lecture } from '../model/Lecture';
 import { LectureCreateResponse } from './dto/LectureCreateResponse';
 import { type Request, type Response } from 'express';
 import { HTTP_STATUS } from '../common/constant/HttpStatus';
+import { LectureCreateRequest } from './dto/LectureCreateRequest';
 
 @injectable()
 export class LectureController {
@@ -19,7 +20,7 @@ export class LectureController {
     request: Request,
     response: Response,
   ): Promise<void> {
-    const { title, introduction, instructorId, category, price } = request.body;
+    const { title, introduction, instructorId, category, price } = request.body as LectureCreateRequest;
     const lecture: Lecture = await this._lectureService.createLecture(title, introduction, instructorId, category, price);
     const body: LectureCreateResponse = this._lectureDTOMapper.toLectureCreateResponse(lecture);
     response
