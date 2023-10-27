@@ -12,4 +12,7 @@ export const BindingTypes = {
   LectureService: Symbol('LectureService'),
   LectureRepository: Symbol('LectureRepository'),
   LectureDTOMapper: Symbol('LectureDTOMapper'),
+
+  // instructor
+  InstructorRepository: Symbol('InstructorRepository'),
 };

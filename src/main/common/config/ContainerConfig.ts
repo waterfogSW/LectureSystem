@@ -9,6 +9,7 @@ import { LectureRepository } from '../../repository/LectureRepository';
 import { LectureService } from '../../service/LectureService';
 import { LectureDTOMapper } from '../../mapper/LectureDTOMapper';
 import { LectureController } from '../../controller/LectureController';
+import { InstructorRepository } from '../../repository/InstructorRepository';
 
 const container: Container = new Container({ defaultScope: 'Singleton' });
 
@@ -26,6 +27,9 @@ const bindings = [
   { type: BindingTypes.LectureDTOMapper, to: LectureDTOMapper },
   { type: BindingTypes.LectureService, to: LectureService },
   { type: BindingTypes.LectureRepository, to: LectureRepository },
+
+  // instructor
+  { type: BindingTypes.InstructorRepository, to: InstructorRepository },
 ];
 
 bindings.forEach(({ type, to }) => container.bind(type).to(to));
