@@ -1,8 +1,8 @@
 import { injectable } from 'inversify';
-import { LectureCreateResponse } from '../controller/dto/LectureCreateResponse';
-import { Lecture } from '../model/Lecture';
+import { LectureCreateResponse } from '../dto/LectureCreateResponse';
+import { Lecture } from '../../model/Lecture';
 import { Request } from 'express';
-import { LectureCreateRequest } from '../controller/dto/LectureCreateRequest';
+import { LectureCreateRequest } from '../dto/LectureCreateRequest';
 
 @injectable()
 export class LectureDTOMapper {

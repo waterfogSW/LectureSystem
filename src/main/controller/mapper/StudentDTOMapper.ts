@@ -1,7 +1,7 @@
 import { injectable } from 'inversify';
-import { type Student } from '../model/Student';
-import { type StudentCreateResponse } from '../controller/dto/StudentCreateResponse';
-import { StudentCreateRequest } from '../controller/dto/StudentCreateRequest';
+import { type Student } from '../../model/Student';
+import { type StudentCreateResponse } from '../dto/StudentCreateResponse';
+import { StudentCreateRequest } from '../dto/StudentCreateRequest';
 import { Request } from 'express';
 
 @injectable()

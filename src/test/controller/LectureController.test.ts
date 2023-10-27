@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { LectureController } from '../../main/controller/LectureController';
 import { LectureService } from '../../main/service/LectureService';
-import { LectureDTOMapper } from '../../main/mapper/LectureDTOMapper';
+import { LectureDTOMapper } from '../../main/controller/mapper/LectureDTOMapper';
 import { Lecture } from '../../main/model/Lecture';
 import { MockFactory } from '../util/MockFactory';
 import { Request, Response } from 'express';
