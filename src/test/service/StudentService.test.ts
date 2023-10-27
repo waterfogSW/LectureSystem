@@ -23,7 +23,7 @@ describe('수강생 서비스', () => {
     jest.clearAllMocks();
   });
 
-  it('새로운 수강생을 가입시킨다.', async () => {
+  it('수강생을 생성하고, 생성된 수강생을 반환한다.', async () => {
     // given
     const nickname: string = 'test';
     const email: string = 'test@example.com';
@@ -33,10 +33,10 @@ describe('수강생 서비스', () => {
     repository.save.mockResolvedValue(new Student(1, nickname, email));
 
     // when
-    await service.createStudent(studentCreateRequest);
+    const savedStudent = await service.createStudent(studentCreateRequest);
 
     // then
-    expect(repository.save).toBeCalledTimes(1);
+    expect(savedStudent.id).toBeDefined();
   });
 
   it('이미 가입된 수강생의 이메일로 가입시키려고 하면 예외를 던진다.', async () => {
@@ -54,7 +54,7 @@ describe('수강생 서비스', () => {
     await expect(promise).rejects.toThrowError(IllegalArgumentException);
   });
 
-  it('존재하는 수강생을 삭제한다.', async () => {
+  it('수강생을 삭제한다.', async () => {
     // given
     const id: number = 1;
     const student: Student = new Student(id, 'test', 'test@example.com');
