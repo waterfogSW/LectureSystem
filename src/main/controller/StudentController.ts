@@ -6,6 +6,7 @@ import { type Student } from '../model/Student';
 import { StudentDTOMapper } from '../mapper/StudentDTOMapper';
 import { type StudentCreateResponse } from './dto/StudentCreateResponse';
 import { BindingTypes } from '../common/constant/BindingTypes';
+import { StudentCreateRequest } from './dto/StudentCreateRequest';
 
 @injectable()
 export class StudentController {
@@ -18,7 +19,7 @@ export class StudentController {
     request: Request,
     response: Response,
   ): Promise<void> {
-    const { nickname, email } = request.body;
+    const { nickname, email } = request.body as StudentCreateRequest;
     const student: Student = await this._studentService.createStudent(nickname, email);
     const body: StudentCreateResponse = this._studentDTOMapper.toStudentCreateResponse(student);
     response
@@ -31,7 +32,8 @@ export class StudentController {
     response: Response,
   ): Promise<void> {
     const { id } = request.params;
-    await this._studentService.deleteStudent(parseInt(id));
+    const parsedId: number = parseInt(id, 10);
+    await this._studentService.deleteStudent(parsedId);
     response
       .status(HTTP_STATUS.OK)
       .send();
