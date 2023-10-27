@@ -4,6 +4,9 @@ import { BindingTypes } from '../common/constant/BindingTypes';
 import { Lecture } from '../model/Lecture';
 import { PoolConnection } from 'mysql2/promise';
 import { transactional } from '../common/decorator/transactional';
+import { InstructorRepository } from '../repository/InstructorRepository';
+import { Instructor } from '../model/Instructor';
+import { NotFoundException } from '../common/exception/NotFoundException';
 
 
 @injectable()
@@ -11,6 +14,7 @@ export class LectureService {
 
   constructor(
     @inject(BindingTypes.LectureRepository) private readonly _lectureRepository: LectureRepository,
+    @inject(BindingTypes.InstructorRepository) private readonly _instructorRepository: InstructorRepository,
   ) {}
 
   @transactional()
@@ -22,14 +26,12 @@ export class LectureService {
     price: number,
     connection?: PoolConnection,
   ): Promise<Lecture> {
-    const lecture: Lecture = Lecture.create(
-      title,
-      introduction,
-      instructorId,
-      category,
-      price,
-    );
+    const instructor: Instructor | null = await this._instructorRepository.findById(instructorId, connection!);
+    if (instructor === null) {
+      throw new NotFoundException(`존재하지 않는 강사 ID(${ instructorId }) 입니다`);
+    }
 
+    const lecture: Lecture = Lecture.create(title, introduction, instructor.id!, category, price);
     return await this._lectureRepository.save(lecture, connection!);
   }
 
