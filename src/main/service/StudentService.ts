@@ -6,6 +6,7 @@ import { transactional } from '../common/decorator/transactional';
 import { IllegalArgumentException } from '../common/exception/IllegalArgumentException';
 import { NotFoundException } from '../common/exception/NotFoundException';
 import { BindingTypes } from '../common/constant/BindingTypes';
+import { StudentCreateRequest } from '../controller/dto/StudentCreateRequest';
 
 @injectable()
 export class StudentService {
@@ -15,10 +16,10 @@ export class StudentService {
 
   @transactional()
   public async createStudent(
-    nickname: string,
-    email: string,
+    request: StudentCreateRequest,
     connection?: PoolConnection,
   ): Promise<Student> {
+    const { nickname, email }: StudentCreateRequest = request;
     const student: Student = Student.create(nickname, email);
     const existsEmail: boolean = await this._studentRepository.existsByEmail(email, connection!);
     if (existsEmail) {
@@ -32,10 +33,10 @@ export class StudentService {
   public async deleteStudent(
     id: number,
     connection?: PoolConnection,
-  ):Promise<void> {
+  ): Promise<void> {
     const student: Student | null = await this._studentRepository.findById(id, connection!);
     if (student === null) {
-      throw new NotFoundException(`존재하지 않는 학생(id=${id})입니다`);
+      throw new NotFoundException(`존재하지 않는 학생(id=${ id })입니다`);
     }
 
     await this._studentRepository.delete(id, connection!);

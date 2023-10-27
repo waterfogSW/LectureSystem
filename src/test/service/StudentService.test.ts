@@ -6,6 +6,7 @@ import { MockFactory } from '../util/MockFactory';
 import { Student } from '../../main/model/Student';
 import { IllegalArgumentException } from '../../main/common/exception/IllegalArgumentException';
 import { NotFoundException } from '../../main/common/exception/NotFoundException';
+import { StudentCreateRequest } from '../../main/controller/dto/StudentCreateRequest';
 
 
 describe('수강생 서비스', () => {
@@ -26,12 +27,13 @@ describe('수강생 서비스', () => {
     // given
     const nickname: string = 'test';
     const email: string = 'test@example.com';
+    const studentCreateRequest: StudentCreateRequest = new StudentCreateRequest(nickname, email);
 
     repository.existsByEmail.mockResolvedValue(false);
     repository.save.mockResolvedValue(new Student(1, nickname, email));
 
     // when
-    await service.createStudent(nickname, email);
+    await service.createStudent(studentCreateRequest);
 
     // then
     expect(repository.save).toBeCalledTimes(1);
@@ -41,11 +43,12 @@ describe('수강생 서비스', () => {
     // given
     const nickname: string = 'test';
     const email: string = 'test@example.com';
+    const studentCreateRequest: StudentCreateRequest = new StudentCreateRequest(nickname, email);
 
     repository.existsByEmail.mockResolvedValue(true);
 
     // when
-    const promise: Promise<Student> = service.createStudent(nickname, email);
+    const promise: Promise<Student> = service.createStudent(studentCreateRequest);
 
     // then
     await expect(promise).rejects.toThrowError(IllegalArgumentException);

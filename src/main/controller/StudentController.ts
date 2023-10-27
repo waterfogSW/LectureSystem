@@ -19,8 +19,8 @@ export class StudentController {
     request: Request,
     response: Response,
   ): Promise<void> {
-    const { nickname, email } = request.body as StudentCreateRequest;
-    const student: Student = await this._studentService.createStudent(nickname, email);
+    const studentCreateRequest: StudentCreateRequest = this._studentDTOMapper.toStudentCreateRequest(request);
+    const student: Student = await this._studentService.createStudent(studentCreateRequest);
     const body: StudentCreateResponse = this._studentDTOMapper.toStudentCreateResponse(student);
     response
       .status(HTTP_STATUS.CREATED)
