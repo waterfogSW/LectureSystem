@@ -8,7 +8,7 @@ import { IllegalArgumentException } from '../../main/common/exception/IllegalArg
 import { NotFoundException } from '../../main/common/exception/NotFoundException';
 
 
-describe('수강생 서비스는', () => {
+describe('수강생 서비스', () => {
 
   let service: StudentService;
   let repository: jest.Mocked<StudentRepository>;
