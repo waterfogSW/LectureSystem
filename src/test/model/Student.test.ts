@@ -18,7 +18,7 @@ describe('수강생', () => {
     expect(student.email).toBe(email);
   });
 
-  it.each([2, 31])('닉네임은 1자 이상 30자 이하만 가능하다. (닉네임 길이: %i)', (length: number) => {
+  it.each([2, 11])('닉네임은 3자 이상 10자 이하만 가능하다. (닉네임 길이: %i)', (length: number) => {
     // given
     const nickname: string = 'a'.repeat(length);
     const email: string = 'test@example.com';

@@ -4,11 +4,11 @@ import { IllegalArgumentException } from '../common/exception/IllegalArgumentExc
 
 export class Student extends BaseModel {
 
-  @IsString()
-  @Length(3, 20)
+  @IsString({ message: '닉네임은 문자열이어야 합니다.' })
+  @Length(3, 10, {  message: '닉네임의 길이는 3글자 이상, 10글자 미만이어야 합니다.' })
   private readonly _nickname: string;
 
-  @IsEmail()
+  @IsEmail({}, { message: '잘못된 이메일 형식입니다.' })
   private readonly _email: string;
 
   constructor(
