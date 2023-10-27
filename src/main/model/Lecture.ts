@@ -2,7 +2,6 @@ import { BaseModel, Id } from '../common/model/BaseModel';
 import {
   IsBoolean,
   IsEnum,
-  IsNotEmpty,
   IsNumber,
   IsPositive,
   IsString,
@@ -15,28 +14,27 @@ import { IllegalArgumentException } from '../common/exception/IllegalArgumentExc
 
 export class Lecture extends BaseModel {
 
-  @IsString()
-  @Length(1, 20)
+  @IsString({ message: '강의 제목은 문자열이어야 합니다.' })
+  @Length(3, 20, { message: '강의 제목은 3글자 이상, 20글자 미만이어야 합니다.' })
   private readonly _title: string;
 
-  @IsString()
-  @Length(1, 5000)
+  @IsString({ message: '강의 소개는 문자열이어야 합니다.' })
+  @Length(1, 5000, { message: '강의 소개는 1글자 이상, 5000글자 미만이어야 합니다.' })
   private readonly _introduction: string;
 
-  @IsNumber()
-  private readonly _instructorId: Id;
+  @IsNumber({ allowNaN: false, allowInfinity: false }, { message: '강사 아이디는 숫자여야 합니다.' })
+  @IsPositive({ message: '강사 아이디는 1이상이어야 합니다.' })
+  private readonly _instructorId: number;
 
-  @IsNotEmpty()
-  @IsEnum(LectureCategory)
+  @IsEnum(LectureCategory, { message: '존재하지 않는 강의 카테고리입니다.' })
   private readonly _category: LectureCategoryNames;
 
-  @IsNumber()
-  @IsPositive()
+  @IsNumber({ allowNaN: false, allowInfinity: false }, { message: '강의 가격은 숫자여야 합니다.' })
+  @IsPositive({ message: '강의 가격은 0보다 커야 합니다.' })
   private readonly _price: number;
 
-  @IsBoolean()
+  @IsBoolean({ message: '잘못된 강의 공개여부 형식입니다.' })
   private readonly _is_published: boolean;
-
 
   constructor(
     id: Id,
