@@ -9,7 +9,7 @@ import { NotFoundException } from '../../main/common/exception/NotFoundException
 import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { LectureCreateRequest } from '../../main/controller/dto/LectureCreateRequest';
 
-describe('강의 서비스', () => {
+describe('LectureService', () => {
   let lectureService: LectureService;
   let lectureRepository: jest.Mocked<LectureRepository>;
   let instructorRepository: jest.Mocked<InstructorRepository>;
@@ -24,43 +24,46 @@ describe('강의 서비스', () => {
     jest.clearAllMocks();
   });
 
-  it('강의를 생성하고, 생성된 강의를 반환한다.', async () => {
-    // given
-    const title = 'New Lecture';
-    const introduction = 'Introduction to new lecture';
-    const instructorId = 1;
-    const category = 'WEB';
-    const price = 10000;
-    const request: LectureCreateRequest = new LectureCreateRequest(title, introduction, instructorId, category, price);
+  describe('createLecture', () => {
 
-    const mockInstructor: Instructor = new Instructor(instructorId, 'Instructor Name');
-    instructorRepository.findById.mockResolvedValue(mockInstructor);
+    it('강의를 생성하고, 생성된 강의를 반환한다.', async () => {
+      // given
+      const title = 'New Lecture';
+      const introduction = 'Introduction to new lecture';
+      const instructorId = 1;
+      const category = 'WEB';
+      const price = 10000;
+      const request: LectureCreateRequest = new LectureCreateRequest(title, introduction, instructorId, category, price);
 
-    const mockLecture: Lecture = new Lecture(1, title, introduction, instructorId, category, price);
-    lectureRepository.save.mockResolvedValue(mockLecture);
+      const mockInstructor: Instructor = new Instructor(instructorId, 'Instructor Name');
+      instructorRepository.findById.mockResolvedValue(mockInstructor);
 
-    // when
-    const result: Lecture = await lectureService.createLecture(request);
+      const mockLecture: Lecture = new Lecture(1, title, introduction, instructorId, category, price);
+      lectureRepository.save.mockResolvedValue(mockLecture);
 
-    // then
-    expect(result.id).toBeDefined();
-  });
+      // when
+      const result: Lecture = await lectureService.createLecture(request);
 
-  it('존재하지 않는 강사 ID로 강의를 생성하려고 하면 NotFoundException 을 던진다', async () => {
-    // given
-    const title: string = 'New Lecture';
-    const introduction: string = 'Introduction to new lecture';
-    const instructorId: number = 999; // 존재하지 않는 강사 ID
-    const category: string = 'WEB';
-    const price: number = 10000;
-    const request: LectureCreateRequest = new LectureCreateRequest(title, introduction, instructorId, category, price);
+      // then
+      expect(result.id).toBeDefined();
+    });
 
-    instructorRepository.findById.mockResolvedValue(null);
+    it('존재하지 않는 강사 ID로 강의를 생성하려고 하면 NotFoundException 을 던진다', async () => {
+      // given
+      const title: string = 'New Lecture';
+      const introduction: string = 'Introduction to new lecture';
+      const instructorId: number = 999; // 존재하지 않는 강사 ID
+      const category: string = 'WEB';
+      const price: number = 10000;
+      const request: LectureCreateRequest = new LectureCreateRequest(title, introduction, instructorId, category, price);
 
-    // when
-    const promise: Promise<Lecture> = lectureService.createLecture(request);
+      instructorRepository.findById.mockResolvedValue(null);
 
-    // then
-    await expect(promise).rejects.toThrow(new NotFoundException(`존재하지 않는 강사 ID(${ instructorId }) 입니다`));
+      // when
+      const promise: Promise<Lecture> = lectureService.createLecture(request);
+
+      // then
+      await expect(promise).rejects.toThrow(new NotFoundException(`존재하지 않는 강사 ID(${ instructorId }) 입니다`));
+    });
   });
 });

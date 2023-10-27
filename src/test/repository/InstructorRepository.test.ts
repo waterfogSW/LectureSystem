@@ -32,12 +32,12 @@ describe('InstructorRepository', () => {
       const mockInstructorData = [
         { id: findId, name: 'Test Instructor', created_at: '2021-08-01 00:00:00', updated_at: '2021-08-01 00:00:00' },
       ];
-      mockConnection.execute.mockResolvedValue([mockInstructorData, []]); // 모의 execute 함수가 결과를 반환
+      mockConnection.execute.mockResolvedValue([mockInstructorData, []]);
 
       // when
       const instructor: Instructor | null = await instructorRepository.findById(findId, mockConnection);
 
-      // Assert
+      // then
       expect(instructor?.id!!).toBe(findId);
     });
   });

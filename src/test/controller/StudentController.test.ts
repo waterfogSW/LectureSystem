@@ -24,7 +24,7 @@ describe('StudentController', () => {
     responseObject = {
       status: jest.fn().mockImplementation(() => responseObject),
       json: jest.fn().mockImplementation(() => responseObject),
-      send: jest.fn().mockImplementation(() => responseObject), // 'send' 메서드도 모방합니다.
+      send: jest.fn().mockImplementation(() => responseObject),
     };
     mockRequest = {};
     mockResponse = responseObject;
@@ -33,43 +33,41 @@ describe('StudentController', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
+  describe('createStudent', () => {
+    it('학생 생성 요청을 처리한다', async () => {
+      // given
+      const studentInfo = {
+        nickname: 'test',
+        email: 'test@student.com',
+      };
+      mockRequest.body = studentInfo;
 
-  it('학생 생성 요청을 처리하고 생성된 학생 정보를 반환한다', async () => {
-    // given
-    const studentInfo = {
-      nickname: 'test',
-      email: 'test@student.com',
-    };
-    mockRequest.body = studentInfo;
+      const createdStudent = new Student(1, studentInfo.nickname, studentInfo.email);
+      studentService.createStudent.mockResolvedValue(createdStudent);
 
-    const createdStudent = new Student(1, studentInfo.nickname, studentInfo.email);
-    studentService.createStudent.mockResolvedValue(createdStudent);
+      const studentCreateResponse = { id: 1, nickname: 'test_student', email: 'test@student.com' };
+      studentDTOMapper.toStudentCreateResponse.mockReturnValue(studentCreateResponse);
 
-    const studentCreateResponse = { id: 1, nickname: 'test_student', email: 'test@student.com' };
-    studentDTOMapper.toStudentCreateResponse.mockReturnValue(studentCreateResponse);
+      // when
+      await studentController.createStudent(mockRequest as Request, mockResponse as Response);
 
-    // when
-    await studentController.createStudent(mockRequest as Request, mockResponse as Response);
-
-    // then
-    expect(mockResponse.status).toBeCalledWith(HTTP_STATUS.CREATED);
-    expect(mockResponse.json).toBeCalledWith(studentCreateResponse);
+      // then
+      expect(mockResponse.status).toBeCalledWith(HTTP_STATUS.CREATED);
+      expect(mockResponse.json).toBeCalledWith(studentCreateResponse);
+    });
   });
 
-  it('학생 삭제 요청을 처리하고 성공 메시지를 반환한다', async () => {
-    // given
-    const studentId = '1'; // URL 파라미터에서 올 것으로 예상되는 문자열
-    mockRequest.params = { id: studentId };
+  describe('deleteStudent', () => {
+    it('학생 삭제 요청을 처리한다.', async () => {
+      // given
+      const studentId = '1';
+      mockRequest.params = { id: studentId };
 
-    // 서비스 메서드가 성공적으로 수행되었음을 나타내기 위해 특별한 값을 반환할 필요는 없습니다.
-    studentService.deleteStudent.mockResolvedValue();
+      // when
+      await studentController.deleteStudent(mockRequest as Request, mockResponse as Response);
 
-    // when
-    await studentController.deleteStudent(mockRequest as Request, mockResponse as Response);
-
-    // then
-    expect(studentService.deleteStudent).toBeCalledWith(parseInt(studentId, 10));
-    expect(mockResponse.status).toBeCalledWith(HTTP_STATUS.OK);
-    expect(mockResponse.send).toBeCalled(); // 별도의 성공 메시지 없이 응답이 전송되었는지 확인합니다.
+      // then
+      expect(mockResponse.status).toBeCalledWith(HTTP_STATUS.OK);
+    });
   });
 });

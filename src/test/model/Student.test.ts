@@ -3,7 +3,7 @@ import { Student } from '../../main/domain/Student';
 import { IllegalArgumentException } from '../../main/common/exception/IllegalArgumentException';
 
 
-describe('수강생', () => {
+describe('Student', () => {
 
   it('새로운 수강생을 생성한다.', () => {
     // given

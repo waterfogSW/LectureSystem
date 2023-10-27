@@ -31,42 +31,45 @@ describe('LectureController', () => {
     mockResponse = responseObject;
   });
 
-  it('강의 생성 요청을 처리하고 생성된 강의 정보를 반환한다', async () => {
-    // given
-    const title: string = 'Test Lecture';
-    const introduction: string = 'This is a test lecture.';
-    const instructorId: number = 1;
-    const category: string = 'WEB';
-    const price: number = 5000;
-    mockRequest.body = { title, introduction, instructorId, category, price };
+  describe('createLecture', () => {
 
-    const createdLecture: Lecture = new Lecture(1, title, introduction, instructorId, category, price);
-    lectureService.createLecture.mockResolvedValue(createdLecture);
+    it('강의 생성 요청을 처리한다.', async () => {
+      // given
+      const title: string = 'Test Lecture';
+      const introduction: string = 'This is a test lecture.';
+      const instructorId: number = 1;
+      const category: string = 'WEB';
+      const price: number = 5000;
+      mockRequest.body = { title, introduction, instructorId, category, price };
 
-    // when
-    await lectureController.createLecture(mockRequest as Request, mockResponse as Response);
+      const createdLecture: Lecture = new Lecture(1, title, introduction, instructorId, category, price);
+      lectureService.createLecture.mockResolvedValue(createdLecture);
 
-    // then
-    expect(mockResponse.status).toBeCalledWith(HTTP_STATUS.CREATED);
-    expect(mockResponse.json).toBeCalledWith({
-      id: 1,
-      title: 'Test Lecture',
+      // when
+      await lectureController.createLecture(mockRequest as Request, mockResponse as Response);
+
+      // then
+      expect(mockResponse.status).toBeCalledWith(HTTP_STATUS.CREATED);
+      expect(mockResponse.json).toBeCalledWith({
+        id: 1,
+        title: 'Test Lecture',
+      });
     });
-  });
 
-  it('강의 생성 요청 시 유효하지 않은 카테고리가 들어오면 예외를 던진다', async () => {
-    // given
-    const title: string = 'Test Lecture';
-    const introduction: string = 'This is a test lecture.';
-    const instructorId: number = 1;
-    const category: string = 'UNKNOWN';
-    const price: number = 5000;
+    it('강의 생성 요청 시 유효하지 않은 카테고리가 들어오면 예외를 던진다', async () => {
+      // given
+      const title: string = 'Test Lecture';
+      const introduction: string = 'This is a test lecture.';
+      const instructorId: number = 1;
+      const category: string = 'UNKNOWN';
+      const price: number = 5000;
 
-    mockRequest.body = { title, introduction, instructorId, category, price };
+      mockRequest.body = { title, introduction, instructorId, category, price };
 
-    // when, then
-    await expect(lectureController.createLecture(mockRequest as Request, mockResponse as Response))
-      .rejects
-      .toThrowError(IllegalArgumentException);
+      // when, then
+      await expect(lectureController.createLecture(mockRequest as Request, mockResponse as Response))
+        .rejects
+        .toThrowError(IllegalArgumentException);
+    });
   });
 });
