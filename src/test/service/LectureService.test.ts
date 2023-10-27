@@ -1,5 +1,4 @@
 import 'reflect-metadata';
-import 'reflect-metadata';
 import { LectureService } from '../../main/service/LectureService';
 import { LectureRepository } from '../../main/repository/LectureRepository';
 import { InstructorRepository } from '../../main/repository/InstructorRepository';
