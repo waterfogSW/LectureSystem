@@ -26,12 +26,21 @@
           },
           {
             "in": "query",
+            "name": "size",
+            "schema": {
+              "type": "integer",
+              "default": 10
+            },
+            "description": "페이지 크기"
+          },
+          {
+            "in": "query",
             "name": "order",
             "schema": {
               "type": "string",
               "enum": [
-                "student_count",
-                "recent"
+                "recent",
+                "enrollments"
               ],
               "default": "recent"
             },
