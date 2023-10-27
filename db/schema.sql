@@ -1,44 +1,44 @@
 CREATE TABLE students -- 수강생
 (
-    id         BIGINT(20)   NOT NULL AUTO_INCREMENT PRIMARY KEY,                            -- 수강생 아이디
-    nickname   VARCHAR(255) NOT NULL,                                                       -- 닉네임
-    email      VARCHAR(255) NOT NULL,                                                       -- 이메일
-    created_at TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,                             -- 생성일
-    updated_at TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, -- 수정일
-    is_deleted TINYINT(1)   NOT NULL DEFAULT FALSE                                          -- 삭제 여부
+    id         BIGINT(20)   NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT '수강생 아이디',
+    nickname   VARCHAR(255) NOT NULL COMMENT '닉네임',
+    email      VARCHAR(255) NOT NULL COMMENT '이메일',
+    created_at TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '생성일',
+    updated_at TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '수정일',
+    is_deleted TINYINT(1)   NOT NULL DEFAULT FALSE COMMENT '삭제 여부'
 );
 
 CREATE TABLE lectures -- 강의
 (
-    id            BIGINT(20)   NOT NULL AUTO_INCREMENT PRIMARY KEY,                            -- 강의 아이디
-    title         VARCHAR(255) NOT NULL,                                                       -- 강의 제목
-    introduction  TEXT         NOT NULL,                                                       -- 강의 소개
-    instructor_id BIGINT(20)   NOT NULL,                                                       -- 강사 아이디
-    category      VARCHAR(255) NOT NULL,                                                       -- 강의 카테고리
-    price         INT          NOT NULL,                                                       -- 강의 가격
-    is_published  TINYINT(1)   NOT NULL DEFAULT FALSE,                                         -- 강의 공개 여부
-    created_at    TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,                             -- 생성일
-    updated_at    TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, -- 수정일
-    is_deleted    TINYINT(1)   NOT NULL DEFAULT FALSE                                          -- 삭제 여부
+    id            BIGINT(20)   NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT '강의 아이디',
+    title         VARCHAR(255) NOT NULL COMMENT '강의 제목',
+    introduction  TEXT         NOT NULL COMMENT '강의 소개',
+    instructor_id BIGINT(20)   NOT NULL COMMENT '강사 아이디',
+    category      VARCHAR(255) NOT NULL COMMENT '강의 카테고리',
+    price         INT          NOT NULL COMMENT '강의 가격',
+    is_published  TINYINT(1)   NOT NULL DEFAULT FALSE COMMENT '강의 공개 여부',
+    created_at    TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '생성일',
+    updated_at    TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '수정일',
+    is_deleted    TINYINT(1)   NOT NULL DEFAULT FALSE COMMENT '삭제 여부'
 );
 
 CREATE TABLE instructors -- 강사
 (
-    id         BIGINT(20)   NOT NULL AUTO_INCREMENT PRIMARY KEY,                            -- 강사 아이디
-    name       VARCHAR(255) NOT NULL,                                                       -- 강사 이름
-    created_at TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,                             -- 생성일
-    updated_at TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, -- 수정일
-    is_deleted TINYINT(1)   NOT NULL DEFAULT FALSE                                          -- 삭제 여부
+    id         BIGINT(20)   NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT '강사 아이디',
+    name       VARCHAR(255) NOT NULL COMMENT '강사 이름',
+    created_at TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '생성일',
+    updated_at TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '수정일',
+    is_deleted TINYINT(1)   NOT NULL DEFAULT FALSE COMMENT '삭제 여부'
 );
 
 CREATE TABLE enrollments -- 내역
 (
-    id         BIGINT(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,                            -- 내역 아이디
-    student_id BIGINT(20) NOT NULL,                                                       -- 수강생 아이디
-    lecture_id BIGINT(20) NOT NULL,                                                       -- 강의 아이디
-    created_at TIMESTAMP  NOT NULL DEFAULT CURRENT_TIMESTAMP,                             -- 생성일
-    updated_at TIMESTAMP  NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, -- 수정일
-    is_deleted TINYINT(1) NOT NULL DEFAULT FALSE                                          -- 삭제 여부
+    id         BIGINT(20) NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT '내역 아이디',
+    student_id BIGINT(20) NOT NULL COMMENT '수강생 아이디',
+    lecture_id BIGINT(20) NOT NULL COMMENT '강의 아이디',
+    created_at TIMESTAMP  NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '생성일',
+    updated_at TIMESTAMP  NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '수정일',
+    is_deleted TINYINT(1) NOT NULL DEFAULT FALSE COMMENT '삭제 여부'
 );
 
 -- 뷰
