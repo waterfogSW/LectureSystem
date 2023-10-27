@@ -75,7 +75,7 @@ export class Lecture extends BaseModel {
     return this._price;
   }
 
-  get is_published(): boolean {
+  public get is_published(): boolean {
     return this._is_published;
   }
 
