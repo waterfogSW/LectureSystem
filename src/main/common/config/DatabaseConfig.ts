@@ -7,6 +7,7 @@ const connectionPoolConfig = {
   database: 'lecture_system',
   user: 'root',
   password: 'root',
+  timezone: 'Asia/Seoul',
 };
 
 @injectable()
