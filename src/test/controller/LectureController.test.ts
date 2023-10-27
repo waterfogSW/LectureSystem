@@ -6,19 +6,21 @@ import { Lecture } from '../../main/domain/Lecture';
 import { MockFactory } from '../util/MockFactory';
 import { Request, Response } from 'express';
 import { HTTP_STATUS } from '../../main/common/constant/HttpStatus';
-import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals';
+import { beforeEach, describe, expect, it, jest } from '@jest/globals';
+import { IllegalArgumentException } from '../../main/common/exception/IllegalArgumentException';
 
 describe('LectureController', () => {
   let lectureController: LectureController;
+  let lectureDTOMapper: LectureDTOMapper;
+
   let lectureService: jest.Mocked<LectureService>;
-  let lectureDTOMapper: jest.Mocked<LectureDTOMapper>;
   let mockRequest: Partial<Request>;
   let mockResponse: Partial<Response>;
   let responseObject: any;
 
   beforeEach(() => {
     lectureService = MockFactory.create<LectureService>();
-    lectureDTOMapper = MockFactory.create<LectureDTOMapper>();
+    lectureDTOMapper = new LectureDTOMapper();
     lectureController = new LectureController(lectureService, lectureDTOMapper);
 
     responseObject = {
@@ -29,31 +31,42 @@ describe('LectureController', () => {
     mockResponse = responseObject;
   });
 
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
-
   it('강의 생성 요청을 처리하고 생성된 강의 정보를 반환한다', async () => {
     // given
-    mockRequest.body = {
-      title: 'Test Lecture',
-      introduction: 'This is a test lecture.',
-      instructorId: 1,
-      category: 'WEB',
-      price: 5000,
-    };
+    const title: string = 'Test Lecture';
+    const introduction: string = 'This is a test lecture.';
+    const instructorId: number = 1;
+    const category: string = 'WEB';
+    const price: number = 5000;
+    mockRequest.body = { title, introduction, instructorId, category, price };
 
-    const createdLecture = new Lecture(1, 'Test Lecture', 'This is a test lecture.', 1, 'WEB', 5000);
+    const createdLecture: Lecture = new Lecture(1, title, introduction, instructorId, category, price);
     lectureService.createLecture.mockResolvedValue(createdLecture);
-
-    const lectureCreateResponse = { id: 1, title: 'Test Lecture' };
-    lectureDTOMapper.toLectureCreateResponse.mockReturnValue(lectureCreateResponse);
 
     // when
     await lectureController.createLecture(mockRequest as Request, mockResponse as Response);
 
     // then
     expect(mockResponse.status).toBeCalledWith(HTTP_STATUS.CREATED);
-    expect(mockResponse.json).toBeCalledWith(lectureCreateResponse);
+    expect(mockResponse.json).toBeCalledWith({
+      id: 1,
+      title: 'Test Lecture',
+    });
+  });
+
+  it('강의 생성 요청 시 유효하지 않은 카테고리가 들어오면 예외를 던진다', async () => {
+    // given
+    const title: string = 'Test Lecture';
+    const introduction: string = 'This is a test lecture.';
+    const instructorId: number = 1;
+    const category: string = 'UNKNOWN';
+    const price: number = 5000;
+
+    mockRequest.body = { title, introduction, instructorId, category, price };
+
+    // when, then
+    await expect(lectureController.createLecture(mockRequest as Request, mockResponse as Response))
+      .rejects
+      .toThrowError(IllegalArgumentException);
   });
 });
