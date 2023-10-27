@@ -64,27 +64,24 @@
           },
           {
             "in": "query",
-            "name": "instructor",
+            "name": "searchType",
             "schema": {
-              "type": "string"
+              "type": "string",
+              "enum": [
+                "title",
+                "instructor",
+                "studentId"
+              ]
             },
-            "description": "검색어 - 강사명"
+            "description": "검색타입"
           },
           {
             "in": "query",
-            "name": "title",
+            "name": "searchKeyword",
             "schema": {
               "type": "string"
             },
-            "description": "검색어 - 강의명"
-          },
-          {
-            "in": "query",
-            "name": "studentId",
-            "schema": {
-              "type": "integer"
-            },
-            "description": "검색어 - 수강생 아이디"
+            "description": "검색어"
           }
         ],
         "responses": {
