@@ -10,6 +10,7 @@ import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals
 import { LectureCreateRequest } from '../../main/controller/dto/LectureCreateRequest';
 import { TestLectureDataFactory } from '../util/TestLectureDataFactory';
 import { TestLectureFactory } from '../util/TestLectureFactory';
+import { LectureCreateResponse } from '../../main/controller/dto/LectureCreateResponse';
 
 describe('LectureService', () => {
   let lectureService: LectureService;
@@ -28,7 +29,7 @@ describe('LectureService', () => {
 
   describe('createLecture', () => {
 
-    it('강의를 생성하고, 생성된 강의를 반환한다.', async () => {
+    it('강의를 생성하고, 생성된 강의 정보를 반환한다.', async () => {
       // given
       const data = TestLectureDataFactory.createData();
       const request: LectureCreateRequest = new LectureCreateRequest(data.title, data.introduction, data.instructorId, data.category, data.price);
@@ -40,11 +41,11 @@ describe('LectureService', () => {
       lectureRepository.save.mockResolvedValue(mockLecture);
 
       // when
-      const result: Lecture = await lectureService.createLecture(request);
+      const result: LectureCreateResponse = await lectureService.createLecture(request);
 
       // then
-      expect(result.id).toBeDefined();
-      expect(result).toBeInstanceOf(Lecture);
+      const resultId = Reflect.get(result, 'id');
+      expect(resultId).toBe(mockLecture.id);
     });
 
     it('존재하지 않는 강사 ID로 강의를 생성하려고 하면 NotFoundException 을 던진다', async () => {
@@ -54,7 +55,7 @@ describe('LectureService', () => {
       instructorRepository.findById.mockResolvedValue(null); // 강사 ID가 존재하지 않는다고 가정
 
       // when
-      const promise: Promise<Lecture> = lectureService.createLecture(request);
+      const promise: Promise<LectureCreateResponse> = lectureService.createLecture(request);
 
       // then
       await expect(promise).rejects.toThrowError(NotFoundException);

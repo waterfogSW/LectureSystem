@@ -1,9 +1,9 @@
 import { Lecture } from '../../domain/Lecture';
 
 export class LectureCreateResponse {
+
   private readonly id: number;
   private readonly title: string;
-
 
   constructor(
     id: number,

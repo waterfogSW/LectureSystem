@@ -19,11 +19,10 @@ export class LectureController {
     response: Response,
   ): Promise<void> {
     const lectureCreateRequest: LectureCreateRequest = LectureCreateRequest.from(request);
-    const lecture: Lecture = await this._lectureService.createLecture(lectureCreateRequest);
-    const body: LectureCreateResponse = LectureCreateResponse.from(lecture);
+    const lectureCreateResponse: LectureCreateResponse = await this._lectureService.createLecture(lectureCreateRequest);
     response
       .status(HTTP_STATUS.CREATED)
-      .json(body);
+      .json(lectureCreateResponse);
   }
 
 }

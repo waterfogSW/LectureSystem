@@ -8,6 +8,7 @@ import { InstructorRepository } from '../repository/InstructorRepository';
 import { Instructor } from '../domain/Instructor';
 import { NotFoundException } from '../common/exception/NotFoundException';
 import { LectureCreateRequest } from '../controller/dto/LectureCreateRequest';
+import { LectureCreateResponse } from '../controller/dto/LectureCreateResponse';
 
 
 @injectable()
@@ -22,7 +23,7 @@ export class LectureService {
   public async createLecture(
     request: LectureCreateRequest,
     connection?: PoolConnection,
-  ): Promise<Lecture> {
+  ): Promise<LectureCreateResponse> {
     const { title, introduction, instructorId, category, price }: LectureCreateRequest = request;
     const instructor: Instructor | null = await this._instructorRepository.findById(instructorId, connection!);
     if (instructor === null) {
@@ -30,7 +31,8 @@ export class LectureService {
     }
 
     const lecture: Lecture = Lecture.create(title, introduction, instructor.id!, category, price);
-    return await this._lectureRepository.save(lecture, connection!);
+    const createdLecture: Lecture = await this._lectureRepository.save(lecture, connection!);
+    return LectureCreateResponse.from(createdLecture);
   }
 
 }

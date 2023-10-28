@@ -9,6 +9,9 @@ import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { IllegalArgumentException } from '../../main/common/exception/IllegalArgumentException';
 import { TestLectureDataFactory } from '../util/TestLectureDataFactory';
 import { TestLectureFactory } from '../util/TestLectureFactory';
+import exp from 'constants';
+import { LectureCreateResponse } from '../../main/controller/dto/LectureCreateResponse';
+import { create } from 'domain';
 
 describe('LectureController', () => {
 
@@ -36,15 +39,16 @@ describe('LectureController', () => {
     it('강의 생성 요청을 처리한다.', async () => {
       // given
       mockRequest.body = TestLectureDataFactory.createData();
-      const createdId: number = 1;
-      const createdLecture: Lecture = TestLectureFactory.createWithId(createdId);
-      lectureService.createLecture.mockResolvedValue(createdLecture);
+      const savedLecture: Lecture = TestLectureFactory.createWithId(1);
+      const lectureCreateResponse: LectureCreateResponse = LectureCreateResponse.from(savedLecture);
+      lectureService.createLecture.mockResolvedValue(lectureCreateResponse);
 
       // when
       await lectureController.createLecture(mockRequest as Request, mockResponse as Response);
 
       // then
       expect(mockResponse.status).toBeCalledWith(HTTP_STATUS.CREATED);
+      expect(mockResponse.json).toBeCalledWith(lectureCreateResponse);
     });
 
     it('강의 생성 요청 시 유효하지 않은 카테고리가 들어오면 예외를 던진다', async () => {
