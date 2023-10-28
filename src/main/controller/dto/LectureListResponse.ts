@@ -6,28 +6,29 @@ export class LectureListResponse {
 
   private readonly lectures: Array<LectureListResponseItem>;
   private readonly page: number;
-  private readonly totalPages: number;
-
+  private readonly pageSize: number;
+  private readonly total: number;
 
   constructor(
     items: Array<LectureListResponseItem>,
     page: number,
-    totalPages: number,
+    total: number,
   ) {
     this.lectures = items;
     this.page = page;
-    this.totalPages = totalPages;
+    this.pageSize = items.length;
+    this.total = total;
   }
 
   public static of(
     items: Array<LectureListResponseItem>,
     page: number,
-    totalPages: number,
+    total: number,
   ): LectureListResponse {
     return new LectureListResponse(
       items,
       page,
-      totalPages,
+      total,
     );
   }
 }
