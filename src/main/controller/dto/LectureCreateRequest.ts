@@ -1,6 +1,7 @@
 import { IsEnum, IsNumber, IsString } from 'class-validator';
 import { LectureCategory, LectureCategoryNames } from '../../domain/LectureCategory';
 import { validateClass } from '../../common/util/ClassValidateUtil';
+import { Request } from 'express';
 
 export class LectureCreateRequest {
 
@@ -32,6 +33,11 @@ export class LectureCreateRequest {
     this._category = category as LectureCategoryNames;
     this._price = price;
     validateClass(this);
+  }
+
+  public static from(request: Request): LectureCreateRequest {
+    const { title, introduction, instructorId, category, price } = request.body;
+    return new LectureCreateRequest(title, introduction, instructorId, category, price);
   }
 
   public get title(): string {

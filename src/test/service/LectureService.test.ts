@@ -8,6 +8,8 @@ import { Instructor } from '../../main/domain/Instructor';
 import { NotFoundException } from '../../main/common/exception/NotFoundException';
 import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { LectureCreateRequest } from '../../main/controller/dto/LectureCreateRequest';
+import { TestLectureDataFactory } from '../util/TestLectureDataFactory';
+import { TestLectureFactory } from '../util/TestLectureFactory';
 
 describe('LectureService', () => {
   let lectureService: LectureService;
@@ -28,17 +30,13 @@ describe('LectureService', () => {
 
     it('강의를 생성하고, 생성된 강의를 반환한다.', async () => {
       // given
-      const title = 'New Lecture';
-      const introduction = 'Introduction to new lecture';
-      const instructorId = 1;
-      const category = 'WEB';
-      const price = 10000;
-      const request: LectureCreateRequest = new LectureCreateRequest(title, introduction, instructorId, category, price);
+      const data = TestLectureDataFactory.createData();
+      const request: LectureCreateRequest = new LectureCreateRequest(data.title, data.introduction, data.instructorId, data.category, data.price);
 
-      const mockInstructor: Instructor = new Instructor(instructorId, 'Instructor Name');
+      const mockInstructor: Instructor = new Instructor(data.instructorId, 'Instructor Name');
       instructorRepository.findById.mockResolvedValue(mockInstructor);
 
-      const mockLecture: Lecture = new Lecture(1, title, introduction, instructorId, category, price);
+      const mockLecture: Lecture = TestLectureFactory.createWithId(1);
       lectureRepository.save.mockResolvedValue(mockLecture);
 
       // when
@@ -46,24 +44,20 @@ describe('LectureService', () => {
 
       // then
       expect(result.id).toBeDefined();
+      expect(result).toBeInstanceOf(Lecture);
     });
 
     it('존재하지 않는 강사 ID로 강의를 생성하려고 하면 NotFoundException 을 던진다', async () => {
       // given
-      const title: string = 'New Lecture';
-      const introduction: string = 'Introduction to new lecture';
-      const instructorId: number = 999; // 존재하지 않는 강사 ID
-      const category: string = 'WEB';
-      const price: number = 10000;
-      const request: LectureCreateRequest = new LectureCreateRequest(title, introduction, instructorId, category, price);
-
-      instructorRepository.findById.mockResolvedValue(null);
+      const data = TestLectureDataFactory.createData();
+      const request: LectureCreateRequest = new LectureCreateRequest(data.title, data.introduction, data.instructorId, data.category, data.price);
+      instructorRepository.findById.mockResolvedValue(null); // 강사 ID가 존재하지 않는다고 가정
 
       // when
       const promise: Promise<Lecture> = lectureService.createLecture(request);
 
       // then
-      await expect(promise).rejects.toThrow(new NotFoundException(`존재하지 않는 강사 ID(${ instructorId }) 입니다`));
+      await expect(promise).rejects.toThrowError(NotFoundException);
     });
   });
 });

@@ -3,8 +3,7 @@ import { StudentService } from '../service/StudentService';
 import { type Request, type Response } from 'express';
 import { HTTP_STATUS } from '../common/constant/HttpStatus';
 import { type Student } from '../domain/Student';
-import { StudentDTOMapper } from './mapper/StudentDTOMapper';
-import { type StudentCreateResponse } from './dto/StudentCreateResponse';
+import { StudentCreateResponse } from './dto/StudentCreateResponse';
 import { BindingTypes } from '../common/constant/BindingTypes';
 import { StudentCreateRequest } from './dto/StudentCreateRequest';
 
@@ -12,16 +11,15 @@ import { StudentCreateRequest } from './dto/StudentCreateRequest';
 export class StudentController {
   constructor(
     @inject(BindingTypes.StudentService) private readonly _studentService: StudentService,
-    @inject(BindingTypes.StudentDTOMapper) private readonly _studentDTOMapper: StudentDTOMapper,
   ) {}
 
   public async createStudent(
     request: Request,
     response: Response,
   ): Promise<void> {
-    const studentCreateRequest: StudentCreateRequest = this._studentDTOMapper.toStudentCreateRequest(request);
+    const studentCreateRequest: StudentCreateRequest = StudentCreateRequest.from(request);
     const student: Student = await this._studentService.createStudent(studentCreateRequest);
-    const body: StudentCreateResponse = this._studentDTOMapper.toStudentCreateResponse(student);
+    const body: StudentCreateResponse = StudentCreateResponse.from(student);
     response
       .status(HTTP_STATUS.CREATED)
       .json(body);

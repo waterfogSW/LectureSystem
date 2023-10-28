@@ -5,13 +5,11 @@ export const BindingTypes = {
   StudentController: Symbol('StudentController'),
   StudentService: Symbol('StudentService'),
   StudentRepository: Symbol('StudentRepository'),
-  StudentDTOMapper: Symbol('StudentDTOMapper'),
 
   // lecture
   LectureController: Symbol('LectureController'),
   LectureService: Symbol('LectureService'),
   LectureRepository: Symbol('LectureRepository'),
-  LectureDTOMapper: Symbol('LectureDTOMapper'),
 
   // instructor
   InstructorRepository: Symbol('InstructorRepository'),

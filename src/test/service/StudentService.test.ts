@@ -7,6 +7,8 @@ import { Student } from '../../main/domain/Student';
 import { IllegalArgumentException } from '../../main/common/exception/IllegalArgumentException';
 import { NotFoundException } from '../../main/common/exception/NotFoundException';
 import { StudentCreateRequest } from '../../main/controller/dto/StudentCreateRequest';
+import { TestStudentDataFactory } from '../util/TestStudentDataFactory';
+import { TestStudentFactory } from '../util/TestStudentFactory';
 
 
 describe('StudentService', () => {
@@ -27,25 +29,24 @@ describe('StudentService', () => {
 
     it('수강생을 생성하고, 생성된 수강생을 반환한다.', async () => {
       // given
-      const nickname: string = 'test';
-      const email: string = 'test@example.com';
-      const studentCreateRequest: StudentCreateRequest = new StudentCreateRequest(nickname, email);
+      const data = TestStudentDataFactory.createData();
+      const request: StudentCreateRequest = new StudentCreateRequest(data.nickname, data.email);
+      const savedStudent: Student = TestStudentFactory.createWithId(1);
 
       repository.existsByEmail.mockResolvedValue(false);
-      repository.save.mockResolvedValue(new Student(1, nickname, email));
+      repository.save.mockResolvedValue(savedStudent);
 
       // when
-      const savedStudent = await service.createStudent(studentCreateRequest);
+      const findStudent: Student = await service.createStudent(request);
 
       // then
-      expect(savedStudent.id).toBeDefined();
+      expect(findStudent.id).toBeDefined();
     });
 
     it('이미 가입된 수강생의 이메일로 가입시키려고 하면 예외를 던진다.', async () => {
       // given
-      const nickname: string = 'test';
-      const email: string = 'test@example.com';
-      const studentCreateRequest: StudentCreateRequest = new StudentCreateRequest(nickname, email);
+      const data = TestStudentDataFactory.createData();
+      const studentCreateRequest: StudentCreateRequest = new StudentCreateRequest(data.nickname, data.email);
 
       repository.existsByEmail.mockResolvedValue(true);
 
@@ -61,7 +62,7 @@ describe('StudentService', () => {
     it('수강생을 삭제한다.', async () => {
       // given
       const id: number = 1;
-      const student: Student = new Student(id, 'test', 'test@example.com');
+      const student: Student = TestStudentFactory.createWithId(id);
 
       repository.findById.mockResolvedValue(student);
 

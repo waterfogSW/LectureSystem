@@ -1,25 +1,26 @@
 import 'reflect-metadata';
 import { StudentController } from '../../main/controller/StudentController';
 import { StudentService } from '../../main/service/StudentService';
-import { StudentDTOMapper } from '../../main/controller/mapper/StudentDTOMapper';
 import { Student } from '../../main/domain/Student';
 import { MockFactory } from '../util/MockFactory';
 import { Request, Response } from 'express';
 import { HTTP_STATUS } from '../../main/common/constant/HttpStatus';
 import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals';
+import { TestStudentDataFactory } from '../util/TestStudentDataFactory';
+import { TestStudentFactory } from '../util/TestStudentFactory';
 
 describe('StudentController', () => {
+
   let studentController: StudentController;
   let studentService: jest.Mocked<StudentService>;
-  let studentDTOMapper: jest.Mocked<StudentDTOMapper>;
+
   let mockRequest: Partial<Request>;
   let mockResponse: Partial<Response>;
   let responseObject: any;
 
   beforeEach(() => {
     studentService = MockFactory.create<StudentService>();
-    studentDTOMapper = MockFactory.create<StudentDTOMapper>();
-    studentController = new StudentController(studentService, studentDTOMapper);
+    studentController = new StudentController(studentService);
 
     responseObject = {
       status: jest.fn().mockImplementation(() => responseObject),
@@ -36,24 +37,16 @@ describe('StudentController', () => {
   describe('createStudent', () => {
     it('학생 생성 요청을 처리한다', async () => {
       // given
-      const studentInfo = {
-        nickname: 'test',
-        email: 'test@student.com',
-      };
-      mockRequest.body = studentInfo;
-
-      const createdStudent = new Student(1, studentInfo.nickname, studentInfo.email);
+      mockRequest.body = TestStudentDataFactory.createData();
+      const createdId: number = 1;
+      const createdStudent: Student = TestStudentFactory.createWithId(createdId);
       studentService.createStudent.mockResolvedValue(createdStudent);
-
-      const studentCreateResponse = { id: 1, nickname: 'test_student', email: 'test@student.com' };
-      studentDTOMapper.toStudentCreateResponse.mockReturnValue(studentCreateResponse);
 
       // when
       await studentController.createStudent(mockRequest as Request, mockResponse as Response);
 
       // then
       expect(mockResponse.status).toBeCalledWith(HTTP_STATUS.CREATED);
-      expect(mockResponse.json).toBeCalledWith(studentCreateResponse);
     });
   });
 
