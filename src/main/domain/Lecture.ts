@@ -1,4 +1,4 @@
-import { BaseModel, Id } from '../common/model/BaseModel';
+import { BaseEntity, Id } from '../common/entity/BaseEntity';
 import {
   IsBoolean,
   IsEnum,
@@ -12,7 +12,7 @@ import {
 import { LectureCategory, LectureCategoryNames } from './LectureCategory';
 import { IllegalArgumentException } from '../common/exception/IllegalArgumentException';
 
-export class Lecture extends BaseModel {
+export class Lecture extends BaseEntity {
 
   @IsString({ message: '강의 제목은 문자열이어야 합니다.' })
   @Length(3, 20, { message: '강의 제목은 3글자 이상, 20글자 미만이어야 합니다.' })

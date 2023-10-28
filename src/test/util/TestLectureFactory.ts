@@ -1,6 +1,6 @@
 import { TestLectureDataFactory } from './TestLectureDataFactory';
 import { Lecture } from '../../main/domain/Lecture';
-import { Id } from '../../main/common/model/BaseModel';
+import { Id } from '../../main/common/entity/BaseEntity';
 
 export class TestLectureFactory {
 

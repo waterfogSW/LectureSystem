@@ -1,8 +1,8 @@
-import { BaseModel, Id } from '../common/model/BaseModel';
+import { BaseEntity, Id } from '../common/entity/BaseEntity';
 import { IsString, Length, validateSync, ValidationError } from 'class-validator';
 import { IllegalArgumentException } from '../common/exception/IllegalArgumentException';
 
-export class Instructor extends BaseModel {
+export class Instructor extends BaseEntity {
   @IsString()
   @Length(1, 20)
   private readonly _name: string;

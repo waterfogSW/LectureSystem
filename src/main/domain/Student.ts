@@ -1,8 +1,8 @@
-import { BaseModel, Id } from '../common/model/BaseModel';
+import { BaseEntity, Id } from '../common/entity/BaseEntity';
 import { IsEmail, IsString, Length } from 'class-validator';
 import { validateClass } from '../common/util/ClassValidateUtil';
 
-export class Student extends BaseModel {
+export class Student extends BaseEntity {
 
   @IsString({ message: '닉네임은 문자열이어야 합니다.' })
   @Length(3, 10, { message: '닉네임의 길이는 3글자 이상, 10글자 미만이어야 합니다.' })

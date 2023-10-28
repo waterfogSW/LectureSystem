@@ -2,7 +2,7 @@ import { IsDate, IsInt, IsOptional, IsPositive } from 'class-validator';
 
 export type Id = number | undefined;
 
-export abstract class BaseModel {
+export abstract class BaseEntity {
 
   @IsOptional()
   @IsInt({ message: 'ID 는 양수여야 합니다.' })
