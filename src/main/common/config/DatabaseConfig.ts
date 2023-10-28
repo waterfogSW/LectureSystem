@@ -7,7 +7,7 @@ const connectionPoolConfig = {
   database: 'lecture_system',
   user: 'root',
   password: 'root',
-  timezone: '+09:00' // 한국 시간
+  timezone: '+09:00', // 한국 시간
 };
 
 @injectable()

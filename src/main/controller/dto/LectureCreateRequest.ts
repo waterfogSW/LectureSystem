@@ -35,11 +35,6 @@ export class LectureCreateRequest {
     validateClass(this);
   }
 
-  public static from(request: Request): LectureCreateRequest {
-    const { title, introduction, instructorId, category, price } = request.body;
-    return new LectureCreateRequest(title, introduction, instructorId, category, price);
-  }
-
   public get title(): string {
     return this._title;
   }
@@ -58,5 +53,10 @@ export class LectureCreateRequest {
 
   public get price(): number {
     return this._price;
+  }
+
+  public static from(request: Request): LectureCreateRequest {
+    const { title, introduction, instructorId, category, price } = request.body;
+    return new LectureCreateRequest(title, introduction, instructorId, category, price);
   }
 }
