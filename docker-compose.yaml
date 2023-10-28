@@ -12,5 +12,8 @@ services:
       - --collation-server=utf8mb4_unicode_ci
       - --skip-character-set-client-handshake
     volumes:
-      - ./db/schema.sql:/docker-entrypoint-initdb.d/schema.sql
-      - ./db/test-data.sql:/docker-entrypoint-initdb.d/test-data.sql
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/01_schema.sql
+      - ./db/test_data/students.sql:/docker-entrypoint-initdb.d/02_students.sql
+      - ./db/test_data/lectures.sql:/docker-entrypoint-initdb.d/04_lectures.sql
+      - ./db/test_data/instructors.sql:/docker-entrypoint-initdb.d/03_instructors.sql
+      - ./db/test_data/enrollments.sql:/docker-entrypoint-initdb.d/05_enrollments.sql
