@@ -17,4 +17,14 @@ export class TestLectureFactory {
     );
   }
 
+  public static create(): Lecture {
+    return new Lecture(
+      undefined,
+      this.TEST_LECTURE_DATA.title,
+      this.TEST_LECTURE_DATA.introduction,
+      this.TEST_LECTURE_DATA.instructorId,
+      this.TEST_LECTURE_DATA.category,
+      this.TEST_LECTURE_DATA.price,
+    )
+  }
 }
