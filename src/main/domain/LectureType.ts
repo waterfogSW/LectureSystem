@@ -9,6 +9,17 @@ export const LectureCategory: ReadonlyRecord<LectureCategoryNames, LectureCatego
   DATABASE: 'DATABASE',
 };
 
+export type LectureCategoryFilterNames = 'ALL' | LectureCategoryNames
+export const LectureCategoryFilter: ReadonlyRecord<LectureCategoryFilterNames, LectureCategoryFilterNames> = {
+  ALL: 'ALL',
+  WEB: 'WEB',
+  APP: 'APP',
+  GAME: 'GAME',
+  ALGORITHM: 'ALGORITHM',
+  INFRA: 'INFRA',
+  DATABASE: 'DATABASE',
+};
+
 export type LectureSearchTypeNames = 'TITLE' | 'INSTRUCTOR' | 'STUDENT_ID'
 export const LectureSearchType: ReadonlyRecord<LectureSearchTypeNames, LectureSearchTypeNames> = {
   TITLE: 'TITLE',

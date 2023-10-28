@@ -21,6 +21,10 @@ export class Instructor extends BaseEntity {
     }
   }
 
+  public get name(): string {
+    return this._name;
+  }
+
   public static create(
     name: string,
   ): Instructor {
