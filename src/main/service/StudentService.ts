@@ -7,6 +7,7 @@ import { IllegalArgumentException } from '../common/exception/IllegalArgumentExc
 import { NotFoundException } from '../common/exception/NotFoundException';
 import { BindingTypes } from '../common/constant/BindingTypes';
 import { StudentCreateRequest } from '../controller/dto/StudentCreateRequest';
+import { StudentCreateResponse } from '../controller/dto/StudentCreateResponse';
 
 @injectable()
 export class StudentService {
@@ -18,7 +19,7 @@ export class StudentService {
   public async createStudent(
     request: StudentCreateRequest,
     connection?: PoolConnection,
-  ): Promise<Student> {
+  ): Promise<StudentCreateResponse> {
     const { nickname, email }: StudentCreateRequest = request;
     const student: Student = Student.create(nickname, email);
     const existsEmail: boolean = await this._studentRepository.existsByEmail(email, connection!);
@@ -26,7 +27,8 @@ export class StudentService {
       throw new IllegalArgumentException('이미 사용중인 이메일 입니다');
     }
 
-    return await this._studentRepository.save(student, connection!);
+    const createdStudent: Student = await this._studentRepository.save(student, connection!);
+    return StudentCreateResponse.from(createdStudent);
   }
 
   @transactional()

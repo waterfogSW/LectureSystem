@@ -9,6 +9,7 @@ import { NotFoundException } from '../../main/common/exception/NotFoundException
 import { StudentCreateRequest } from '../../main/controller/dto/StudentCreateRequest';
 import { TestStudentDataFactory } from '../util/TestStudentDataFactory';
 import { TestStudentFactory } from '../util/TestStudentFactory';
+import { StudentCreateResponse } from '../../main/controller/dto/StudentCreateResponse';
 
 
 describe('StudentService', () => {
@@ -31,16 +32,19 @@ describe('StudentService', () => {
       // given
       const data = TestStudentDataFactory.createData();
       const request: StudentCreateRequest = new StudentCreateRequest(data.nickname, data.email);
-      const savedStudent: Student = TestStudentFactory.createWithId(1);
+
+      const incrementId: number = 1;
+      const savedStudent: Student = TestStudentFactory.createWithId(incrementId);
 
       repository.existsByEmail.mockResolvedValue(false);
       repository.save.mockResolvedValue(savedStudent);
 
       // when
-      const findStudent: Student = await service.createStudent(request);
+      const result: StudentCreateResponse = await service.createStudent(request);
 
       // then
-      expect(findStudent.id).toBeDefined();
+      const resultId: number = Reflect.get(result, 'id');
+      expect(resultId).toBe(incrementId);
     });
 
     it('이미 가입된 수강생의 이메일로 가입시키려고 하면 예외를 던진다.', async () => {
@@ -51,7 +55,7 @@ describe('StudentService', () => {
       repository.existsByEmail.mockResolvedValue(true);
 
       // when
-      const promise: Promise<Student> = service.createStudent(studentCreateRequest);
+      const promise: Promise<StudentCreateResponse> = service.createStudent(studentCreateRequest);
 
       // then
       await expect(promise).rejects.toThrowError(IllegalArgumentException);

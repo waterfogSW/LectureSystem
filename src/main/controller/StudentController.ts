@@ -18,11 +18,10 @@ export class StudentController {
     response: Response,
   ): Promise<void> {
     const studentCreateRequest: StudentCreateRequest = StudentCreateRequest.from(request);
-    const student: Student = await this._studentService.createStudent(studentCreateRequest);
-    const body: StudentCreateResponse = StudentCreateResponse.from(student);
+    const studentCreateResponse: StudentCreateResponse = await this._studentService.createStudent(studentCreateRequest);
     response
       .status(HTTP_STATUS.CREATED)
-      .json(body);
+      .json(studentCreateResponse);
   }
 
   public async deleteStudent(

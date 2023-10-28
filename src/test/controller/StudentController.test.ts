@@ -8,6 +8,7 @@ import { HTTP_STATUS } from '../../main/common/constant/HttpStatus';
 import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { TestStudentDataFactory } from '../util/TestStudentDataFactory';
 import { TestStudentFactory } from '../util/TestStudentFactory';
+import { StudentCreateResponse } from '../../main/controller/dto/StudentCreateResponse';
 
 describe('StudentController', () => {
 
@@ -38,15 +39,16 @@ describe('StudentController', () => {
     it('학생 생성 요청을 처리한다', async () => {
       // given
       mockRequest.body = TestStudentDataFactory.createData();
-      const createdId: number = 1;
-      const createdStudent: Student = TestStudentFactory.createWithId(createdId);
-      studentService.createStudent.mockResolvedValue(createdStudent);
+      const savedStudent: Student = TestStudentFactory.createWithId(1);
+      const studentCreateResponse: StudentCreateResponse = StudentCreateResponse.from(savedStudent);
+      studentService.createStudent.mockResolvedValue(studentCreateResponse);
 
       // when
       await studentController.createStudent(mockRequest as Request, mockResponse as Response);
 
       // then
       expect(mockResponse.status).toBeCalledWith(HTTP_STATUS.CREATED);
+      expect(mockResponse.json).toBeCalledWith(studentCreateResponse);
     });
   });
 
