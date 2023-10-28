@@ -21,17 +21,17 @@
             "schema": {
               "type": "integer",
               "default": 1,
-              "required": false,
+              "required": false
             },
             "description": "페이지 번호"
           },
           {
             "in": "query",
-            "name": "size",
+            "name": "pageSize",
             "schema": {
               "type": "integer",
               "default": 10,
-              "required": false,
+              "required": false
             },
             "description": "페이지 크기"
           },
@@ -45,7 +45,7 @@
                 "enrollments"
               ],
               "default": "recent",
-              "required": false,
+              "required": false
             },
             "description": "정렬 순서(최신순, 수강생순)"
           },
@@ -84,7 +84,7 @@
             "in": "query",
             "name": "searchKeyword",
             "schema": {
-              "type": "string",
+              "type": "string"
             },
             "required": false,
             "description": "검색어"
@@ -596,17 +596,21 @@
               ]
             }
           },
+          "total": {
+            "type": "integer"
+          },
           "page": {
             "type": "integer"
           },
-          "totalPages": {
+          "pageSize": {
             "type": "integer"
           }
         },
         "required": [
           "lectures",
+          "total",
           "page",
-          "totalPages"
+          "pageSize"
         ]
       },
       "LectureCreateRequest": {
