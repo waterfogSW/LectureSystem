@@ -1,5 +1,5 @@
 import { IsEnum, IsNumber, IsString } from 'class-validator';
-import { LectureCategory, LectureCategoryNames } from '../../domain/LectureCategory';
+import { LectureCategory, LectureCategoryNames } from '../../domain/LectureType';
 import { validateClass } from '../../common/util/ClassValidateUtil';
 import { Request } from 'express';
 
