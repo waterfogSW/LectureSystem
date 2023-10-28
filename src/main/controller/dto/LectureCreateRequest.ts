@@ -30,7 +30,7 @@ export class LectureCreateRequest {
     this._title = title;
     this._introduction = introduction;
     this._instructorId = instructorId;
-    this._category = category as LectureCategoryNames;
+    this._category = category.toUpperCase() as LectureCategoryNames;
     this._price = price;
     validateClass(this);
   }
