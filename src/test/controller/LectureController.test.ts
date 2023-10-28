@@ -9,9 +9,7 @@ import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { IllegalArgumentException } from '../../main/common/exception/IllegalArgumentException';
 import { TestLectureDataFactory } from '../util/TestLectureDataFactory';
 import { TestLectureFactory } from '../util/TestLectureFactory';
-import exp from 'constants';
 import { LectureCreateResponse } from '../../main/controller/dto/LectureCreateResponse';
-import { create } from 'domain';
 
 describe('LectureController', () => {
 

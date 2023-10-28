@@ -2,7 +2,6 @@ import { inject, injectable } from 'inversify';
 import { StudentService } from '../service/StudentService';
 import { type Request, type Response } from 'express';
 import { HTTP_STATUS } from '../common/constant/HttpStatus';
-import { type Student } from '../domain/Student';
 import { StudentCreateResponse } from './dto/StudentCreateResponse';
 import { BindingTypes } from '../common/constant/BindingTypes';
 import { StudentCreateRequest } from './dto/StudentCreateRequest';
