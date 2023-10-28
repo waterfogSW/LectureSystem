@@ -62,7 +62,7 @@ export class LectureListRequest {
     return this._pageSize;
   }
 
-  public get order(): LectureOrderTypeNames | undefined {
+  public get order(): LectureOrderTypeNames {
     return this._order;
   }
 
