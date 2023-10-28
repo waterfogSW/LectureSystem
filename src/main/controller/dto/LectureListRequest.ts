@@ -2,7 +2,6 @@ import {
   LectureCategory,
   LectureCategoryFilter,
   LectureCategoryFilterNames,
-  LectureCategoryNames,
   LectureOrderType,
   LectureOrderTypeNames,
   LectureSearchType,
@@ -28,7 +27,7 @@ export class LectureListRequest {
 
   @IsOptional()
   @IsEnum(LectureCategory, { message: '유효하지 않은 카테고리 타입 입니다.' })
-  private readonly _category?: LectureCategoryNames;
+  private readonly _category: LectureCategoryFilterNames;
 
   @IsOptional()
   @IsEnum(LectureSearchType, { message: '유효하지 않은 검색타입 입니다.' })
@@ -49,7 +48,7 @@ export class LectureListRequest {
     this._page = page;
     this._pageSize = size;
     this._order = this.toEnumCase(order) as LectureOrderTypeNames;
-    this._category = this.toEnumCase(category) as LectureCategoryNames;
+    this._category = this.toEnumCase(category) as LectureCategoryFilterNames;
     this._searchType = this.toEnumCase(searchType) as LectureSearchTypeNames;
     this._searchKeyword = searchKeyword;
     validateClass(this);
@@ -67,7 +66,7 @@ export class LectureListRequest {
     return this._order;
   }
 
-  public get category(): LectureCategoryNames | undefined {
+  public get category(): LectureCategoryFilterNames {
     return this._category;
   }
 
