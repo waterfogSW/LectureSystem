@@ -28,10 +28,13 @@ describe('InstructorRepository', () => {
 
     it('ID값에 해당하는 강사를 반환한다', async () => {
       // given
-      const findId = 1;
-      const mockInstructorData = [
-        { id: findId, name: 'Test Instructor', created_at: '2021-08-01 00:00:00', updated_at: '2021-08-01 00:00:00' },
-      ];
+      const findId: number = 1;
+      const mockInstructorData: any = [{
+        id: findId,
+        name: 'Test Instructor',
+        created_at: '2021-08-01 00:00:00',
+        updated_at: '2021-08-01 00:00:00',
+      }];
       mockConnection.execute.mockResolvedValue([mockInstructorData, []]);
 
       // when
