@@ -20,7 +20,8 @@
             "name": "page",
             "schema": {
               "type": "integer",
-              "default": 1
+              "default": 1,
+              "required": false,
             },
             "description": "페이지 번호"
           },
@@ -29,7 +30,8 @@
             "name": "size",
             "schema": {
               "type": "integer",
-              "default": 10
+              "default": 10,
+              "required": false,
             },
             "description": "페이지 크기"
           },
@@ -42,7 +44,8 @@
                 "recent",
                 "enrollments"
               ],
-              "default": "recent"
+              "default": "recent",
+              "required": false,
             },
             "description": "정렬 순서(최신순, 수강생순)"
           },
@@ -60,7 +63,8 @@
                 "database"
               ]
             },
-            "description": "검색 필터 - 카테고리"
+            "description": "검색 필터 - 카테고리",
+            "required": false
           },
           {
             "in": "query",
@@ -70,17 +74,19 @@
               "enum": [
                 "title",
                 "instructor",
-                "studentId"
+                "student_id"
               ]
             },
-            "description": "검색타입"
+            "description": "검색타입",
+            "required": false
           },
           {
             "in": "query",
             "name": "searchKeyword",
             "schema": {
-              "type": "string"
+              "type": "string",
             },
+            "required": false,
             "description": "검색어"
           }
         ],
