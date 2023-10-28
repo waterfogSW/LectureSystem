@@ -3,7 +3,7 @@ import { LectureRepository } from '../repository/LectureRepository';
 import { BindingTypes } from '../common/constant/BindingTypes';
 import { Lecture } from '../domain/Lecture';
 import { PoolConnection } from 'mysql2/promise';
-import { transactional } from '../common/decorator/transactional';
+import { transactional } from '../common/decorator/Transactional';
 import { InstructorRepository } from '../repository/InstructorRepository';
 import { Instructor } from '../domain/Instructor';
 import { NotFoundException } from '../common/exception/NotFoundException';

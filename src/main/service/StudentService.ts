@@ -2,7 +2,7 @@ import { inject, injectable } from 'inversify';
 import { Student } from '../domain/Student';
 import { StudentRepository } from '../repository/StudentRepository';
 import { PoolConnection } from 'mysql2/promise';
-import { transactional } from '../common/decorator/transactional';
+import { transactional } from '../common/decorator/Transactional';
 import { IllegalArgumentException } from '../common/exception/IllegalArgumentException';
 import { NotFoundException } from '../common/exception/NotFoundException';
 import { BindingTypes } from '../common/constant/BindingTypes';
