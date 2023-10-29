@@ -17,3 +17,4 @@ services:
       - ./db/test_data/lectures.sql:/docker-entrypoint-initdb.d/04_lectures.sql
       - ./db/test_data/instructors.sql:/docker-entrypoint-initdb.d/03_instructors.sql
       - ./db/test_data/enrollments.sql:/docker-entrypoint-initdb.d/05_enrollments.sql
+      - ./db/test_data/lecture_student_counts.sql:/docker-entrypoint-initdb.d/06_lecture_student_counts.sql

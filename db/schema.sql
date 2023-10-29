@@ -31,7 +31,7 @@ CREATE TABLE instructors -- 강사
     is_deleted TINYINT(1)   NOT NULL DEFAULT FALSE COMMENT '삭제 여부'
 );
 
-CREATE TABLE enrollments -- 내역
+CREATE TABLE enrollments -- 강의 등록 내역
 (
     id         BIGINT(20) NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT '내역 아이디',
     student_id BIGINT(20) NOT NULL COMMENT '수강생 아이디',
@@ -39,6 +39,13 @@ CREATE TABLE enrollments -- 내역
     created_at TIMESTAMP  NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '생성일',
     updated_at TIMESTAMP  NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '수정일',
     is_deleted TINYINT(1) NOT NULL DEFAULT FALSE COMMENT '삭제 여부'
+);
+
+CREATE TABLE lecture_student_counts -- 강의 등록 수강생수
+(
+    id         BIGINT(20) NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT '아이디',
+    lecture_id BIGINT(20) NOT NULL COMMENT '강의 아이디',
+    count      INT        NOT NULL COMMENT '수강생수'
 );
 
 -- 뷰
@@ -73,3 +80,4 @@ CREATE INDEX idx_instructors_name ON instructors (name);
 CREATE INDEX idx_enrollments_student_id ON enrollments (student_id);
 CREATE INDEX idx_enrollments_lecture_id ON enrollments (lecture_id);
 CREATE INDEX idx_enrollments_student_lecture ON enrollments (student_id, lecture_id);
+CREATE INDEX idx_lecture_student_counts_lecture_id ON lecture_student_counts (lecture_id);
