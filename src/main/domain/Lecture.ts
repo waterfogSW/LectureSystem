@@ -15,7 +15,7 @@ import { IllegalArgumentException } from '../common/exception/IllegalArgumentExc
 export class Lecture extends BaseEntity {
 
   @IsString({ message: '강의 제목은 문자열이어야 합니다.' })
-  @Length(3, 20, { message: '강의 제목은 3글자 이상, 20글자 미만이어야 합니다.' })
+  @Length(3, 50, { message: '강의 제목은 3글자 이상, 50글자 미만이어야 합니다.' })
   private readonly _title: string;
 
   @IsString({ message: '강의 소개는 문자열이어야 합니다.' })

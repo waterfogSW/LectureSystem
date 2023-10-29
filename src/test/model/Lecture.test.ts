@@ -39,7 +39,7 @@ describe('Lecture', () => {
     expect(lecture.category).toBe(category.toUpperCase());
   });
 
-  it.each([2, 21])('강의 제목은 3자 이상 20자 이하만 가능하다. (강의 제목 길이: %i)', (length: number) => {
+  it.each([2, 51])('강의 제목은 3자 이상 50자 이하만 가능하다. (강의 제목 길이: %i)', (length: number) => {
     // given
     const title: string = 'a'.repeat(length);
     const introduction: string = 'test';
