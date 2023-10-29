@@ -7,6 +7,8 @@ import { HTTP_STATUS } from '../common/constant/HttpStatus';
 import { LectureCreateRequest } from './dto/LectureCreateRequest';
 import { LectureListRequest } from './dto/LectureListRequest';
 import { LectureListResponse } from './dto/LectureListResponse';
+import { LectureBulkCreateResponse } from './dto/LectureBulkCreateResponse';
+import { LectureBulkCreateRequest } from './dto/LectureBulkCreateRequest';
 
 @injectable()
 export class LectureController {
@@ -35,5 +37,16 @@ export class LectureController {
     response
       .status(HTTP_STATUS.OK)
       .json(lectureListResponse);
+  }
+
+  public async createLectureBulk(
+    request: Request,
+    response: Response,
+  ): Promise<void> {
+    const lectureBulkCreateRequest: LectureBulkCreateRequest = LectureBulkCreateRequest.from(request);
+    const lectureBulkCreateResponse: LectureBulkCreateResponse = await this._lectureService.createLectureBulk(lectureBulkCreateRequest);
+    response
+      .status(HTTP_STATUS.CREATED)
+      .json(lectureBulkCreateResponse);
   }
 }

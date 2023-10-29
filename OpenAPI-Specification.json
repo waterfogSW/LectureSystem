@@ -175,10 +175,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/LectureBulkCreateRequest"
-                }
+                "$ref": "#/components/schemas/LectureBulkCreateRequest"
               }
             }
           }
@@ -672,48 +669,10 @@
         "description": "강의 대량 등록 요청",
         "type": "object",
         "properties": {
-          "lectures": {
+          "items": {
             "type": "array",
             "items": {
-              "description": "강의 대량 등록 요청 아이템",
-              "type": "object",
-              "properties": {
-                "title": {
-                  "type": "string",
-                  "description": "강의명"
-                },
-                "introduction": {
-                  "type": "string",
-                  "description": "강의 소개"
-                },
-                "instructorId": {
-                  "type": "integer",
-                  "description": "강사 ID"
-                },
-                "category": {
-                  "type": "string",
-                  "enum": [
-                    "web",
-                    "app",
-                    "game",
-                    "algorithm",
-                    "infra",
-                    "database"
-                  ],
-                  "description": "강의 카테고리"
-                },
-                "price": {
-                  "type": "integer",
-                  "description": "가격"
-                }
-              },
-              "required": [
-                "title",
-                "introduction",
-                "instructorId",
-                "category",
-                "price"
-              ]
+              "$ref": "#/components/schemas/LectureCreateRequest"
             }
           }
         }
@@ -722,7 +681,7 @@
         "description": "강의 대량 등록 응답",
         "type": "object",
         "properties": {
-          "successes": {
+          "items": {
             "type": "array",
             "items": {
               "type": "object",
@@ -734,22 +693,14 @@
                 "title": {
                   "type": "string",
                   "description": "강의명"
-                }
-              }
-            }
-          },
-          "failures": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "title": {
+                },
+                "status": {
                   "type": "string",
-                  "description": "강의명"
+                  "description": "강의 등록 상태 코드"
                 },
                 "message": {
                   "type": "string",
-                  "description": "실패 사유"
+                  "description": "강의 등록 상태 메시지"
                 }
               }
             }

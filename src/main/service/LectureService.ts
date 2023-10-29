@@ -12,6 +12,8 @@ import { LectureCreateResponse } from '../controller/dto/LectureCreateResponse';
 import { LectureListRequest } from '../controller/dto/LectureListRequest';
 import { LectureListItem, LectureListResponse } from '../controller/dto/LectureListResponse';
 import { LectureStudentCountRepository } from '../repository/LectureStudentCountRepository';
+import { LectureBulkCreateRequest } from '../controller/dto/LectureBulkCreateRequest';
+import { LectureBulkCreateResponse, LectureBulkCreateResponseItem } from '../controller/dto/LectureBulkCreateResponse';
 
 
 @injectable()
@@ -66,5 +68,32 @@ export class LectureService {
     ]) as [Array<LectureListItem>, number];
 
     return LectureListResponse.of(lectureListItems, page, pageSize, lectureCount);
+  }
+
+  @transactional()
+  public async createLectureBulk(
+    lectureBulkCreateRequest: LectureBulkCreateRequest,
+    connection?: PoolConnection,
+  ): Promise<LectureBulkCreateResponse> {
+    const requests: Array<LectureCreateRequest> = lectureBulkCreateRequest.items;
+    const responseItems: Array<LectureBulkCreateResponseItem> = await Promise.all(
+      requests.map((request: LectureCreateRequest) => this._processSingleLectureCreateRequest(request, connection!))
+    );
+    return LectureBulkCreateResponse.from(responseItems);
+  }
+
+  private async _processSingleLectureCreateRequest(
+    request: LectureCreateRequest,
+    connection: PoolConnection,
+  ): Promise<LectureBulkCreateResponseItem> {
+    try {
+      const response: LectureCreateResponse = await this.createLecture(request, connection);
+      return LectureBulkCreateResponseItem.createWithSuccess(response.id, response.title);
+    } catch (error) {
+      if (error instanceof Error) {
+        return LectureBulkCreateResponseItem.createWithFail(request.title, error);
+      }
+      return LectureBulkCreateResponseItem.createWithFail(request.title, new Error('알 수 없는 에러'));
+    }
   }
 }

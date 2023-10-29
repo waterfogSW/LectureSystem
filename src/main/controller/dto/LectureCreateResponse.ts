@@ -1,16 +1,25 @@
 import { Lecture } from '../../domain/Lecture';
+import { Id } from '../../common/entity/BaseEntity';
 
 export class LectureCreateResponse {
 
-  private readonly id: number;
-  private readonly title: string;
+  private readonly _id: number;
+  private readonly _title: string;
 
   constructor(
     id: number,
     title: string,
   ) {
-    this.id = id;
-    this.title = title;
+    this._id = id;
+    this._title = title;
+  }
+
+  public get id(): Id {
+    return this._id;
+  }
+
+  public get title(): string {
+    return this._title;
   }
 
   public static from(lecture: Lecture): LectureCreateResponse {
