@@ -8,6 +8,7 @@ import {
   LectureSearchType,
   LectureSearchTypeNames,
 } from '../domain/LectureType';
+import { LectureListItem } from '../controller/dto/LectureListResponse';
 
 @injectable()
 export class LectureRepository {
@@ -37,6 +38,25 @@ export class LectureRepository {
     );
   }
 
+  public async count(
+    connection: PoolConnection,
+    category?: LectureCategoryNames,
+    searchType?: LectureSearchTypeNames,
+    searchKeyword?: string,
+  ): Promise<number> {
+    const queryParams: (string | number)[] = [];
+    const query: string = `
+        SELECT COUNT(lectures.id) as count
+        FROM active_lectures as lectures
+                 JOIN active_instructors as instructors ON lectures.instructor_id = instructors.id
+                 JOIN lecture_student_counts as counts ON lectures.id = counts.lecture_id
+            ${ this._buildWhereClause(queryParams, category, searchType, searchKeyword) }
+    `;
+
+    const [rows]: [RowDataPacket[], FieldPacket[]] = await connection.execute(query, queryParams);
+    return rows[0].count;
+  }
+
   public async findByPage(
     connection: PoolConnection,
     page: number,
@@ -45,34 +65,33 @@ export class LectureRepository {
     category?: LectureCategoryNames,
     searchType?: LectureSearchTypeNames,
     searchKeyword?: string,
-  ): Promise<Array<Lecture>> {
+  ): Promise<Array<LectureListItem>> {
     const queryParams: (string | number)[] = [];
     const query: string = `
-        SELECT lectures.id,
-               lectures.title,
-               lectures.introduction,
-               lectures.category,
-               lectures.price,
-               lectures.created_at,
-               lectures.instructor_id
+        SELECT lectures.id         as id,
+               lectures.category   as category,
+               lectures.title      as title,
+               instructors.name    as instructor_name,
+               lectures.price      as price,
+               counts.count        as student_count,
+               lectures.created_at as created_at
         FROM active_lectures as lectures
-            ${ this._buildWhereClause(queryParams, category, searchType, searchKeyword) } 
-            ${ this._buildOrderClause(order) }
+                 JOIN active_instructors as instructors ON lectures.instructor_id = instructors.id
+                 JOIN lecture_student_counts as counts ON lectures.id = counts.lecture_id
+            ${ this._buildWhereClause(queryParams, category, searchType, searchKeyword) } ${ this._buildOrderClause(order) }
             ${ this._buildPaginationClause(queryParams, page, pageSize) }
     `;
 
     const [rows]: [RowDataPacket[], FieldPacket[]] = await connection.execute(query, queryParams);
-
-    return rows.map((row: RowDataPacket): Lecture => {
-      return new Lecture(
+    return rows.map((row: RowDataPacket) => {
+      return LectureListItem.of(
         row.id,
-        row.title,
-        row.introduction,
-        row.instructor_id,
         row.category,
+        row.title,
+        row.instructor_name,
         row.price,
+        row.student_count,
         row.created_at,
-        row.updated_at,
       );
     });
   }
@@ -95,7 +114,7 @@ export class LectureRepository {
       conditions.push(searchWhereClause);
     }
 
-    return conditions.length > 0 ? ` WHERE ${ conditions.join(' AND ') }` : '';
+    return conditions.length > 0 ? `WHERE ${ conditions.join(' AND ') }` : '';
   }
 
   private _buildWhereCategoryClause(
@@ -118,13 +137,13 @@ export class LectureRepository {
       switch (searchType) {
         case LectureSearchType.TITLE:
           queryParams.push(`%${ searchKeyword }%`);
-          return ' title LIKE ?';
+          return 'title LIKE ?';
         case LectureSearchType.INSTRUCTOR:
           queryParams.push(`%${ searchKeyword }%`);
-          return ' instructor_id IN (SELECT id FROM active_instructors WHERE name LIKE ?)';
+          return 'name LIKE ?';
         case LectureSearchType.STUDENT_ID:
           queryParams.push(searchKeyword);
-          return ' id IN (SELECT lecture_id FROM active_enrollments WHERE student_id = ?)';
+          return 'lectures.id IN (SELECT enrollments.lecture_id FROM active_enrollments as enrollments WHERE enrollments.student_id = ?)';
       }
     }
     return '';
@@ -132,9 +151,9 @@ export class LectureRepository {
 
   private _buildOrderClause(order: LectureOrderTypeNames): string {
     if (order === LectureOrderType.ENROLLMENTS) {
-      return ' ORDER BY (SELECT COUNT(*) FROM active_enrollments WHERE active_enrollments.lecture_id = lectures.id) DESC';
+      return 'ORDER BY student_count DESC';
     }
-    return ' ORDER BY created_at DESC';
+    return 'ORDER BY created_at DESC';
   }
 
   private _buildPaginationClause(
@@ -145,7 +164,7 @@ export class LectureRepository {
     const offset: number = (page - LectureRepository.START_PAGE) * pageSize;
     queryParams.push(pageSize.toString());
     queryParams.push(offset.toString());
-    return ' LIMIT ? OFFSET ?';
+    return 'LIMIT ? OFFSET ?';
   }
 
 }

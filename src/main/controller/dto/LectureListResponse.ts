@@ -1,39 +1,40 @@
 import { LectureCategoryNames } from '../../domain/LectureType';
-import { Lecture } from '../../domain/Lecture';
-import { Instructor } from '../../domain/Instructor';
 
 export class LectureListResponse {
 
-  private readonly lectures: Array<LectureListResponseItem>;
+  private readonly lectures: Array<LectureListItem>;
   private readonly page: number;
   private readonly pageSize: number;
   private readonly total: number;
 
   constructor(
-    items: Array<LectureListResponseItem>,
+    items: Array<LectureListItem>,
     page: number,
+    pageSize: number,
     total: number,
   ) {
     this.lectures = items;
     this.page = page;
-    this.pageSize = items.length;
+    this.pageSize = pageSize;
     this.total = total;
   }
 
   public static of(
-    items: Array<LectureListResponseItem>,
+    items: Array<LectureListItem>,
     page: number,
+    pageSize: number,
     total: number,
   ): LectureListResponse {
     return new LectureListResponse(
       items,
       page,
+      pageSize,
       total,
     );
   }
 }
 
-class LectureListResponseItem {
+export class LectureListItem {
 
   private readonly id: number;
   private readonly category: LectureCategoryNames;
@@ -62,18 +63,22 @@ class LectureListResponseItem {
   }
 
   public static of(
-    lecture: Lecture,
-    instructor: Instructor,
+    id: number,
+    category: string,
+    title: string,
+    instructor: string,
+    price: number,
     studentCount: number,
-  ): LectureListResponseItem {
-    return new LectureListResponseItem(
-      lecture.id!,
-      lecture.category,
-      lecture.title,
-      instructor.name,
-      lecture.price,
+    createdAt: string,
+  ): LectureListItem {
+    return new LectureListItem(
+      id,
+      category as LectureCategoryNames,
+      title,
+      instructor,
+      price,
       studentCount,
-      lecture.createdAt,
+      new Date(createdAt),
     );
   }
 }

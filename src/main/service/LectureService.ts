@@ -9,6 +9,8 @@ import { Instructor } from '../domain/Instructor';
 import { NotFoundException } from '../common/exception/NotFoundException';
 import { LectureCreateRequest } from '../controller/dto/LectureCreateRequest';
 import { LectureCreateResponse } from '../controller/dto/LectureCreateResponse';
+import { LectureListRequest } from '../controller/dto/LectureListRequest';
+import { LectureListItem, LectureListResponse } from '../controller/dto/LectureListResponse';
 
 
 @injectable()
@@ -35,4 +37,30 @@ export class LectureService {
     return LectureCreateResponse.from(createdLecture);
   }
 
+  @transactional()
+  public async listLecture(
+    lectureListRequest: LectureListRequest,
+    connection?: PoolConnection,
+  ): Promise<LectureListResponse> {
+    const { page, pageSize, order, category, searchType, searchKeyword }: LectureListRequest = lectureListRequest;
+    const [lectureListItems, lectureCount]: [Array<LectureListItem>, number] = await Promise.all([
+      this._lectureRepository.findByPage(
+        connection!,
+        page,
+        pageSize,
+        order,
+        category,
+        searchType,
+        searchKeyword,
+      ),
+      this._lectureRepository.count(
+        connection!,
+        category,
+        searchType,
+        searchKeyword,
+      ),
+    ]) as [Array<LectureListItem>, number];
+
+    return LectureListResponse.of(lectureListItems, page, pageSize, lectureCount);
+  }
 }

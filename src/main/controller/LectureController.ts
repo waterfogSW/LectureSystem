@@ -5,6 +5,8 @@ import { LectureCreateResponse } from './dto/LectureCreateResponse';
 import { type Request, type Response } from 'express';
 import { HTTP_STATUS } from '../common/constant/HttpStatus';
 import { LectureCreateRequest } from './dto/LectureCreateRequest';
+import { LectureListRequest } from './dto/LectureListRequest';
+import { LectureListResponse } from './dto/LectureListResponse';
 
 @injectable()
 export class LectureController {
@@ -24,4 +26,14 @@ export class LectureController {
       .json(lectureCreateResponse);
   }
 
+  public async listLecture(
+    request: Request,
+    response: Response,
+  ): Promise<void> {
+    const lectureListRequest: LectureListRequest = LectureListRequest.from(request);
+    const lectureListResponse: LectureListResponse = await this._lectureService.listLecture(lectureListRequest);
+    response
+      .status(HTTP_STATUS.OK)
+      .json(lectureListResponse);
+  }
 }
