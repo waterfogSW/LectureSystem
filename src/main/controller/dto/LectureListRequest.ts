@@ -1,7 +1,6 @@
 import {
   LectureCategory,
-  LectureCategoryFilter,
-  LectureCategoryFilterNames,
+  LectureCategoryNames,
   LectureOrderType,
   LectureOrderTypeNames,
   LectureSearchType,
@@ -27,7 +26,7 @@ export class LectureListRequest {
 
   @IsOptional()
   @IsEnum(LectureCategory, { message: '유효하지 않은 카테고리 타입 입니다.' })
-  private readonly _category: LectureCategoryFilterNames;
+  private readonly _category?: LectureCategoryNames;
 
   @IsOptional()
   @IsEnum(LectureSearchType, { message: '유효하지 않은 검색타입 입니다.' })
@@ -41,14 +40,14 @@ export class LectureListRequest {
     page: number = 1,
     size: number = 10,
     order: LectureOrderTypeNames = LectureOrderType.RECENT,
-    category: LectureCategoryFilterNames = LectureCategoryFilter.ALL,
+    category?: LectureCategoryNames,
     searchType?: string,
     searchKeyword?: string,
   ) {
     this._page = page;
     this._pageSize = size;
     this._order = this.toEnumCase(order) as LectureOrderTypeNames;
-    this._category = this.toEnumCase(category) as LectureCategoryFilterNames;
+    this._category = this.toEnumCase(category) as LectureCategoryNames;
     this._searchType = this.toEnumCase(searchType) as LectureSearchTypeNames;
     this._searchKeyword = searchKeyword;
     validateClass(this);
@@ -66,7 +65,7 @@ export class LectureListRequest {
     return this._order;
   }
 
-  public get category(): LectureCategoryFilterNames {
+  public get category(): LectureCategoryNames | undefined {
     return this._category;
   }
 
@@ -79,11 +78,10 @@ export class LectureListRequest {
   }
 
   public static from(request: Request): LectureListRequest {
-    const { page, size, order, category, searchType, searchKeyword }: any = request.query;
-
+    const { page, pageSize, order, category, searchType, searchKeyword }: any = request.query;
     return new LectureListRequest(
-      page,
-      size,
+      Number(page),
+      Number(pageSize),
       order,
       category,
       searchType,
