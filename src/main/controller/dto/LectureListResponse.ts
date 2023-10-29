@@ -2,7 +2,7 @@ import { LectureCategoryNames } from '../../domain/LectureType';
 
 export class LectureListResponse {
 
-  private readonly lectures: Array<LectureListItem>;
+  private readonly items: Array<LectureListItem>;
   private readonly page: number;
   private readonly pageSize: number;
   private readonly total: number;
@@ -13,7 +13,7 @@ export class LectureListResponse {
     pageSize: number,
     total: number,
   ) {
-    this.lectures = items;
+    this.items = items;
     this.page = page;
     this.pageSize = pageSize;
     this.total = total;
