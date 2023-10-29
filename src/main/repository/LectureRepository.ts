@@ -85,29 +85,49 @@ export class LectureRepository {
   ): string {
     const conditions: string[] = [];
 
-    if (category) {
-      conditions.push('category = ?');
-      queryParams.push(category);
+    const categoryWhereClause: string = this._buildWhereCategoryClause(queryParams, category);
+    if (categoryWhereClause) {
+      conditions.push(categoryWhereClause);
     }
 
-    if (searchType && searchKeyword) {
-      switch (searchType) {
-        case LectureSearchType.TITLE:
-          conditions.push('title LIKE ?');
-          queryParams.push(`%${ searchKeyword }%`);
-          break;
-        case LectureSearchType.INSTRUCTOR:
-          conditions.push('instructor_id IN (SELECT id FROM active_instructors WHERE name LIKE ?)');
-          queryParams.push(`%${ searchKeyword }%`);
-          break;
-        case LectureSearchType.STUDENT_ID:
-          conditions.push('id IN (SELECT lecture_id FROM active_enrollments WHERE student_id = ?)');
-          queryParams.push(searchKeyword);
-          break;
-      }
+    const searchWhereClause: string = this._buildWhereSearchClause(queryParams, searchType, searchKeyword);
+    if (searchWhereClause) {
+      conditions.push(searchWhereClause);
     }
 
     return conditions.length > 0 ? ` WHERE ${ conditions.join(' AND ') }` : '';
+  }
+
+  private _buildWhereCategoryClause(
+    queryParams: (string | number)[],
+    category?: LectureCategoryNames,
+  ): string {
+    if (category) {
+      queryParams.push(category);
+      return ' category = ?';
+    }
+    return '';
+  }
+
+  private _buildWhereSearchClause(
+    queryParams: (string | number)[],
+    searchType?: LectureSearchTypeNames,
+    searchKeyword?: string,
+  ): string {
+    if (searchType && searchKeyword) {
+      switch (searchType) {
+        case LectureSearchType.TITLE:
+          queryParams.push(`%${ searchKeyword }%`);
+          return ' title LIKE ?';
+        case LectureSearchType.INSTRUCTOR:
+          queryParams.push(`%${ searchKeyword }%`);
+          return ' instructor_id IN (SELECT id FROM active_instructors WHERE name LIKE ?)';
+        case LectureSearchType.STUDENT_ID:
+          queryParams.push(searchKeyword);
+          return ' id IN (SELECT lecture_id FROM active_enrollments WHERE student_id = ?)';
+      }
+    }
+    return '';
   }
 
   private _buildOrderClause(order: LectureOrderTypeNames): string {
