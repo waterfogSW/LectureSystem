@@ -12,6 +12,8 @@ import {
 @injectable()
 export class LectureRepository {
 
+  private static readonly START_PAGE: number = 1;
+
   public async save(
     lecture: Lecture,
     connection: PoolConnection,
@@ -44,7 +46,7 @@ export class LectureRepository {
     searchType?: LectureSearchTypeNames,
     searchKeyword?: string,
   ): Promise<Array<Lecture>> {
-    const queryParams: any[] = [];
+    const queryParams: (string | number)[] = [];
     const query: string = `
         SELECT lectures.id,
                lectures.title,
@@ -59,9 +61,9 @@ export class LectureRepository {
             ${ this._buildPaginationClause(queryParams, page, pageSize) }
     `;
 
-    const [rows, field]: [RowDataPacket[], FieldPacket[]] = await connection.execute(query, queryParams);
+    const [rows]: [RowDataPacket[], FieldPacket[]] = await connection.execute(query, queryParams);
 
-    return rows.map((row: RowDataPacket) => {
+    return rows.map((row: RowDataPacket): Lecture => {
       return new Lecture(
         row.id,
         row.title,
@@ -76,7 +78,7 @@ export class LectureRepository {
   }
 
   private _buildWhereClause(
-    queryParams: any[],
+    queryParams: (string | number)[],
     category?: LectureCategoryNames,
     searchType?: LectureSearchTypeNames,
     searchKeyword?: string,
@@ -92,11 +94,11 @@ export class LectureRepository {
       switch (searchType) {
         case LectureSearchType.TITLE:
           conditions.push('title LIKE ?');
-          queryParams.push(`%${searchKeyword}%`);
+          queryParams.push(`%${ searchKeyword }%`);
           break;
         case LectureSearchType.INSTRUCTOR:
           conditions.push('instructor_id IN (SELECT id FROM active_instructors WHERE name LIKE ?)');
-          queryParams.push(`%${searchKeyword}%`);
+          queryParams.push(`%${ searchKeyword }%`);
           break;
         case LectureSearchType.STUDENT_ID:
           conditions.push('id IN (SELECT lecture_id FROM active_enrollments WHERE student_id = ?)');
@@ -110,17 +112,17 @@ export class LectureRepository {
 
   private _buildOrderClause(order: LectureOrderTypeNames): string {
     if (order === LectureOrderType.ENROLLMENTS) {
-      return ' ORDER BY (SELECT COUNT(*) FROM enrollments WHERE enrollments.lecture_id = lectures.id) DESC';
+      return ' ORDER BY (SELECT COUNT(*) FROM active_enrollments WHERE active_enrollments.lecture_id = lectures.id) DESC';
     }
     return ' ORDER BY created_at DESC';
   }
 
   private _buildPaginationClause(
-    queryParams: any[],
+    queryParams: (string | number)[],
     page: number,
     pageSize: number,
   ): string {
-    const offset: number = (page - 1) * pageSize;
+    const offset: number = (page - LectureRepository.START_PAGE) * pageSize;
     queryParams.push(pageSize.toString());
     queryParams.push(offset.toString());
     return ' LIMIT ? OFFSET ?';
