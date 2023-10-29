@@ -13,4 +13,7 @@ export const BindingTypes = {
 
   // instructor
   InstructorRepository: Symbol('InstructorRepository'),
+
+  // lecture student count
+  LectureStudentCountRepository: Symbol('LectureStudentCountRepository'),
 };

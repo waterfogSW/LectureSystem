@@ -8,6 +8,7 @@ import { LectureRepository } from '../../repository/LectureRepository';
 import { LectureService } from '../../service/LectureService';
 import { LectureController } from '../../controller/LectureController';
 import { InstructorRepository } from '../../repository/InstructorRepository';
+import { LectureStudentCountRepository } from '../../repository/LectureStudentCountRepository';
 
 const container: Container = new Container({ defaultScope: 'Singleton' });
 
@@ -26,6 +27,9 @@ const bindings = [
 
   // instructor
   { type: BindingTypes.InstructorRepository, to: InstructorRepository },
+
+  // lecture student count
+  { type: BindingTypes.LectureStudentCountRepository, to: LectureStudentCountRepository },
 ];
 
 bindings.forEach(({ type, to }) => container.bind(type).to(to));

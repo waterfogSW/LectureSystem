@@ -11,16 +11,19 @@ import { LectureCreateRequest } from '../../main/controller/dto/LectureCreateReq
 import { TestLectureDataFactory } from '../util/TestLectureDataFactory';
 import { TestLectureFactory } from '../util/TestLectureFactory';
 import { LectureCreateResponse } from '../../main/controller/dto/LectureCreateResponse';
+import { LectureStudentCountRepository } from '../../main/repository/LectureStudentCountRepository';
 
 describe('LectureService', () => {
   let lectureService: LectureService;
   let lectureRepository: jest.Mocked<LectureRepository>;
+  let lectureStudentCountRepository: jest.Mocked<LectureStudentCountRepository>;
   let instructorRepository: jest.Mocked<InstructorRepository>;
 
   beforeEach(() => {
     lectureRepository = MockFactory.create<LectureRepository>();
+    lectureStudentCountRepository = MockFactory.create<LectureStudentCountRepository>();
     instructorRepository = MockFactory.create<InstructorRepository>();
-    lectureService = new LectureService(lectureRepository, instructorRepository);
+    lectureService = new LectureService(lectureRepository, lectureStudentCountRepository, instructorRepository);
   });
 
   afterEach(() => {

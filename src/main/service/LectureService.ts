@@ -11,6 +11,7 @@ import { LectureCreateRequest } from '../controller/dto/LectureCreateRequest';
 import { LectureCreateResponse } from '../controller/dto/LectureCreateResponse';
 import { LectureListRequest } from '../controller/dto/LectureListRequest';
 import { LectureListItem, LectureListResponse } from '../controller/dto/LectureListResponse';
+import { LectureStudentCountRepository } from '../repository/LectureStudentCountRepository';
 
 
 @injectable()
@@ -18,6 +19,7 @@ export class LectureService {
 
   constructor(
     @inject(BindingTypes.LectureRepository) private readonly _lectureRepository: LectureRepository,
+    @inject(BindingTypes.LectureStudentCountRepository) private readonly _lectureStudentCountRepository: LectureStudentCountRepository,
     @inject(BindingTypes.InstructorRepository) private readonly _instructorRepository: InstructorRepository,
   ) {}
 
@@ -34,6 +36,8 @@ export class LectureService {
 
     const lecture: Lecture = Lecture.create(title, introduction, instructor.id!, category, price);
     const createdLecture: Lecture = await this._lectureRepository.save(lecture, connection!);
+    await this._lectureStudentCountRepository.create(createdLecture.id!, connection!);
+
     return LectureCreateResponse.from(createdLecture);
   }
 
