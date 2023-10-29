@@ -44,6 +44,7 @@ export class LectureRepository {
     searchType?: LectureSearchTypeNames,
     searchKeyword?: string,
   ): Promise<Array<Lecture>> {
+    const queryParams: any[] = [];
     const query: string = `
         SELECT lectures.id,
                lectures.title,
@@ -53,12 +54,12 @@ export class LectureRepository {
                lectures.created_at,
                lectures.instructor_id
         FROM active_lectures as lectures
-        ${ this._buildWhereClause(category, searchType, searchKeyword) }
-        ${ this._buildOrderClause(order) }
-        ${ this._buildPaginationClause(page, pageSize) }
+            ${ this._buildWhereClause(queryParams, category, searchType, searchKeyword) } 
+            ${ this._buildOrderClause(order) }
+            ${ this._buildPaginationClause(queryParams, page, pageSize) }
     `;
 
-    const [rows, field]: [RowDataPacket[], FieldPacket[]] = await connection.execute(query);
+    const [rows, field]: [RowDataPacket[], FieldPacket[]] = await connection.execute(query, queryParams);
 
     return rows.map((row: RowDataPacket) => {
       return new Lecture(
@@ -75,59 +76,54 @@ export class LectureRepository {
   }
 
   private _buildWhereClause(
+    queryParams: any[],
     category?: LectureCategoryNames,
     searchType?: LectureSearchTypeNames,
     searchKeyword?: string,
   ): string {
     const conditions: string[] = [];
-    const categoryFilterClause: string = this._buildCategoryFilterClause(category);
-    if (categoryFilterClause) {
-      conditions.push(categoryFilterClause);
+
+    if (category) {
+      conditions.push('category = ?');
+      queryParams.push(category);
     }
 
-    const searchClause: string = this._buildSearchClause(searchType, searchKeyword);
-    if (searchClause) {
-      conditions.push(searchClause);
+    if (searchType && searchKeyword) {
+      switch (searchType) {
+        case LectureSearchType.TITLE:
+          conditions.push('title LIKE ?');
+          queryParams.push(`%${searchKeyword}%`);
+          break;
+        case LectureSearchType.INSTRUCTOR:
+          conditions.push('instructor_id IN (SELECT id FROM active_instructors WHERE name LIKE ?)');
+          queryParams.push(`%${searchKeyword}%`);
+          break;
+        case LectureSearchType.STUDENT_ID:
+          conditions.push('id IN (SELECT lecture_id FROM active_enrollments WHERE student_id = ?)');
+          queryParams.push(searchKeyword);
+          break;
+      }
     }
 
     return conditions.length > 0 ? ` WHERE ${ conditions.join(' AND ') }` : '';
   }
 
-  private _buildCategoryFilterClause(category?: LectureCategoryNames): string {
-    if (!category) {
-      return '';
-    }
-    return `category = '${ category }'`;
-  }
-
-  private _buildSearchClause(
-    searchType?: LectureSearchTypeNames,
-    searchKeyword?: string,
-  ): string {
-    if (!searchType || !searchKeyword) {
-      return '';
-    }
-    const conditionMapping: { [key: string]: string } = {
-      [LectureSearchType.TITLE]: `title LIKE '%${ searchKeyword }%'`,
-      [LectureSearchType.INSTRUCTOR]: `instructor_id IN (SELECT id FROM active_instructors WHERE name LIKE '%${ searchKeyword }%')`,
-      [LectureSearchType.STUDENT_ID]: `id IN (SELECT lecture_id FROM active_enrollments WHERE student_id = ${ searchKeyword })`,
-    };
-    return conditionMapping[searchType];
-  }
-
   private _buildOrderClause(order: LectureOrderTypeNames): string {
     if (order === LectureOrderType.ENROLLMENTS) {
-      return ` ORDER BY (SELECT COUNT(*) FROM enrollments WHERE enrollments.lecture_id = lectures.id) DESC`;
+      return ' ORDER BY (SELECT COUNT(*) FROM enrollments WHERE enrollments.lecture_id = lectures.id) DESC';
     }
-    return ` ORDER BY created_at DESC`;
+    return ' ORDER BY created_at DESC';
   }
 
   private _buildPaginationClause(
+    queryParams: any[],
     page: number,
     pageSize: number,
   ): string {
     const offset: number = (page - 1) * pageSize;
-    return ` LIMIT ${ pageSize } OFFSET ${ offset }`;
+    queryParams.push(pageSize.toString());
+    queryParams.push(offset.toString());
+    return ' LIMIT ? OFFSET ?';
   }
 
 }
