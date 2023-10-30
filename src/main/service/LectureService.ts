@@ -20,6 +20,7 @@ import { StudentRepository } from '../repository/StudentRepository';
 import { Enrollment } from '../domain/Enrollment';
 import { EnrollmentRepository } from '../repository/EnrollmentRepository';
 import { Student } from '../domain/Student';
+import { LectureUpdateRequest } from '../controller/dto/LectureUpdateRequest';
 
 
 @injectable()
@@ -121,6 +122,21 @@ export class LectureService {
     );
 
     return LectureDetailResponse.of(lecture, studentCount, lectureStudents);
+  }
+
+  @transactional()
+  public async updateLecture(
+    lectureUpdateRequest: LectureUpdateRequest,
+    connection?: PoolConnection,
+  ): Promise<void> {
+    const { lectureId, title, introduction, price }: LectureUpdateRequest = lectureUpdateRequest;
+    const lecture: Lecture | null = await this._lectureRepository.findById(lectureId, connection!);
+    if (!lecture) {
+      throw new NotFoundException(`존재하지 않는 강의 ID(${lectureId}) 입니다`);
+    }
+
+    const updatedLecture: Lecture = lecture.update(title, introduction, price);
+    await this._lectureRepository.update(updatedLecture, connection!);
   }
 
   private async _processSingleLectureCreateRequest(

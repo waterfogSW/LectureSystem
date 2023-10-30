@@ -18,6 +18,7 @@ export const configureRoutes = (app: Application): void => {
   app.get('/api/lectures', withAsync(lectureController.listLecture.bind(lectureController)));
   app.post('/api/lectures/bulk', withAsync(lectureController.createLectureBulk.bind(lectureController)));
   app.get('/api/lectures/:id', withAsync(lectureController.detailLecture.bind(lectureController)));
+  app.patch('/api/lectures/:id', withAsync(lectureController.updateLecture.bind(lectureController)));
 };
 
 type asyncRouterFunction = (

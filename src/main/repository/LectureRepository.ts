@@ -63,6 +63,25 @@ export class LectureRepository {
     );
   }
 
+  public async update(
+    lecture: Lecture,
+    connection: PoolConnection,
+  ): Promise<void> {
+    const updateQuery: string = `UPDATE lectures
+                                 SET title         = ?,
+                                     introduction  = ?,
+                                     instructor_id = ?,
+                                     category      = ?,
+                                     price         = ?,
+                                     is_published  = ?,
+                                     updated_at    = ?
+                                 WHERE id = ?`;
+    await connection.execute(
+      updateQuery,
+      [lecture.title, lecture.introduction, lecture.instructorId, lecture.category, lecture.price, lecture.is_published, lecture.updatedAt, lecture.id],
+    );
+  }
+
   public async count(
     connection: PoolConnection,
     category?: LectureCategoryNames,

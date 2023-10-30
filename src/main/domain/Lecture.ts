@@ -57,6 +57,24 @@ export class Lecture extends BaseEntity {
     this.validate();
   }
 
+  public update(
+    title?: string,
+    introduction?: string,
+    price?: number,
+  ): Lecture {
+    return new Lecture(
+      this.id,
+      title ? title : this.title,
+      introduction ? introduction : this.introduction,
+      this.instructorId,
+      this.category,
+      price ? price : this.price,
+      this.createdAt,
+      new Date(),
+      this.is_published,
+    );
+  }
+
   public get title(): string {
     return this._title;
   }
@@ -65,7 +83,7 @@ export class Lecture extends BaseEntity {
     return this._introduction;
   }
 
-  public get instructorId(): Id {
+  public get instructorId(): number {
     return this._instructorId;
   }
 
