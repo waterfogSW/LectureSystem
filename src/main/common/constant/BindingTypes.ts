@@ -17,6 +17,8 @@ export const BindingTypes = {
   InstructorRepository: Symbol('InstructorRepository'),
 
   // enrollment
+  EnrollmentController: Symbol('EnrollmentController'),
+  EnrollmentService: Symbol('EnrollmentService'),
   EnrollmentRepository: Symbol('EnrollmentRepository'),
 
   // lecture student count
