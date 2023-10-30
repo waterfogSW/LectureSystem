@@ -745,6 +745,10 @@
             "format": "date-time",
             "description": "최근 수정 시간"
           },
+          "studentCount": {
+            "type": "integer",
+            "description": "수강생 수"
+          },
           "students": {
             "type": "array",
             "items": {
