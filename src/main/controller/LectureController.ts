@@ -12,6 +12,7 @@ import { LectureBulkCreateRequest } from './dto/LectureBulkCreateRequest';
 import { LectureDetailRequest } from './dto/LectureDetailRequest';
 import { LectureDetailResponse } from './dto/LectureDetailResponse';
 import { LectureUpdateRequest } from './dto/LectureUpdateRequest';
+import { LectureDeleteRequest } from './dto/LectureDeleteRequest';
 
 @injectable()
 export class LectureController {
@@ -70,6 +71,17 @@ export class LectureController {
   ): Promise<void> {
     const lectureUpdateRequest: LectureUpdateRequest = LectureUpdateRequest.from(request);
     await this._lectureService.updateLecture(lectureUpdateRequest);
+    response
+      .status(HTTP_STATUS.OK)
+      .send();
+  }
+
+  public async deleteLecture(
+    request: Request,
+    response: Response,
+  ):Promise<void> {
+    const lectureDeleteRequest: LectureDeleteRequest = LectureDeleteRequest.from(request);
+    await this._lectureService.deleteLecture(lectureDeleteRequest);
     response
       .status(HTTP_STATUS.OK)
       .send();

@@ -101,6 +101,14 @@ export class LectureRepository {
     return rows[0].count;
   }
 
+  public async delete(
+    lectureId: number,
+    poolConnection: PoolConnection,
+  ): Promise<void> {
+    const deleteQuery: string = 'UPDATE lectures SET is_deleted = true WHERE id = ?';
+    await poolConnection.execute(deleteQuery, [lectureId]);
+  }
+
   public async findByPage(
     connection: PoolConnection,
     page: number,
@@ -210,5 +218,4 @@ export class LectureRepository {
     queryParams.push(offset.toString());
     return 'LIMIT ? OFFSET ?';
   }
-
 }

@@ -21,6 +21,7 @@ import { Enrollment } from '../domain/Enrollment';
 import { EnrollmentRepository } from '../repository/EnrollmentRepository';
 import { Student } from '../domain/Student';
 import { LectureUpdateRequest } from '../controller/dto/LectureUpdateRequest';
+import { LectureDeleteRequest } from '../controller/dto/LectureDeleteRequest';
 
 
 @injectable()
@@ -137,6 +138,23 @@ export class LectureService {
 
     const updatedLecture: Lecture = lecture.update(title, introduction, price);
     await this._lectureRepository.update(updatedLecture, connection!);
+  }
+
+  @transactional()
+  public async deleteLecture(
+    lectureDeleteRequest: LectureDeleteRequest,
+    connection?: PoolConnection,
+  ): Promise<void> {
+    const { lectureId }: LectureDeleteRequest = lectureDeleteRequest;
+    const lecture: Lecture | null = await this._lectureRepository.findById(lectureId, connection!);
+    if (!lecture) {
+      throw new NotFoundException(`존재하지 않는 강의 ID(${lectureId}) 입니다`);
+    }
+
+    await Promise.all([
+      this._lectureRepository.delete(lectureId, connection!),
+      this._lectureStudentCountRepository.delete(lectureId, connection!),
+    ]);
   }
 
   private async _processSingleLectureCreateRequest(

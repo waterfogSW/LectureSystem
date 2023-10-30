@@ -21,4 +21,11 @@ export class LectureStudentCountRepository {
     return rows[0].count;
   }
 
+  public async delete(
+    lectureId: number,
+    poolConnection: PoolConnection,
+  ):Promise<void> {
+    const deleteQuery: string = 'UPDATE lecture_student_counts SET is_deleted = 1 WHERE lecture_id = ?';
+    await poolConnection.execute(deleteQuery, [lectureId]);
+  }
 }
