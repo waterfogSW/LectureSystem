@@ -96,7 +96,7 @@ export class LectureService {
   }
 
   @transactional()
-  public async lectureDetail(
+  public async detailLecture(
     { lectureId }: LectureDetailRequest,
     connection?: PoolConnection,
   ): Promise<LectureDetailResponse> {

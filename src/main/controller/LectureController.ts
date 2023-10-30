@@ -52,12 +52,12 @@ export class LectureController {
       .json(lectureBulkCreateResponse);
   }
 
-  public async lectureDetail(
+  public async detailLecture(
     request: Request,
     response: Response,
   ): Promise<void> {
     const lectureDetailRequest: LectureDetailRequest = LectureDetailRequest.from(request);
-    const lectureDetailResponse: LectureDetailResponse = await this._lectureService.lectureDetail(lectureDetailRequest);
+    const lectureDetailResponse: LectureDetailResponse = await this._lectureService.detailLecture(lectureDetailRequest);
     response
       .status(HTTP_STATUS.OK)
       .json(lectureDetailResponse);
