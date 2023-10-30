@@ -1,4 +1,4 @@
-import { IsArray, IsPositive, validate } from 'class-validator';
+import { IsArray, IsPositive } from 'class-validator';
 import { Request } from 'express';
 import { IsPositiveNumberArray, validateClass } from '../../common/util/ClassValidateUtil';
 

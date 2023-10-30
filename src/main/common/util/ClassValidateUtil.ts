@@ -1,6 +1,5 @@
 import {
   registerDecorator,
-  validate,
   validateSync,
   ValidationArguments,
   ValidationError, ValidationOptions,
