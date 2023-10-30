@@ -1,3 +1,5 @@
+import { EnrollmentRepository } from '../../repository/EnrollmentRepository';
+
 export const BindingTypes = {
   ConnectionPool: Symbol('ConnectionPool'),
 
@@ -13,6 +15,9 @@ export const BindingTypes = {
 
   // instructor
   InstructorRepository: Symbol('InstructorRepository'),
+
+  // enrollment
+  EnrollmentRepository: Symbol('EnrollmentRepository'),
 
   // lecture student count
   LectureStudentCountRepository: Symbol('LectureStudentCountRepository'),

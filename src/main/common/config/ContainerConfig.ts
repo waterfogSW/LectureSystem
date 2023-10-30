@@ -9,6 +9,7 @@ import { LectureService } from '../../service/LectureService';
 import { LectureController } from '../../controller/LectureController';
 import { InstructorRepository } from '../../repository/InstructorRepository';
 import { LectureStudentCountRepository } from '../../repository/LectureStudentCountRepository';
+import { EnrollmentRepository } from '../../repository/EnrollmentRepository';
 
 const container: Container = new Container({ defaultScope: 'Singleton' });
 
@@ -27,6 +28,9 @@ const bindings = [
 
   // instructor
   { type: BindingTypes.InstructorRepository, to: InstructorRepository },
+
+  // enrollment
+  { type: BindingTypes.EnrollmentRepository, to: EnrollmentRepository },
 
   // lecture student count
   { type: BindingTypes.LectureStudentCountRepository, to: LectureStudentCountRepository },
