@@ -15,6 +15,31 @@ export class LectureRepository {
 
   private static readonly START_PAGE: number = 1;
 
+  public async findById(
+    id: number,
+    connection: PoolConnection,
+  ): Promise<Lecture | null> {
+    const selectQuery: string = 'SELECT * FROM active_lectures WHERE id = ?';
+    const [lectures]: [RowDataPacket[], FieldPacket[]] = await connection.execute<RowDataPacket[]>(
+      selectQuery,
+      [id],
+    );
+    if (lectures.length === 0) {
+      return null;
+    }
+    const lecture: RowDataPacket = lectures[0];
+    return new Lecture(
+      lecture.id,
+      lecture.title,
+      lecture.introduction,
+      lecture.instructor_id,
+      lecture.category,
+      lecture.price,
+      new Date(lecture.created_at),
+      new Date(lecture.updated_at),
+    );
+  }
+
   public async save(
     lecture: Lecture,
     connection: PoolConnection,

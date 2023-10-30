@@ -9,6 +9,8 @@ import { LectureListRequest } from './dto/LectureListRequest';
 import { LectureListResponse } from './dto/LectureListResponse';
 import { LectureBulkCreateResponse } from './dto/LectureBulkCreateResponse';
 import { LectureBulkCreateRequest } from './dto/LectureBulkCreateRequest';
+import { LectureDetailRequest } from './dto/LectureDetailRequest';
+import { LectureDetailResponse } from './dto/LectureDetailResponse';
 
 @injectable()
 export class LectureController {
@@ -48,5 +50,16 @@ export class LectureController {
     response
       .status(HTTP_STATUS.CREATED)
       .json(lectureBulkCreateResponse);
+  }
+
+  public async lectureDetail(
+    request: Request,
+    response: Response,
+  ): Promise<void> {
+    const lectureDetailRequest: LectureDetailRequest = LectureDetailRequest.from(request);
+    const lectureDetailResponse: LectureDetailResponse = await this._lectureService.lectureDetail(lectureDetailRequest);
+    response
+      .status(HTTP_STATUS.OK)
+      .json(lectureDetailResponse);
   }
 }

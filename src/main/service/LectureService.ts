@@ -14,15 +14,28 @@ import { LectureListItem, LectureListResponse } from '../controller/dto/LectureL
 import { LectureStudentCountRepository } from '../repository/LectureStudentCountRepository';
 import { LectureBulkCreateRequest } from '../controller/dto/LectureBulkCreateRequest';
 import { LectureBulkCreateResponse, LectureBulkCreateResponseItem } from '../controller/dto/LectureBulkCreateResponse';
+import { LectureDetailRequest } from '../controller/dto/LectureDetailRequest';
+import { LectureDetailResponse, LectureDetailResponseStudentItem } from '../controller/dto/LectureDetailResponse';
+import { StudentRepository } from '../repository/StudentRepository';
+import { Enrollment } from '../domain/Enrollment';
+import { EnrollmentRepository } from '../repository/EnrollmentRepository';
+import { Student } from '../domain/Student';
 
 
 @injectable()
 export class LectureService {
 
   constructor(
-    @inject(BindingTypes.LectureRepository) private readonly _lectureRepository: LectureRepository,
-    @inject(BindingTypes.LectureStudentCountRepository) private readonly _lectureStudentCountRepository: LectureStudentCountRepository,
-    @inject(BindingTypes.InstructorRepository) private readonly _instructorRepository: InstructorRepository,
+    @inject(BindingTypes.LectureRepository)
+    private readonly _lectureRepository: LectureRepository,
+    @inject(BindingTypes.LectureStudentCountRepository)
+    private readonly _lectureStudentCountRepository: LectureStudentCountRepository,
+    @inject(BindingTypes.InstructorRepository)
+    private readonly _instructorRepository: InstructorRepository,
+    @inject(BindingTypes.EnrollmentRepository)
+    private readonly _enrollmentRepository: EnrollmentRepository,
+    @inject(BindingTypes.StudentRepository)
+    private readonly _studentRepository: StudentRepository,
   ) {}
 
   @transactional()
@@ -77,9 +90,37 @@ export class LectureService {
   ): Promise<LectureBulkCreateResponse> {
     const requests: Array<LectureCreateRequest> = lectureBulkCreateRequest.items;
     const responseItems: Array<LectureBulkCreateResponseItem> = await Promise.all(
-      requests.map((request: LectureCreateRequest) => this._processSingleLectureCreateRequest(request, connection!))
+      requests.map((request: LectureCreateRequest) => this._processSingleLectureCreateRequest(request, connection!)),
     );
     return LectureBulkCreateResponse.from(responseItems);
+  }
+
+  @transactional()
+  public async lectureDetail(
+    { lectureId }: LectureDetailRequest,
+    connection?: PoolConnection,
+  ): Promise<LectureDetailResponse> {
+    const lecture: Lecture | null = await this._lectureRepository.findById(lectureId, connection!);
+    if (!lecture) {
+      throw new NotFoundException(`존재하지 않는 강의 ID(${lectureId}) 입니다`);
+    }
+
+    const [studentCount, enrollments]: [number, Array<Enrollment>] = await Promise.all([
+      this._lectureStudentCountRepository.getStudentCount(lectureId, connection!),
+      this._enrollmentRepository.findAllByLectureId(lectureId, connection!),
+    ]);
+
+    const studentItems: Array<Student | null> = await Promise.all(
+      enrollments.map((enrollment: Enrollment) =>
+        this._studentRepository.findById(enrollment.studentId, connection!)
+      )
+    );
+
+    const lectureStudents: Array<LectureDetailResponseStudentItem> = enrollments.map((enrollment, index) =>
+      LectureDetailResponseStudentItem.of(enrollment, studentItems[index])
+    );
+
+    return LectureDetailResponse.of(lecture, studentCount, lectureStudents);
   }
 
   private async _processSingleLectureCreateRequest(
