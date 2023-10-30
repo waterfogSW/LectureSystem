@@ -45,7 +45,8 @@ CREATE TABLE lecture_student_counts -- 강의 등록 수강생수
 (
     id         BIGINT(20) NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT '아이디',
     lecture_id BIGINT(20) NOT NULL COMMENT '강의 아이디',
-    count      INT        NOT NULL COMMENT '수강생수'
+    count      INT        NOT NULL COMMENT '수강생수',
+    is_deleted TINYINT(1) NOT NULL DEFAULT FALSE COMMENT '삭제 여부'
 );
 
 -- 뷰
@@ -67,6 +68,11 @@ WHERE is_deleted = FALSE;
 CREATE VIEW active_enrollments AS
 SELECT *
 FROM enrollments
+WHERE is_deleted = FALSE;
+
+CREATE VIEW active_lecture_student_counts AS
+SELECT *
+FROM lecture_student_counts
 WHERE is_deleted = FALSE;
 
 -- 인덱스
