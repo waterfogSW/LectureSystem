@@ -43,51 +43,62 @@ export class EnrollmentService {
   ): Promise<EnrollmentCreateResponse> {
     const { lectureIds, studentId }: EnrollmentCreateRequest = enrollmentCreateRequest;
 
+    await Promise.all([
+      this._ensureNoDuplicateLectureIds(lectureIds),
+      this._ensureStudentExists(studentId, connection!),
+      this._ensureAllLecturesExist(lectureIds, connection!),
+      this._ensureNoEnrollmentExists(lectureIds, studentId, connection!)
+    ]);
+
+    const newEnrollments: Array<Enrollment> = lectureIds.map((lectureId: Id) => Enrollment.create(lectureId!, studentId));
+    const createdEnrollments: Array<Enrollment> = await Promise.all(newEnrollments.map((enrollment: Enrollment) => this._enrollmentRepository.save(enrollment, connection!)),);
+
+    return EnrollmentCreateResponse.from(createdEnrollments);
+  }
+
+  private async _ensureNoDuplicateLectureIds(lectureIds: Array<Id>): Promise<void> {
     const set: Set<Id> = new Set(lectureIds);
     if (set.size !== lectureIds.length) {
       throw new IllegalArgumentException('중복된 강의가 포함되어 있습니다.');
     }
+  }
 
-    const [student, lectures]: [Student | null, Array<Lecture | null>] = await Promise.all([
-        this._studentRepository.findById(studentId, connection!),
-        Promise.all(lectureIds.map((lectureId: number) => this._lectureRepository.findById(lectureId, connection!))),
-      ],
-    );
-
-    if (!student) {
+  private async _ensureStudentExists(
+    studentId: number,
+    connection: PoolConnection,
+  ): Promise<void> {
+    const student: Student | null = await this._studentRepository.findById(studentId, connection);
+    if (student === null) {
       throw new NotFoundException(`존재하지 않는 학생(id=${ studentId })입니다`);
     }
+  }
 
-    const foundLectureIds: Array<Id> = lectures
-      .filter((lecture: Lecture | null): lecture is Lecture => lecture !== null)
-      .map((lecture: Lecture) => lecture.id);
-
-    const notFoundLectureIds: Array<Id> = lectureIds.filter((lectureId: Id) => !foundLectureIds.includes(lectureId));
-
+  private async _ensureAllLecturesExist(
+    lectureIds: Array<Id>,
+    connection: PoolConnection,
+  ): Promise<void> {
+    const lectures: Array<Lecture | null> = await Promise.all(
+      lectureIds.map((lectureId: Id) => this._lectureRepository.findById(lectureId!, connection)),
+    );
+    const notFoundLectureIds: Array<Id> = lectures
+      .filter((lecture: Lecture | null): lecture is null => lecture === null)
+      .map((lecture: Lecture | null) => lecture!.id);
     if (notFoundLectureIds.length > 0) {
       throw new NotFoundException(`존재하지 않는 강의(id=${ notFoundLectureIds.join(',') })가 포함되어 있습니다.`);
     }
-    const foundEnrollments: Array<Enrollment | null> = await Promise.all(
-      foundLectureIds
-        .map((lectureId: Id) => this._enrollmentRepository.findByLectureIdAndStudentId(lectureId!, studentId, connection!))
+  }
+
+  private async _ensureNoEnrollmentExists(
+    lectureIds: Array<number>,
+    studentId: number,
+    connection: PoolConnection,
+  ): Promise<void> {
+    const enrollments: Array<Enrollment | null> = await Promise.all(
+      lectureIds.map((lectureId: Id) => this._enrollmentRepository.findByLectureIdAndStudentId(lectureId!, studentId, connection)),
     );
-
-    const foundEnrollmentIds: Array<Id> = foundEnrollments
-      .filter((enrollment: Enrollment | null): enrollment is Enrollment => enrollment !== null)
-      .map((enrollment: Enrollment) => enrollment.lectureId);
-
-    if (foundEnrollmentIds.length > 0) {
-      throw new IllegalArgumentException(`이미 수강중인 강의(id=${ foundEnrollmentIds.join(',') })가 포함되어 있습니다.`);
+    const foundEnrollments: Array<Enrollment> = enrollments.filter((enrollment: Enrollment | null): enrollment is Enrollment => enrollment !== null);
+    if (foundEnrollments.length > 0) {
+      throw new IllegalArgumentException(`이미 수강중인 강의(id=${ foundEnrollments.map((enrollment: Enrollment) => enrollment.lectureId).join(',') })가 포함되어 있습니다.`);
     }
-
-    const newEnrollments: Array<Enrollment> = await Promise.all(
-      foundLectureIds.map((lectureId: Id) => Enrollment.create(lectureId!, studentId)),
-    );
-
-    const createdEnrollments: Array<Enrollment> = await Promise.all(
-      newEnrollments.map((enrollment: Enrollment) => this._enrollmentRepository.save(enrollment, connection!)),
-    );
-
-    return EnrollmentCreateResponse.from(createdEnrollments);
   }
 }
