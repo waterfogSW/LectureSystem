@@ -20,6 +20,7 @@ export const configureRoutes = (app: Application): void => {
   app.get('/api/lectures/:id', withAsync(lectureController.detailLecture.bind(lectureController)));
   app.patch('/api/lectures/:id', withAsync(lectureController.updateLecture.bind(lectureController)));
   app.delete('/api/lectures/:id', withAsync(lectureController.deleteLecture.bind(lectureController)));
+  app.patch('/api/lectures/:id/publish', withAsync(lectureController.publishLecture.bind(lectureController)));
 };
 
 type asyncRouterFunction = (

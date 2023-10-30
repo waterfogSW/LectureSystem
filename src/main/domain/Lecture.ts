@@ -75,6 +75,20 @@ export class Lecture extends BaseEntity {
     );
   }
 
+  public publish(): Lecture {
+    return new Lecture(
+      this.id,
+      this.title,
+      this.introduction,
+      this.instructorId,
+      this.category,
+      this.price,
+      this.createdAt,
+      new Date(),
+      true,
+    );
+  }
+
   public get title(): string {
     return this._title;
   }

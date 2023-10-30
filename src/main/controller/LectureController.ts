@@ -13,6 +13,7 @@ import { LectureDetailRequest } from './dto/LectureDetailRequest';
 import { LectureDetailResponse } from './dto/LectureDetailResponse';
 import { LectureUpdateRequest } from './dto/LectureUpdateRequest';
 import { LectureDeleteRequest } from './dto/LectureDeleteRequest';
+import { LecturePublishRequest } from './dto/LecturePublishRequest';
 
 @injectable()
 export class LectureController {
@@ -86,5 +87,17 @@ export class LectureController {
       .status(HTTP_STATUS.OK)
       .send();
   }
+
+  public async publishLecture(
+    request: Request,
+    response: Response,
+  ): Promise<void> {
+    const lecturePublishRequest: LecturePublishRequest = LecturePublishRequest.from(request);
+    await this._lectureService.publishLecture(lecturePublishRequest);
+    response
+      .status(HTTP_STATUS.OK)
+      .send();
+  }
+
 
 }

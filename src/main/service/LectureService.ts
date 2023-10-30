@@ -22,6 +22,8 @@ import { EnrollmentRepository } from '../repository/EnrollmentRepository';
 import { Student } from '../domain/Student';
 import { LectureUpdateRequest } from '../controller/dto/LectureUpdateRequest';
 import { LectureDeleteRequest } from '../controller/dto/LectureDeleteRequest';
+import { LecturePublishRequest } from '../controller/dto/LecturePublishRequest';
+import { IllegalArgumentException } from '../common/exception/IllegalArgumentException';
 
 
 @injectable()
@@ -155,6 +157,25 @@ export class LectureService {
       this._lectureRepository.delete(lectureId, connection!),
       this._lectureStudentCountRepository.delete(lectureId, connection!),
     ]);
+  }
+
+  @transactional()
+  public async publishLecture(
+    lecturePublishRequest: LecturePublishRequest,
+    connection?: PoolConnection,
+  ): Promise<void> {
+    const { lectureId }: LecturePublishRequest = lecturePublishRequest;
+    const lecture: Lecture | null = await this._lectureRepository.findById(lectureId, connection!);
+    if (!lecture) {
+      throw new NotFoundException(`존재하지 않는 강의 ID(${lectureId}) 입니다`);
+    }
+
+    if(lecture.is_published) {
+      throw new IllegalArgumentException(`이미 공개된 강의입니다.`);
+    }
+
+    const publishedLecture: Lecture = lecture.publish();
+    await this._lectureRepository.update(publishedLecture, connection!);
   }
 
   private async _processSingleLectureCreateRequest(
