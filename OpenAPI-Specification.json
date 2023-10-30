@@ -251,7 +251,7 @@
           }
         }
       },
-      "put": {
+      "patch": {
         "summary": "강의 수정",
         "parameters": [
           {
@@ -788,22 +788,20 @@
         "properties": {
           "title": {
             "type": "string",
-            "description": "강의명"
+            "description": "강의명",
+            "required": false
           },
           "introduction": {
             "type": "string",
-            "description": "강의 소개"
+            "description": "강의 소개",
+            "required": false
           },
           "price": {
             "type": "integer",
-            "description": "가격"
+            "description": "가격",
+            "required": false
           }
-        },
-        "required": [
-          "title",
-          "introduction",
-          "price"
-        ]
+        }
       },
       "StudentCreateRequest": {
         "description": "수강생 (회원) 가입 요청",
