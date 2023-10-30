@@ -14,8 +14,8 @@ export class Enrollment extends BaseEntity {
     id: Id,
     lectureId: number,
     studentId: number,
-    createdAt: Date,
-    updatedAt: Date,
+    createdAt: Date = new Date(),
+    updatedAt: Date = new Date(),
   ) {
     super(id, createdAt, updatedAt);
     this._lectureId = lectureId;
@@ -29,5 +29,12 @@ export class Enrollment extends BaseEntity {
 
   public get studentId(): number {
     return this._studentId;
+  }
+
+  public static create(
+    lectureId: number,
+    studentId: number,
+  ): Enrollment {
+    return new Enrollment(undefined, lectureId, studentId);
   }
 }
