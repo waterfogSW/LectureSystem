@@ -37,6 +37,7 @@ export class LectureRepository {
       lecture.price,
       new Date(lecture.created_at),
       new Date(lecture.updated_at),
+      Boolean(lecture.is_published),
     );
   }
 
