@@ -1,7 +1,8 @@
 import { IsEnum, IsNumber, IsString } from 'class-validator';
-import { LectureCategory, LectureCategoryNames } from '../../domain/LectureType';
+import { LectureCategory } from '../../domain/LectureType';
 import { validateClass } from '../../common/util/ClassValidateUtil';
 import { Request } from 'express';
+import { parseEnum } from '../../common/util/EnumUtil';
 
 export class LectureCreateRequest {
 
@@ -15,7 +16,7 @@ export class LectureCreateRequest {
   private readonly _instructorId: number;
 
   @IsEnum(LectureCategory, { message: '유효하지 않은 카테고리 입니다' })
-  private readonly _category: LectureCategoryNames;
+  private readonly _category: LectureCategory;
 
   @IsNumber()
   private readonly _price: number;
@@ -24,13 +25,13 @@ export class LectureCreateRequest {
     title: string,
     introduction: string,
     instructorId: number,
-    category: string,
+    category: LectureCategory,
     price: number,
   ) {
     this._title = title;
     this._introduction = introduction;
     this._instructorId = instructorId;
-    this._category = category.toUpperCase() as LectureCategoryNames;
+    this._category = category;
     this._price = price;
     validateClass(this);
   }
@@ -47,7 +48,7 @@ export class LectureCreateRequest {
     return this._instructorId;
   }
 
-  public get category(): LectureCategoryNames {
+  public get category(): LectureCategory {
     return this._category;
   }
 
@@ -57,6 +58,13 @@ export class LectureCreateRequest {
 
   public static from(request: Request): LectureCreateRequest {
     const { title, introduction, instructorId, category, price } = request.body;
-    return new LectureCreateRequest(title, introduction, instructorId, category, price);
+
+    return new LectureCreateRequest(
+      title,
+      introduction,
+      instructorId,
+      parseEnum(category.toUpperCase(), LectureCategory),
+      price
+    );
   }
 }

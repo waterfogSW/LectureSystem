@@ -4,7 +4,7 @@ import { StudentService } from '../../main/service/StudentService';
 import { Student } from '../../main/domain/Student';
 import { MockFactory } from '../util/MockFactory';
 import { Request, Response } from 'express';
-import { HTTP_STATUS } from '../../main/common/constant/HttpStatus';
+import { HttpStatus } from '../../main/common/constant/HttpStatus';
 import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { TestStudentDataFactory } from '../util/TestStudentDataFactory';
 import { TestStudentFactory } from '../util/TestStudentFactory';
@@ -47,7 +47,7 @@ describe('StudentController', () => {
       await studentController.createStudent(mockRequest as Request, mockResponse as Response);
 
       // then
-      expect(mockResponse.status).toBeCalledWith(HTTP_STATUS.CREATED);
+      expect(mockResponse.status).toBeCalledWith(HttpStatus.CREATED);
       expect(mockResponse.json).toBeCalledWith(studentCreateResponse);
     });
   });
@@ -62,7 +62,7 @@ describe('StudentController', () => {
       await studentController.deleteStudent(mockRequest as Request, mockResponse as Response);
 
       // then
-      expect(mockResponse.status).toBeCalledWith(HTTP_STATUS.OK);
+      expect(mockResponse.status).toBeCalledWith(HttpStatus.OK);
     });
   });
 });

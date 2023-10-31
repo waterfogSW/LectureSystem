@@ -1,13 +1,7 @@
 import { injectable } from 'inversify';
 import { Lecture } from '../domain/Lecture';
 import { FieldPacket, PoolConnection, ResultSetHeader, RowDataPacket } from 'mysql2/promise';
-import {
-  LectureCategoryNames,
-  LectureOrderType,
-  LectureOrderTypeNames,
-  LectureSearchType,
-  LectureSearchTypeNames,
-} from '../domain/LectureType';
+import { LectureCategory, LectureOrderType, LectureSearchType } from '../domain/LectureType';
 import { LectureListItem } from '../controller/dto/LectureListResponse';
 
 @injectable()
@@ -85,8 +79,8 @@ export class LectureRepository {
 
   public async count(
     connection: PoolConnection,
-    category?: LectureCategoryNames,
-    searchType?: LectureSearchTypeNames,
+    category?: LectureCategory,
+    searchType?: LectureSearchType,
     searchKeyword?: string,
   ): Promise<number> {
     const queryParams: (string | number)[] = [];
@@ -114,9 +108,9 @@ export class LectureRepository {
     connection: PoolConnection,
     page: number,
     pageSize: number,
-    order: LectureOrderTypeNames,
-    category?: LectureCategoryNames,
-    searchType?: LectureSearchTypeNames,
+    order: LectureOrderType,
+    category?: LectureCategory,
+    searchType?: LectureSearchType,
     searchKeyword?: string,
   ): Promise<Array<LectureListItem>> {
     const queryParams: (string | number)[] = [];
@@ -135,6 +129,8 @@ export class LectureRepository {
             ${ this._buildPaginationClause(queryParams, page, pageSize) }
     `;
 
+    console.log(query);
+
     const [rows]: [RowDataPacket[], FieldPacket[]] = await connection.execute(query, queryParams);
     return rows.map((row: RowDataPacket) => {
       return LectureListItem.of(
@@ -151,8 +147,8 @@ export class LectureRepository {
 
   private _buildWhereClause(
     queryParams: (string | number)[],
-    category?: LectureCategoryNames,
-    searchType?: LectureSearchTypeNames,
+    category?: LectureCategory,
+    searchType?: LectureSearchType,
     searchKeyword?: string,
   ): string {
     const conditions: string[] = [];
@@ -172,7 +168,7 @@ export class LectureRepository {
 
   private _buildWhereCategoryClause(
     queryParams: (string | number)[],
-    category?: LectureCategoryNames,
+    category?: LectureCategory,
   ): string {
     if (category) {
       queryParams.push(category);
@@ -183,7 +179,7 @@ export class LectureRepository {
 
   private _buildWhereSearchClause(
     queryParams: (string | number)[],
-    searchType?: LectureSearchTypeNames,
+    searchType?: LectureSearchType,
     searchKeyword?: string,
   ): string {
     if (searchType && searchKeyword) {
@@ -202,7 +198,7 @@ export class LectureRepository {
     return '';
   }
 
-  private _buildOrderClause(order: LectureOrderTypeNames): string {
+  private _buildOrderClause(order: LectureOrderType): string {
     if (order === LectureOrderType.ENROLLMENTS) {
       return 'ORDER BY student_count DESC';
     }

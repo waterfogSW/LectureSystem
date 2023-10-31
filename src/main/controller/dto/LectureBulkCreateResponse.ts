@@ -1,5 +1,5 @@
 import { Id } from '../../common/entity/BaseEntity';
-import { HTTP_STATUS, HttpStatus } from '../../common/constant/HttpStatus';
+import { HttpStatus } from '../../common/constant/HttpStatus';
 import { NotFoundException } from '../../common/exception/NotFoundException';
 
 export class LectureBulkCreateResponse {
@@ -38,14 +38,14 @@ export class LectureBulkCreateResponseItem {
     id: Id,
     title: string
   ): LectureBulkCreateResponseItem {
-    return new LectureBulkCreateResponseItem(id, title, HTTP_STATUS.CREATED, '');
+    return new LectureBulkCreateResponseItem(id, title, HttpStatus.CREATED, '');
   }
 
   public static createWithFail(
     title: string,
     error: Error
   ): LectureBulkCreateResponseItem {
-    const status: HttpStatus = error instanceof NotFoundException ? HTTP_STATUS.BAD_REQUEST : HTTP_STATUS.INTERNAL_SERVER_ERROR;
+    const status: HttpStatus = error instanceof NotFoundException ? HttpStatus.BAD_REQUEST : HttpStatus.INTERNAL_SERVER_ERROR;
     return new LectureBulkCreateResponseItem(undefined, title, status, error.message);
   }
 }

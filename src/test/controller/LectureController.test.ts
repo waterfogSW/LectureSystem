@@ -3,7 +3,7 @@ import { LectureController } from '../../main/controller/LectureController';
 import { LectureService } from '../../main/service/LectureService';
 import { MockFactory } from '../util/MockFactory';
 import { Request, Response } from 'express';
-import { HTTP_STATUS } from '../../main/common/constant/HttpStatus';
+import { HttpStatus } from '../../main/common/constant/HttpStatus';
 import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { IllegalArgumentException } from '../../main/common/exception/IllegalArgumentException';
 import { TestLectureDataFactory } from '../util/TestLectureDataFactory';
@@ -39,7 +39,7 @@ describe('LectureController', () => {
       await sut.createLecture(mockRequest, mockResponse);
 
       // then
-      expect(mockResponse.status).toBeCalledWith(HTTP_STATUS.CREATED);
+      expect(mockResponse.status).toBeCalledWith(HttpStatus.CREATED);
       expect(mockResponse.json).toBeCalledWith(response);
     });
 

@@ -1,6 +1,6 @@
 import { type NextFunction, type Request, type Response } from 'express';
 import { NotFoundException } from '../exception/NotFoundException';
-import { HTTP_STATUS, type HttpStatus } from '../constant/HttpStatus';
+import { HttpStatus } from '../constant/HttpStatus';
 import { IllegalArgumentException } from '../exception/IllegalArgumentException';
 
 interface ErrorStatusMapping {
@@ -9,9 +9,9 @@ interface ErrorStatusMapping {
 }
 
 const errorStatusMappings: ErrorStatusMapping[] = [
-  { type: NotFoundException, status: HTTP_STATUS.NOT_FOUND },
-  { type: IllegalArgumentException, status: HTTP_STATUS.BAD_REQUEST },
-  { type: Error, status: HTTP_STATUS.INTERNAL_SERVER_ERROR },
+  { type: NotFoundException, status: HttpStatus.NOT_FOUND },
+  { type: IllegalArgumentException, status: HttpStatus.BAD_REQUEST },
+  { type: Error, status: HttpStatus.INTERNAL_SERVER_ERROR },
 ];
 
 export function ExceptionHandler(
@@ -32,6 +32,6 @@ export function ExceptionHandler(
   }
 
   response
-    .status(HTTP_STATUS.INTERNAL_SERVER_ERROR)
+    .status(HttpStatus.INTERNAL_SERVER_ERROR)
     .json({ message: '서버 오류' });
 }

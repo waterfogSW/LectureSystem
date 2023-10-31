@@ -1,13 +1,14 @@
-import { LectureCategoryNames } from '../../domain/LectureType';
+
 import { Student } from '../../domain/Student';
 import { Enrollment } from '../../domain/Enrollment';
 import { Lecture } from '../../domain/Lecture';
+import { LectureCategory } from '../../domain/LectureType';
 
 export class LectureDetailResponse {
 
   private readonly title: string;
   private readonly introduction: string;
-  private readonly category: LectureCategoryNames;
+  private readonly category: LectureCategory;
   private readonly price: number;
   private readonly createdAt: Date;
   private readonly updatedAt: Date;
@@ -17,7 +18,7 @@ export class LectureDetailResponse {
   constructor(
     title: string,
     introduction: string,
-    category: LectureCategoryNames,
+    category: LectureCategory,
     price: number,
     createdAt: Date,
     updatedAt: Date,

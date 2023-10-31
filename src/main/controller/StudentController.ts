@@ -1,7 +1,7 @@
 import { inject, injectable } from 'inversify';
 import { StudentService } from '../service/StudentService';
 import { type Request, type Response } from 'express';
-import { HTTP_STATUS } from '../common/constant/HttpStatus';
+import { HttpStatus } from '../common/constant/HttpStatus';
 import { StudentCreateResponse } from './dto/StudentCreateResponse';
 import { BindingTypes } from '../common/constant/BindingTypes';
 import { StudentCreateRequest } from './dto/StudentCreateRequest';
@@ -19,7 +19,7 @@ export class StudentController {
     const studentCreateRequest: StudentCreateRequest = StudentCreateRequest.from(request);
     const studentCreateResponse: StudentCreateResponse = await this._studentService.createStudent(studentCreateRequest);
     response
-      .status(HTTP_STATUS.CREATED)
+      .status(HttpStatus.CREATED)
       .json(studentCreateResponse);
   }
 
@@ -31,7 +31,7 @@ export class StudentController {
     const parsedId: number = parseInt(id, 10);
     await this._studentService.deleteStudent(parsedId);
     response
-      .status(HTTP_STATUS.OK)
+      .status(HttpStatus.OK)
       .send();
   }
 }

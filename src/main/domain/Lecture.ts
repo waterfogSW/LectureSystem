@@ -9,7 +9,7 @@ import {
   validateSync,
   ValidationError,
 } from 'class-validator';
-import { LectureCategory, LectureCategoryNames } from './LectureType';
+import { LectureCategory } from './LectureType';
 import { IllegalArgumentException } from '../common/exception/IllegalArgumentException';
 
 export class Lecture extends BaseEntity {
@@ -27,7 +27,7 @@ export class Lecture extends BaseEntity {
   private readonly _instructorId: number;
 
   @IsEnum(LectureCategory, { message: '존재하지 않는 강의 카테고리입니다.' })
-  private readonly _category: LectureCategoryNames;
+  private readonly _category: LectureCategory;
 
   @IsNumber({ allowNaN: false, allowInfinity: false }, { message: '강의 가격은 숫자여야 합니다.' })
   @IsPositive({ message: '강의 가격은 0보다 커야 합니다.' })
@@ -52,7 +52,7 @@ export class Lecture extends BaseEntity {
     this._title = title;
     this._introduction = introduction;
     this._price = price;
-    this._category = category.toUpperCase() as LectureCategoryNames;
+    this._category = category.toUpperCase() as LectureCategory;
     this._is_published = is_published || false;
     this.validate();
   }
@@ -101,7 +101,7 @@ export class Lecture extends BaseEntity {
     return this._instructorId;
   }
 
-  public get category(): LectureCategoryNames {
+  public get category(): LectureCategory {
     return this._category;
   }
 

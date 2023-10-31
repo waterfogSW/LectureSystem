@@ -1,4 +1,5 @@
-import { LectureCategoryNames } from '../../domain/LectureType';
+import { LectureCategory } from '../../domain/LectureType';
+import { parseEnum } from '../../common/util/EnumUtil';
 
 export class LectureListResponse {
 
@@ -37,7 +38,7 @@ export class LectureListResponse {
 export class LectureListItem {
 
   private readonly id: number;
-  private readonly category: LectureCategoryNames;
+  private readonly category: LectureCategory;
   private readonly title: string;
   private readonly instructor: string;
   private readonly price: number;
@@ -46,7 +47,7 @@ export class LectureListItem {
 
   constructor(
     id: number,
-    category: LectureCategoryNames,
+    category: LectureCategory,
     title: string,
     instructor: string,
     price: number,
@@ -73,7 +74,7 @@ export class LectureListItem {
   ): LectureListItem {
     return new LectureListItem(
       id,
-      category as LectureCategoryNames,
+      parseEnum(category.toUpperCase(), LectureCategory),
       title,
       instructor,
       price,

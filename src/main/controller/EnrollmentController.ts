@@ -2,7 +2,7 @@ import { inject, injectable } from 'inversify';
 import { EnrollmentService } from '../service/EnrollmentService';
 import { Request, Response } from 'express';
 import { EnrollmentCreateRequest } from './dto/EnrollmentCreateRequest';
-import { HTTP_STATUS } from '../common/constant/HttpStatus';
+import { HttpStatus } from '../common/constant/HttpStatus';
 import { BindingTypes } from '../common/constant/BindingTypes';
 import { EnrollmentCreateResponse } from './dto/EnrollmentCreateResponse';
 
@@ -26,7 +26,7 @@ export class EnrollmentController {
     const enrollmentCreateResponse: EnrollmentCreateResponse = await this._enrollmentService.createEnrollment(enrollmentCreateRequest);
 
     response
-      .status(HTTP_STATUS.OK)
+      .status(HttpStatus.OK)
       .json(enrollmentCreateResponse);
   }
 }
