@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { IsDate, IsInt, IsOptional, IsPositive } from 'class-validator';
 
 export type Id = number | undefined;
