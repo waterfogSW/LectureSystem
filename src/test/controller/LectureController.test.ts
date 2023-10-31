@@ -11,7 +11,6 @@ import { MockRequestFactory } from '../util/MockRequestFactory';
 import { MockResponseFactory } from '../util/MockResponseFactory';
 import { LectureCreateResponse } from '../../main/controller/dto/LectureCreateResponse';
 import { LectureCategory, LectureOrderType, LectureSearchType } from '../../main/domain/LectureEnums';
-import { Lecture } from '../../main/domain/Lecture';
 
 describe('LectureController', () => {
 

@@ -1,7 +1,6 @@
 import { describe, expect, it } from '@jest/globals';
 import { Lecture } from '../../main/domain/Lecture';
 import { IllegalArgumentException } from '../../main/common/exception/IllegalArgumentException';
-import { LectureCategory } from '../../main/domain/LectureEnums';
 import { TestLectureDataFactory } from '../util/TestLectureDataFactory';
 
 
