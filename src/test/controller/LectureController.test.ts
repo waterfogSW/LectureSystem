@@ -1,62 +1,55 @@
 import 'reflect-metadata';
 import { LectureController } from '../../main/controller/LectureController';
 import { LectureService } from '../../main/service/LectureService';
-import { Lecture } from '../../main/domain/Lecture';
 import { MockFactory } from '../util/MockFactory';
 import { Request, Response } from 'express';
 import { HTTP_STATUS } from '../../main/common/constant/HttpStatus';
-import { beforeEach, describe, expect, it, jest } from '@jest/globals';
+import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { IllegalArgumentException } from '../../main/common/exception/IllegalArgumentException';
 import { TestLectureDataFactory } from '../util/TestLectureDataFactory';
-import { TestLectureFactory } from '../util/TestLectureFactory';
+import { MockRequestFactory } from '../util/MockRequestFactory';
+import { MockResponseFactory } from '../util/MockResponseFactory';
 import { LectureCreateResponse } from '../../main/controller/dto/LectureCreateResponse';
 
 describe('LectureController', () => {
 
-  let lectureService: jest.Mocked<LectureService>;
-  let lectureController: LectureController;
-
-  let mockRequest: Partial<Request>;
-  let mockResponse: Partial<Response>;
-  let responseObject: any;
+  let mockLectureService: jest.Mocked<LectureService>;
+  let sut: LectureController;
 
   beforeEach(() => {
-    lectureService = MockFactory.create<LectureService>();
-    lectureController = new LectureController(lectureService);
+    mockLectureService = MockFactory.create<LectureService>();
+    sut = new LectureController(mockLectureService);
+  });
 
-    responseObject = {
-      status: jest.fn().mockImplementation(() => responseObject),
-      json: jest.fn().mockImplementation(() => responseObject),
-    };
-    mockRequest = {};
-    mockResponse = responseObject;
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   describe('createLecture', () => {
 
-    it('강의 생성 요청을 처리한다.', async () => {
+    it('[Good] 새로운 강의를 생성한다.', async () => {
       // given
-      mockRequest.body = TestLectureDataFactory.createData();
-      const savedLecture: Lecture = TestLectureFactory.createWithId(1);
-      const lectureCreateResponse: LectureCreateResponse = LectureCreateResponse.from(savedLecture);
-      lectureService.createLecture.mockResolvedValue(lectureCreateResponse);
+      const data = TestLectureDataFactory.createData();
+      const [mockRequest, mockResponse]: [Request, Response] = [MockRequestFactory.createWithBody(data), MockResponseFactory.create()];
+
+      const response : LectureCreateResponse = new LectureCreateResponse(1, data.title);
+      mockLectureService.createLecture.mockResolvedValue(response);
 
       // when
-      await lectureController.createLecture(mockRequest as Request, mockResponse as Response);
+      await sut.createLecture(mockRequest, mockResponse);
 
       // then
       expect(mockResponse.status).toBeCalledWith(HTTP_STATUS.CREATED);
-      expect(mockResponse.json).toBeCalledWith(lectureCreateResponse);
+      expect(mockResponse.json).toBeCalledWith(response);
     });
 
-    it('강의 생성 요청 시 유효하지 않은 카테고리가 들어오면 예외를 던진다', async () => {
+    it('[Bad] 유효하지 않은 카테고리가 들어오면 예외를 던진다', async () => {
       // given
-      mockRequest.body = TestLectureDataFactory.createDataWithCategory('INVALID_CATEGORY');
+      const data = TestLectureDataFactory.createDataWithCategory('INVALID_CATEGORY');
+      const [mockRequest, mockResponse]: [Request, Response] = [MockRequestFactory.createWithBody(data), MockResponseFactory.create()];
 
       // when, then
-      await expect(lectureController.createLecture(mockRequest as Request, mockResponse as Response))
-        .rejects
-        .toThrowError(IllegalArgumentException);
+      await expect(sut.createLecture(mockRequest, mockResponse)).rejects.toThrowError(IllegalArgumentException);
     });
   });
 });

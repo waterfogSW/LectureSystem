@@ -1,5 +1,3 @@
-import { Lecture } from '../../main/domain/Lecture';
-
 export class TestLectureDataFactory {
 
   static readonly TEST_LECTURE_DATA = {
@@ -8,7 +6,7 @@ export class TestLectureDataFactory {
     instructorId: 1,
     category: 'WEB',
     price: 100,
-  }
+  };
 
   public static createData(): any {
     return {
@@ -17,7 +15,7 @@ export class TestLectureDataFactory {
       instructorId: this.TEST_LECTURE_DATA.instructorId,
       category: this.TEST_LECTURE_DATA.category,
       price: this.TEST_LECTURE_DATA.price,
-    }
+    };
   }
 
   public static createDataWithCategory(category: string): any {
@@ -27,7 +25,7 @@ export class TestLectureDataFactory {
       instructorId: this.TEST_LECTURE_DATA.instructorId,
       category: category,
       price: this.TEST_LECTURE_DATA.price,
-    }
+    };
   }
 
 }
