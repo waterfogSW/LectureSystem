@@ -63,10 +63,10 @@ export class LectureService {
 
   @transactional()
   public async listLecture(
-    lectureListRequest: LectureListRequest,
+    request: LectureListRequest,
     connection?: PoolConnection,
   ): Promise<LectureListResponse> {
-    const { page, pageSize, order, category, searchType, searchKeyword }: LectureListRequest = lectureListRequest;
+    const { page, pageSize, order, category, searchType, searchKeyword }: LectureListRequest = request;
     const [lectureListItems, lectureCount]: [Array<LectureListItem>, number] = await Promise.all([
       this._lectureRepository.findByPage(
         connection!,
@@ -90,10 +90,10 @@ export class LectureService {
 
   @transactional()
   public async createLectureBulk(
-    lectureBulkCreateRequest: LectureBulkCreateRequest,
+    request: LectureBulkCreateRequest,
     connection?: PoolConnection,
   ): Promise<LectureBulkCreateResponse> {
-    const requests: Array<LectureCreateRequest> = lectureBulkCreateRequest.items;
+    const requests: Array<LectureCreateRequest> = request.items;
     const responseItems: Array<LectureBulkCreateResponseItem> = await Promise.all(
       requests.map((request: LectureCreateRequest) => this._processSingleLectureCreateRequest(request, connection!)),
     );
@@ -130,10 +130,10 @@ export class LectureService {
 
   @transactional()
   public async updateLecture(
-    lectureUpdateRequest: LectureUpdateRequest,
+    request: LectureUpdateRequest,
     connection?: PoolConnection,
   ): Promise<void> {
-    const { lectureId, title, introduction, price }: LectureUpdateRequest = lectureUpdateRequest;
+    const { lectureId, title, introduction, price }: LectureUpdateRequest = request;
     const lecture: Lecture | null = await this._lectureRepository.findById(lectureId, connection!);
     if (!lecture) {
       throw new NotFoundException(`존재하지 않는 강의 ID(${lectureId}) 입니다`);
@@ -153,10 +153,10 @@ export class LectureService {
 
   @transactional()
   public async deleteLecture(
-    lectureDeleteRequest: LectureDeleteRequest,
+    request: LectureDeleteRequest,
     connection?: PoolConnection,
   ): Promise<void> {
-    const { lectureId }: LectureDeleteRequest = lectureDeleteRequest;
+    const { lectureId }: LectureDeleteRequest = request;
     const lecture: Lecture | null = await this._lectureRepository.findById(lectureId, connection!);
     if (!lecture) {
       throw new NotFoundException(`존재하지 않는 강의 ID(${lectureId}) 입니다`);
@@ -170,10 +170,10 @@ export class LectureService {
 
   @transactional()
   public async publishLecture(
-    lecturePublishRequest: LecturePublishRequest,
+    request: LecturePublishRequest,
     connection?: PoolConnection,
   ): Promise<void> {
-    const { lectureId }: LecturePublishRequest = lecturePublishRequest;
+    const { lectureId }: LecturePublishRequest = request;
     const lecture: Lecture | null = await this._lectureRepository.findById(lectureId, connection!);
     if (!lecture) {
       throw new NotFoundException(`존재하지 않는 강의 ID(${lectureId}) 입니다`);
