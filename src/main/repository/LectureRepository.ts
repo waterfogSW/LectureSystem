@@ -1,7 +1,7 @@
 import { injectable } from 'inversify';
 import { Lecture } from '../domain/Lecture';
 import { FieldPacket, PoolConnection, ResultSetHeader, RowDataPacket } from 'mysql2/promise';
-import { LectureCategory, LectureOrderType, LectureSearchType } from '../domain/LectureType';
+import { LectureCategory, LectureOrderType, LectureSearchType } from '../domain/LectureEnums';
 import { LectureListItem } from '../controller/dto/LectureListResponse';
 
 @injectable()

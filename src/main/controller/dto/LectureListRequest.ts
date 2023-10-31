@@ -1,4 +1,4 @@
-import { LectureCategory, LectureOrderType, LectureSearchType } from '../../domain/LectureType';
+import { LectureCategory, LectureOrderType, LectureSearchType } from '../../domain/LectureEnums';
 import { Request } from 'express';
 import { IsEnum, IsOptional, IsPositive, IsString } from 'class-validator';
 import { validateClass } from '../../common/util/ClassValidateUtil';

@@ -1,4 +1,4 @@
-import { LectureCategory } from '../../domain/LectureType';
+import { LectureCategory } from '../../domain/LectureEnums';
 import { parseEnum } from '../../common/util/EnumUtil';
 
 export class LectureListResponse {

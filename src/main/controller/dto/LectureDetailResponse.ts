@@ -2,7 +2,7 @@
 import { Student } from '../../domain/Student';
 import { Enrollment } from '../../domain/Enrollment';
 import { Lecture } from '../../domain/Lecture';
-import { LectureCategory } from '../../domain/LectureType';
+import { LectureCategory } from '../../domain/LectureEnums';
 
 export class LectureDetailResponse {
 

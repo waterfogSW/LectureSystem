@@ -9,7 +9,7 @@ import {
   validateSync,
   ValidationError,
 } from 'class-validator';
-import { LectureCategory } from './LectureType';
+import { LectureCategory } from './LectureEnums';
 import { IllegalArgumentException } from '../common/exception/IllegalArgumentException';
 
 export class Lecture extends BaseEntity {
