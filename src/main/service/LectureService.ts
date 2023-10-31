@@ -53,6 +53,11 @@ export class LectureService {
       throw new NotFoundException(`존재하지 않는 강사 ID(${ instructorId }) 입니다`);
     }
 
+    const findTitleLecture: Lecture | null = await this._lectureRepository.findByTitle(title, connection!);
+    if (findTitleLecture !== null) {
+      throw new IllegalArgumentException(`이미 존재하는 강의 제목(${title}) 입니다`);
+    }
+
     const lecture: Lecture = Lecture.create(title, introduction, instructor.id!, category, price);
     const createdLecture: Lecture = await this._lectureRepository.save(lecture, connection!);
     await this._lectureStudentCountRepository.create(createdLecture.id!, connection!);
@@ -137,6 +142,14 @@ export class LectureService {
     if (!lecture) {
       throw new NotFoundException(`존재하지 않는 강의 ID(${lectureId}) 입니다`);
     }
+
+    if (title) {
+      const findTitleLecture: Lecture | null = await this._lectureRepository.findByTitle(title, connection!);
+      if (findTitleLecture !== null) {
+        throw new IllegalArgumentException(`이미 존재하는 강의 제목(${ title }) 입니다`);
+      }
+    }
+
 
     const updatedLecture: Lecture = lecture.update(title, introduction, price);
     await this._lectureRepository.update(updatedLecture, connection!);
