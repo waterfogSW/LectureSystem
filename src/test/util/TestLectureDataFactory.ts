@@ -30,15 +30,4 @@ export class TestLectureDataFactory {
     }
   }
 
-  public static createWithId(id: number | undefined): Lecture {
-    return new Lecture(
-      id,
-      'Test Lecture',
-      'This is a test lecture',
-      1,
-      'WEB',
-      100
-    );
-  }
-
 }
