@@ -7,4 +7,10 @@ export class MockRequestFactory {
       body: data
     } as Request;
   }
+
+  public static createWithQuery(data: any): Request {
+    return {
+      query: data
+    } as Request;
+  }
 }
