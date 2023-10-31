@@ -35,6 +35,32 @@ export class LectureRepository {
     );
   }
 
+  public async findByTitle(
+    title: string,
+    connection: PoolConnection,
+  ): Promise<Lecture | null> {
+    const selectQuery: string = 'SELECT * FROM active_lectures WHERE title = ?';
+    const [lectures]: [RowDataPacket[], FieldPacket[]] = await connection.execute<RowDataPacket[]>(
+      selectQuery,
+      [title],
+    );
+    if (lectures.length === 0) {
+      return null;
+    }
+    const lecture: RowDataPacket = lectures[0];
+    return new Lecture(
+      lecture.id,
+      lecture.title,
+      lecture.introduction,
+      lecture.instructor_id,
+      lecture.category,
+      lecture.price,
+      new Date(lecture.created_at),
+      new Date(lecture.updated_at),
+      Boolean(lecture.is_published),
+    );
+  }
+
   public async save(
     lecture: Lecture,
     connection: PoolConnection,
