@@ -47,11 +47,11 @@ export class EnrollmentService {
       this._ensureNoDuplicateLectureIds(lectureIds),
       this._ensureStudentExists(studentId, connection!),
       this._ensureAllLecturesExist(lectureIds, connection!),
-      this._ensureNoEnrollmentExists(lectureIds, studentId, connection!)
+      this._ensureNoEnrollmentExists(lectureIds, studentId, connection!),
     ]);
 
     const newEnrollments: Array<Enrollment> = lectureIds.map((lectureId: Id) => Enrollment.create(lectureId!, studentId));
-    const createdEnrollments: Array<Enrollment> = await Promise.all(newEnrollments.map((enrollment: Enrollment) => this._enrollmentRepository.save(enrollment, connection!)),);
+    const createdEnrollments: Array<Enrollment> = await Promise.all(newEnrollments.map((enrollment: Enrollment) => this._enrollmentRepository.save(enrollment, connection!)));
 
     return EnrollmentCreateResponse.from(createdEnrollments);
   }
