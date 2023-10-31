@@ -1,16 +1,7 @@
 import { BaseEntity, Id } from '../common/entity/BaseEntity';
-import {
-  IsBoolean,
-  IsEnum,
-  IsNumber,
-  IsPositive,
-  IsString,
-  Length,
-  validateSync,
-  ValidationError,
-} from 'class-validator';
+import { IsBoolean, IsEnum, IsNumber, IsPositive, IsString, Length } from 'class-validator';
 import { LectureCategory } from './LectureEnums';
-import { IllegalArgumentException } from '../common/exception/IllegalArgumentException';
+import { validateClass } from '../common/util/ClassValidateUtil';
 
 export class Lecture extends BaseEntity {
 
@@ -41,7 +32,7 @@ export class Lecture extends BaseEntity {
     title: string,
     introduction: string,
     instructorId: number,
-    category: string,
+    category: LectureCategory,
     price: number,
     createdAt?: Date,
     updatedAt?: Date,
@@ -52,9 +43,43 @@ export class Lecture extends BaseEntity {
     this._title = title;
     this._introduction = introduction;
     this._price = price;
-    this._category = category.toUpperCase() as LectureCategory;
+    this._category = category;
     this._is_published = is_published || false;
-    this.validate();
+    validateClass(this);
+  }
+
+  public get title(): string {
+    return this._title;
+  }
+
+  public get introduction(): string {
+    return this._introduction;
+  }
+
+  public get instructorId(): number {
+    return this._instructorId;
+  }
+
+  public get category(): LectureCategory {
+    return this._category;
+  }
+
+  public get price(): number {
+    return this._price;
+  }
+
+  public get is_published(): boolean {
+    return this._is_published;
+  }
+
+  public static create(
+    title: string,
+    introduction: string,
+    instructorId: number,
+    category: LectureCategory,
+    price: number,
+  ): Lecture {
+    return new Lecture(undefined, title, introduction, instructorId, category, price);
   }
 
   public update(
@@ -87,47 +112,6 @@ export class Lecture extends BaseEntity {
       new Date(),
       true,
     );
-  }
-
-  public get title(): string {
-    return this._title;
-  }
-
-  public get introduction(): string {
-    return this._introduction;
-  }
-
-  public get instructorId(): number {
-    return this._instructorId;
-  }
-
-  public get category(): LectureCategory {
-    return this._category;
-  }
-
-  public get price(): number {
-    return this._price;
-  }
-
-  public get is_published(): boolean {
-    return this._is_published;
-  }
-
-  public static create(
-    title: string,
-    introduction: string,
-    instructorId: number,
-    category: string,
-    price: number,
-  ): Lecture {
-    return new Lecture(undefined, title, introduction, instructorId, category, price);
-  }
-
-  private validate(): void {
-    const errors: ValidationError[] = validateSync(this);
-    if (errors.length > 0) {
-      throw new IllegalArgumentException(errors[0].toString());
-    }
   }
 
 }

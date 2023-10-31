@@ -11,6 +11,7 @@ import { MockRequestFactory } from '../util/MockRequestFactory';
 import { MockResponseFactory } from '../util/MockResponseFactory';
 import { LectureCreateResponse } from '../../main/controller/dto/LectureCreateResponse';
 import { LectureCategory, LectureOrderType, LectureSearchType } from '../../main/domain/LectureEnums';
+import { Lecture } from '../../main/domain/Lecture';
 
 describe('LectureController', () => {
 
@@ -46,7 +47,8 @@ describe('LectureController', () => {
 
     it('[Failure] 유효하지 않은 카테고리가 들어오면 예외를 던진다', async () => {
       // given
-      const data = TestLectureDataFactory.createDataWithCategory('INVALID_CATEGORY');
+      const testInvalidCategory: LectureCategory = 'INVALID_CATEGORY' as LectureCategory;
+      const data = TestLectureDataFactory.createData({ category: testInvalidCategory });
       const [mockRequest, mockResponse]: [Request, Response] = [MockRequestFactory.createWithBody(data), MockResponseFactory.create()];
 
       // when, then
