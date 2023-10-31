@@ -48,17 +48,13 @@ export class LectureService {
     connection?: PoolConnection,
   ): Promise<LectureCreateResponse> {
     const { title, introduction, instructorId, category, price }: LectureCreateRequest = request;
-    const instructor: Instructor | null = await this._instructorRepository.findById(instructorId, connection!);
-    if (instructor === null) {
-      throw new NotFoundException(`존재하지 않는 강사 ID(${ instructorId }) 입니다`);
-    }
 
-    const findTitleLecture: Lecture | null = await this._lectureRepository.findByTitle(title, connection!);
-    if (findTitleLecture !== null) {
-      throw new IllegalArgumentException(`이미 존재하는 강의 제목(${title}) 입니다`);
-    }
+    await Promise.all([
+      this._validateInstructorExists(instructorId, connection!),
+      this._validateLectureTitleNotExists(title, connection!),
+    ]);
 
-    const lecture: Lecture = Lecture.create(title, introduction, instructor.id!, category, price);
+    const lecture: Lecture = Lecture.create(title, introduction, instructorId, category, price);
     const createdLecture: Lecture = await this._lectureRepository.save(lecture, connection!);
     await this._lectureStudentCountRepository.create(createdLecture.id!, connection!);
 
@@ -203,6 +199,26 @@ export class LectureService {
         return LectureBulkCreateResponseItem.createWithFail(request.title, error);
       }
       return LectureBulkCreateResponseItem.createWithFail(request.title, new Error('알 수 없는 에러'));
+    }
+  }
+
+  private async _validateInstructorExists(
+    instructorId: number,
+    connection: PoolConnection,
+  ): Promise<void> {
+    const instructor: Instructor | null = await this._instructorRepository.findById(instructorId, connection);
+    if (instructor === null) {
+      throw new NotFoundException(`존재하지 않는 강사 ID(${ instructorId }) 입니다`);
+    }
+  }
+
+  private async _validateLectureTitleNotExists(
+    title: string,
+    connection: PoolConnection,
+  ): Promise<void> {
+    const lecture: Lecture | null = await this._lectureRepository.findByTitle(title, connection);
+    if (lecture !== null) {
+      throw new IllegalArgumentException(`이미 존재하는 강의 제목(${ title }) 입니다`);
     }
   }
 }
