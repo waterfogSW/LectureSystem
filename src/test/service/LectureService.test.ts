@@ -12,18 +12,33 @@ import { TestLectureDataFactory } from '../util/TestLectureDataFactory';
 import { TestLectureFactory } from '../util/TestLectureFactory';
 import { LectureCreateResponse } from '../../main/controller/dto/LectureCreateResponse';
 import { LectureStudentCountRepository } from '../../main/repository/LectureStudentCountRepository';
+import { EnrollmentRepository } from '../../main/repository/EnrollmentRepository';
+import { StudentRepository } from '../../main/repository/StudentRepository';
 
 describe('LectureService', () => {
-  let lectureService: LectureService;
-  let lectureRepository: jest.Mocked<LectureRepository>;
-  let lectureStudentCountRepository: jest.Mocked<LectureStudentCountRepository>;
-  let instructorRepository: jest.Mocked<InstructorRepository>;
+
+  let mockLectureRepository: jest.Mocked<LectureRepository>;
+  let mockLectureStudentCountRepository: jest.Mocked<LectureStudentCountRepository>;
+  let mockInstructorRepository: jest.Mocked<InstructorRepository>;
+  let mockEnrollmentRepository: jest.Mocked<EnrollmentRepository>;
+  let mockStudentRepository: jest.Mocked<StudentRepository>;
+
+  let sut: LectureService;
 
   beforeEach(() => {
-    lectureRepository = MockFactory.create<LectureRepository>();
-    lectureStudentCountRepository = MockFactory.create<LectureStudentCountRepository>();
-    instructorRepository = MockFactory.create<InstructorRepository>();
-    lectureService = new LectureService(lectureRepository, lectureStudentCountRepository, instructorRepository);
+    mockLectureRepository = MockFactory.create<LectureRepository>();
+    mockLectureStudentCountRepository = MockFactory.create<LectureStudentCountRepository>();
+    mockInstructorRepository = MockFactory.create<InstructorRepository>();
+    mockEnrollmentRepository = MockFactory.create<EnrollmentRepository>();
+    mockStudentRepository = MockFactory.create<StudentRepository>();
+
+    sut = new LectureService(
+      mockLectureRepository,
+      mockLectureStudentCountRepository,
+      mockInstructorRepository,
+      mockEnrollmentRepository,
+      mockStudentRepository
+    );
   });
 
   afterEach(() => {
@@ -38,13 +53,13 @@ describe('LectureService', () => {
       const request: LectureCreateRequest = new LectureCreateRequest(data.title, data.introduction, data.instructorId, data.category, data.price);
 
       const mockInstructor: Instructor = new Instructor(data.instructorId, 'Instructor Name');
-      instructorRepository.findById.mockResolvedValue(mockInstructor);
+      mockInstructorRepository.findById.mockResolvedValue(mockInstructor);
 
       const mockLecture: Lecture = TestLectureFactory.createWithId(1);
-      lectureRepository.save.mockResolvedValue(mockLecture);
+      mockLectureRepository.save.mockResolvedValue(mockLecture);
 
       // when
-      const result: LectureCreateResponse = await lectureService.createLecture(request);
+      const result: LectureCreateResponse = await sut.createLecture(request);
 
       // then
       const resultId = Reflect.get(result, 'id');
@@ -55,10 +70,10 @@ describe('LectureService', () => {
       // given
       const data = TestLectureDataFactory.createData();
       const request: LectureCreateRequest = new LectureCreateRequest(data.title, data.introduction, data.instructorId, data.category, data.price);
-      instructorRepository.findById.mockResolvedValue(null); // 강사 ID가 존재하지 않는다고 가정
+      mockInstructorRepository.findById.mockResolvedValue(null); // 강사 ID가 존재하지 않는다고 가정
 
       // when
-      const promise: Promise<LectureCreateResponse> = lectureService.createLecture(request);
+      const promise: Promise<LectureCreateResponse> = sut.createLecture(request);
 
       // then
       await expect(promise).rejects.toThrowError(NotFoundException);
