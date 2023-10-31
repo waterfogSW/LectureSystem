@@ -89,14 +89,23 @@ export class LectureService {
   }
 
   @transactional()
-  public async createLectureBulk(
+  public async createMultipleLectures(
     request: LectureBulkCreateRequest,
     connection?: PoolConnection,
   ): Promise<LectureBulkCreateResponse> {
-    const requests: Array<LectureCreateRequest> = request.items;
-    const responseItems: Array<LectureBulkCreateResponseItem> = await Promise.all(
-      requests.map((request: LectureCreateRequest) => this._processSingleLectureCreateRequest(request, connection!)),
-    );
+    const createItemWithHandlingError = async (request: LectureCreateRequest): Promise<LectureBulkCreateResponseItem> => {
+      try {
+        const response: LectureCreateResponse = await this.createLecture(request, connection);
+        return LectureBulkCreateResponseItem.createWithSuccess(response.id, response.title);
+      } catch (error) {
+        if (error instanceof Error) {
+          return LectureBulkCreateResponseItem.createWithFail(request.title, error);
+        }
+        return LectureBulkCreateResponseItem.createWithFail(request.title, new Error('알 수 없는 에러'));
+      }
+    };
+
+    const responseItems: Array<LectureBulkCreateResponseItem> = await Promise.all(request.items.map(createItemWithHandlingError));
     return LectureBulkCreateResponse.from(responseItems);
   }
 
@@ -107,7 +116,7 @@ export class LectureService {
   ): Promise<LectureDetailResponse> {
     const lecture: Lecture | null = await this._lectureRepository.findById(lectureId, connection!);
     if (!lecture) {
-      throw new NotFoundException(`존재하지 않는 강의 ID(${lectureId}) 입니다`);
+      throw new NotFoundException(`존재하지 않는 강의 ID(${ lectureId }) 입니다`);
     }
 
     const [studentCount, enrollments]: [number, Array<Enrollment>] = await Promise.all([
@@ -117,12 +126,15 @@ export class LectureService {
 
     const studentItems: Array<Student | null> = await Promise.all(
       enrollments.map((enrollment: Enrollment) =>
-        this._studentRepository.findById(enrollment.studentId, connection!)
-      )
+        this._studentRepository.findById(enrollment.studentId, connection!),
+      ),
     );
 
-    const lectureStudents: Array<LectureDetailResponseStudentItem> = enrollments.map((enrollment, index) =>
-      LectureDetailResponseStudentItem.of(enrollment, studentItems[index])
+    const lectureStudents: Array<LectureDetailResponseStudentItem> = enrollments.map((
+        enrollment,
+        index,
+      ) =>
+        LectureDetailResponseStudentItem.of(enrollment, studentItems[index]),
     );
 
     return LectureDetailResponse.of(lecture, studentCount, lectureStudents);
@@ -136,7 +148,7 @@ export class LectureService {
     const { lectureId, title, introduction, price }: LectureUpdateRequest = request;
     const lecture: Lecture | null = await this._lectureRepository.findById(lectureId, connection!);
     if (!lecture) {
-      throw new NotFoundException(`존재하지 않는 강의 ID(${lectureId}) 입니다`);
+      throw new NotFoundException(`존재하지 않는 강의 ID(${ lectureId }) 입니다`);
     }
 
     if (title) {
@@ -159,7 +171,7 @@ export class LectureService {
     const { lectureId }: LectureDeleteRequest = request;
     const lecture: Lecture | null = await this._lectureRepository.findById(lectureId, connection!);
     if (!lecture) {
-      throw new NotFoundException(`존재하지 않는 강의 ID(${lectureId}) 입니다`);
+      throw new NotFoundException(`존재하지 않는 강의 ID(${ lectureId }) 입니다`);
     }
 
     await Promise.all([
@@ -176,30 +188,15 @@ export class LectureService {
     const { lectureId }: LecturePublishRequest = request;
     const lecture: Lecture | null = await this._lectureRepository.findById(lectureId, connection!);
     if (!lecture) {
-      throw new NotFoundException(`존재하지 않는 강의 ID(${lectureId}) 입니다`);
+      throw new NotFoundException(`존재하지 않는 강의 ID(${ lectureId }) 입니다`);
     }
 
-    if(lecture.is_published) {
+    if (lecture.is_published) {
       throw new IllegalArgumentException(`이미 공개된 강의입니다.`);
     }
 
     const publishedLecture: Lecture = lecture.publish();
     await this._lectureRepository.update(publishedLecture, connection!);
-  }
-
-  private async _processSingleLectureCreateRequest(
-    request: LectureCreateRequest,
-    connection: PoolConnection,
-  ): Promise<LectureBulkCreateResponseItem> {
-    try {
-      const response: LectureCreateResponse = await this.createLecture(request, connection);
-      return LectureBulkCreateResponseItem.createWithSuccess(response.id, response.title);
-    } catch (error) {
-      if (error instanceof Error) {
-        return LectureBulkCreateResponseItem.createWithFail(request.title, error);
-      }
-      return LectureBulkCreateResponseItem.createWithFail(request.title, new Error('알 수 없는 에러'));
-    }
   }
 
   private async _validateInstructorExists(

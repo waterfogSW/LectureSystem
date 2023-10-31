@@ -44,12 +44,12 @@ export class LectureController {
       .json(lectureListResponse);
   }
 
-  public async createLectureBulk(
+  public async createMultipleLectures(
     request: Request,
     response: Response,
   ): Promise<void> {
     const lectureBulkCreateRequest: LectureBulkCreateRequest = LectureBulkCreateRequest.from(request);
-    const lectureBulkCreateResponse: LectureBulkCreateResponse = await this._lectureService.createLectureBulk(lectureBulkCreateRequest);
+    const lectureBulkCreateResponse: LectureBulkCreateResponse = await this._lectureService.createMultipleLectures(lectureBulkCreateRequest);
     response
       .status(HttpStatus.CREATED)
       .json(lectureBulkCreateResponse);

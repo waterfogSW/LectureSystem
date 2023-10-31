@@ -18,7 +18,7 @@ export const configureRoutes = (app: Application): void => {
   // lecture
   app.post('/api/lectures', withAsync(lectureController.createLecture.bind(lectureController)));
   app.get('/api/lectures', withAsync(lectureController.listLecture.bind(lectureController)));
-  app.post('/api/lectures/bulk', withAsync(lectureController.createLectureBulk.bind(lectureController)));
+  app.post('/api/lectures/bulk', withAsync(lectureController.createMultipleLectures.bind(lectureController)));
   app.get('/api/lectures/:id', withAsync(lectureController.detailLecture.bind(lectureController)));
   app.patch('/api/lectures/:id', withAsync(lectureController.updateLecture.bind(lectureController)));
   app.delete('/api/lectures/:id', withAsync(lectureController.deleteLecture.bind(lectureController)));
