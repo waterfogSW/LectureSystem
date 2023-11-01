@@ -333,4 +333,45 @@ describe('LectureController', () => {
       await expect(sut.deleteLecture(request, response)).rejects.toThrowError(IllegalArgumentException);
     });
   });
+
+  describe('publishLecture', () => {
+    it('[Success] 강의 공개를 요청한다', async () => {
+      // given
+      const request: Request = new MockRequestBuilder()
+        .params({ id: 1 })
+        .build();
+
+      const response: Response = MockResponseFactory.create();
+
+      // when
+      await sut.publishLecture(request, response);
+
+      // then
+      expect(response.status).toBeCalledWith(HttpStatus.OK);
+    });
+
+    it('[Failure] id가 숫자가 아니면 예외를 던진다', async () => {
+      // given
+      const request: Request = new MockRequestBuilder()
+        .params({ id: 'notNumber' })
+        .build();
+
+      const response: Response = MockResponseFactory.create();
+
+      // when, then
+      await expect(sut.publishLecture(request, response)).rejects.toThrowError(IllegalArgumentException);
+    });
+
+    it('[Failure] id가 0보다 작으면 예외를 던진다', async () => {
+      // given
+      const request: Request = new MockRequestBuilder()
+        .params({ id: -1 })
+        .build();
+
+      const response: Response = MockResponseFactory.create();
+
+      // when, then
+      await expect(sut.publishLecture(request, response)).rejects.toThrowError(IllegalArgumentException);
+    });
+  });
 });
