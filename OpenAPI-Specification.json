@@ -339,7 +339,7 @@
       }
     },
     "/api/lectures/{id}/publish": {
-      "patch": {
+      "post": {
         "summary": "강의 오픈",
         "parameters": [
           {
