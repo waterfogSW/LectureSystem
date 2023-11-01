@@ -1,11 +1,12 @@
 import { LectureCreateRequest } from './LectureCreateRequest';
-import { ArrayMaxSize, IsArray } from 'class-validator';
+import { ArrayMaxSize, ArrayMinSize, IsArray } from 'class-validator';
 import { Request } from 'express';
 import { validateClass } from '../../common/util/ClassValidateUtil';
 
 export class LectureBulkCreateRequest {
 
   @IsArray({ message: '잘못된 요청 형식입니다.' })
+  @ArrayMinSize(1, { message: '최소 1개 이상의 강의를 요청해야 합니다.' })
   @ArrayMaxSize(10, { message: '최대 10개까지 요청 가능합니다.' })
   private readonly _items: Array<LectureCreateRequest>;
 
