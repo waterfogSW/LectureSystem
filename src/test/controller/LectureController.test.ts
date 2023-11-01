@@ -197,4 +197,37 @@ describe('LectureController', () => {
         await expect(sut.createMultipleLectures(mockRequest, mockResponse)).rejects.toThrowError(IllegalArgumentException);
       });
   });
+
+  describe('detailLecture', () => {
+    it('[Success] 강의 상세 정보를 조회한다', async () => {
+      // given
+      const data: any = { id: 1 };
+      const [mockRequest, mockResponse]: [Request, Response] = [MockRequestFactory.createWithParams(data), MockResponseFactory.create()];
+
+      // when
+      await sut.detailLecture(mockRequest, mockResponse);
+
+      // then
+      expect(mockResponse.status).toBeCalledWith(HttpStatus.OK);
+    });
+
+    it('[Failure] id가 숫자가 아니면 예외를 던진다', async () => {
+      // given
+      const data: any = { id: 'notNumber' };
+      const [mockRequest, mockResponse]: [Request, Response] = [MockRequestFactory.createWithParams(data), MockResponseFactory.create()];
+
+      // when, then
+      await expect(sut.detailLecture(mockRequest, mockResponse)).rejects.toThrowError(IllegalArgumentException);
+    });
+
+    it('[Failure] id가 0보다 작으면 예외를 던진다', async () => {
+      // given
+      const data: any = { id: -1 };
+      const [mockRequest, mockResponse]: [Request, Response] = [MockRequestFactory.createWithParams(data), MockResponseFactory.create()];
+
+      // when, then
+      await expect(sut.detailLecture(mockRequest, mockResponse)).rejects.toThrowError(IllegalArgumentException);
+    });
+
+  });
 });

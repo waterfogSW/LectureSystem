@@ -13,4 +13,10 @@ export class MockRequestFactory {
       query: data,
     } as Request;
   }
+
+  public static createWithParams(data: any): Request {
+    return {
+      params: data,
+    } as Request;
+  }
 }
