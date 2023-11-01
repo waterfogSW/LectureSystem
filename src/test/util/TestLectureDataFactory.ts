@@ -27,4 +27,8 @@ export class TestLectureDataFactory {
       price: price,
     };
   }
+
+  public static createMultipleData(num: number): Array<any> {
+    return Array.from({length: num}, (_value, i) => this.createData({title: `Test Lecture ${i}`}));
+  }
 }
