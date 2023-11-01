@@ -2,6 +2,7 @@ import { LectureCreateRequest } from './LectureCreateRequest';
 import { ArrayMaxSize, ArrayMinSize, IsArray } from 'class-validator';
 import { Request } from 'express';
 import { validateClass } from '../../common/util/ClassValidateUtil';
+import { IllegalArgumentException } from '../../common/exception/IllegalArgumentException';
 
 export class LectureBulkCreateRequest {
 
@@ -21,6 +22,10 @@ export class LectureBulkCreateRequest {
 
   public static from(request: Request): LectureBulkCreateRequest {
     const { items } = request.body;
+    if(!items || !Array.isArray(items)) {
+      throw new IllegalArgumentException('잘못된 요청 형식입니다.');
+    }
+
     const requests: Array<LectureCreateRequest> = items.map((item: any) => {
       const { title, introduction, instructorId, category, price } = item;
       return LectureCreateRequest.of(title, introduction, instructorId, category, price);

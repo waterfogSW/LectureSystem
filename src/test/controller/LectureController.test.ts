@@ -187,5 +187,14 @@ describe('LectureController', () => {
         // when, then
         await expect(sut.createMultipleLectures(mockRequest, mockResponse)).rejects.toThrowError(IllegalArgumentException);
       });
+
+      it('[Failure] 배열 형식이 아니면 예외를 던진다', async () => {
+        // given
+        const data: any = { items : 'notArray' };
+        const [mockRequest, mockResponse]: [Request, Response] = [MockRequestFactory.createWithBody(data), MockResponseFactory.create()];
+
+        // when, then
+        await expect(sut.createMultipleLectures(mockRequest, mockResponse)).rejects.toThrowError(IllegalArgumentException);
+      });
   });
 });
