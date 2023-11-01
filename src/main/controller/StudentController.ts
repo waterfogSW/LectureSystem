@@ -5,6 +5,7 @@ import { HttpStatus } from '../common/constant/HttpStatus';
 import { StudentCreateResponse } from './dto/StudentCreateResponse';
 import { BindingTypes } from '../common/constant/BindingTypes';
 import { StudentCreateRequest } from './dto/StudentCreateRequest';
+import { StudentDeleteRequest } from './dto/StudentDeleteRequest';
 
 @injectable()
 export class StudentController {
@@ -28,9 +29,8 @@ export class StudentController {
     request: Request,
     response: Response,
   ): Promise<void> {
-    const { id } = request.params;
-    const parsedId: number = parseInt(id, 10);
-    await this._studentFacade.deleteStudent(parsedId);
+    const studentDeleteRequest: StudentDeleteRequest = StudentDeleteRequest.from(request);
+    await this._studentFacade.deleteStudent(studentDeleteRequest);
     response
       .status(HttpStatus.OK)
       .send();

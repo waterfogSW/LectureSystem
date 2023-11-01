@@ -1,0 +1,24 @@
+import { IsPositive } from 'class-validator';
+import { validateClass } from '../../common/util/ClassValidateUtil';
+import { Request } from 'express';
+
+export class StudentDeleteRequest {
+
+  @IsPositive({ message: '학생 아이디는 0보다 커야 합니다.' })
+  private readonly _studentId: number;
+
+  constructor(studentId: number) {
+    this._studentId = studentId;
+    validateClass(this);
+  }
+
+  public get studentId(): number {
+    return this._studentId;
+  }
+
+  public static from(request: Request): StudentDeleteRequest {
+    const studentId: number = Number(request.params.id);
+    return new StudentDeleteRequest(studentId);
+  }
+
+}

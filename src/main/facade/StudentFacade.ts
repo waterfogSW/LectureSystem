@@ -7,6 +7,7 @@ import { StudentCreateRequest } from '../controller/dto/StudentCreateRequest';
 import { StudentCreateResponse } from '../controller/dto/StudentCreateResponse';
 import { StudentService } from '../service/StudentService';
 import { EnrollmentService } from '../service/EnrollementSerivce';
+import { StudentDeleteRequest } from '../controller/dto/StudentDeleteRequest';
 
 @injectable()
 export class StudentFacade {
@@ -27,9 +28,9 @@ export class StudentFacade {
 
   @transactional()
   public async deleteStudent(
-    id: number,
+    { studentId }: StudentDeleteRequest,
     connection?: PoolConnection,
   ): Promise<void> {
-    await this._studentService.delete(id, connection!);
+    await this._studentService.delete(studentId, connection!);
   }
 }
