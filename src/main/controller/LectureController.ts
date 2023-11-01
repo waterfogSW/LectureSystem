@@ -52,7 +52,7 @@ export class LectureController {
     const lectureBulkCreateRequest: LectureBulkCreateRequest = LectureBulkCreateRequest.from(request);
     const lectureBulkCreateResponse: LectureBulkCreateResponse = await this._lectureFacade.createMultipleLectures(lectureBulkCreateRequest);
     response
-      .status(HttpStatus.CREATED)
+      .status(HttpStatus.OK)
       .json(lectureBulkCreateResponse);
   }
 
