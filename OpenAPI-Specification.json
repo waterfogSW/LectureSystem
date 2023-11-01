@@ -338,9 +338,9 @@
         }
       }
     },
-    "/api/lectures/{id}/open": {
+    "/api/lectures/{id}/publish": {
       "patch": {
-        "summary": "강의 개설",
+        "summary": "강의 오픈",
         "parameters": [
           {
             "in": "path",
