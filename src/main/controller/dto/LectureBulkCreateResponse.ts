@@ -1,6 +1,5 @@
 import { Id } from '../../common/entity/BaseEntity';
 import { HttpStatus } from '../../common/constant/HttpStatus';
-import { NotFoundException } from '../../common/exception/NotFoundException';
 
 export class LectureBulkCreateResponse {
 

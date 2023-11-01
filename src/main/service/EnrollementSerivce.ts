@@ -4,7 +4,6 @@ import { EnrollmentRepository } from '../repository/EnrollmentRepository';
 import { BindingTypes } from '../common/constant/BindingTypes';
 import { PoolConnection } from 'mysql2/promise';
 import { Enrollment } from '../domain/Enrollment';
-import { Id } from '../common/entity/BaseEntity';
 import { IllegalArgumentException } from '../common/exception/IllegalArgumentException';
 import { LectureStudentCountRepository } from '../repository/LectureStudentCountRepository';
 import { NotFoundException } from '../common/exception/NotFoundException';
