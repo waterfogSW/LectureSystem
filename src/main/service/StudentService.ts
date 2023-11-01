@@ -16,14 +16,13 @@ export class StudentService {
     private readonly _studentRepository: StudentRepository,
   ) {}
 
-  public async findByIdOrReturn(
+  public async findByIdOrReturnDeletedStudent(
     id: number,
-    func: () => Student,
     connection: PoolConnection,
   ): Promise<Student> {
     const student: Student | null = await this._studentRepository.findById(id, connection);
     if (student === null) {
-      return func();
+      return Student.createDeletedStudent();
     }
     return student;
   }
@@ -58,7 +57,7 @@ export class StudentService {
     id: number,
     connection: PoolConnection,
   ): Promise<void> {
-    const student: Student = await this.findById(id, connection);
+    await this.findById(id, connection);
     await this._studentRepository.deleteById(id, connection);
   }
 

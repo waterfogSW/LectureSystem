@@ -82,7 +82,7 @@ export class LectureFacade {
     ]);
 
     const students: Array<Student> = await Promise.all(
-      enrollments.map((enrollment: Enrollment) => this._studentService.findByIdOrReturn(enrollment.studentId, Student.createDeletedStudent, connection!)),
+      enrollments.map((enrollment: Enrollment) => this._studentService.findByIdOrReturnDeletedStudent(enrollment.studentId, connection!)),
     );
 
     return LectureDetailResponse.of(lecture, studentCount, enrollments, students);
