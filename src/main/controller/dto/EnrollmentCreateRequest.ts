@@ -1,10 +1,12 @@
-import { IsArray, IsPositive } from 'class-validator';
+import { ArrayMinSize, IsArray, IsPositive } from 'class-validator';
 import { Request } from 'express';
 import { IsPositiveNumberArray, validateClass } from '../../common/util/ClassValidateUtil';
+import { IllegalArgumentException } from '../../common/exception/IllegalArgumentException';
 
 export class EnrollmentCreateRequest {
 
   @IsArray({ message: '강의 ID는 배열이어야 합니다.' })
+  @ArrayMinSize(1, { message: '강의 ID는 최소 1개 이상이어야 합니다.' })
   @IsPositiveNumberArray({ message: '강의 ID는 0보다 커야 합니다.' })
   private readonly _lectureIds: Array<number>;
 
@@ -29,6 +31,10 @@ export class EnrollmentCreateRequest {
   }
 
   public static from(request: Request): EnrollmentCreateRequest {
+    if (!Array.isArray(request.body.lectureIds)) {
+      throw new IllegalArgumentException('강의 ID는 배열이어야 합니다.');
+    }
+
     const lectureIds: Array<number> = request.body.lectureIds.map((lectureId: any) => Number(lectureId));
     const studentId: number = Number(request.body.studentId);
     return new EnrollmentCreateRequest(lectureIds, studentId);
