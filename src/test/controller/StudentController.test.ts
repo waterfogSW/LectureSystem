@@ -9,60 +9,76 @@ import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals
 import { TestStudentDataFactory } from '../util/TestStudentDataFactory';
 import { TestStudentFactory } from '../util/TestStudentFactory';
 import { StudentCreateResponse } from '../../main/controller/dto/StudentCreateResponse';
+import { MockRequestBuilder } from '../util/MockRequestBuilder';
+import { MockResponseFactory } from '../util/MockResponseFactory';
+import { IllegalArgumentException } from '../../main/common/exception/IllegalArgumentException';
 
 describe('StudentController', () => {
 
-  let studentController: StudentController;
-  let studentService: jest.Mocked<StudentFacade>;
-
-  let mockRequest: Partial<Request>;
-  let mockResponse: Partial<Response>;
-  let responseObject: any;
+  let mockStudentFacade: jest.Mocked<StudentFacade>;
+  let sut: StudentController;
 
   beforeEach(() => {
-    studentService = MockFactory.create<StudentFacade>();
-    studentController = new StudentController(studentService);
-
-    responseObject = {
-      status: jest.fn().mockImplementation(() => responseObject),
-      json: jest.fn().mockImplementation(() => responseObject),
-      send: jest.fn().mockImplementation(() => responseObject),
-    };
-    mockRequest = {};
-    mockResponse = responseObject;
+    mockStudentFacade = MockFactory.create<StudentFacade>();
+    sut = new StudentController(mockStudentFacade);
   });
 
   afterEach(() => {
     jest.clearAllMocks();
   });
+
   describe('createStudent', () => {
-    it('학생 생성 요청을 처리한다', async () => {
+    it('[Success] 학생 생성을 요청한다', async () => {
       // given
-      mockRequest.body = TestStudentDataFactory.createData();
-      const savedStudent: Student = TestStudentFactory.createWithId(1);
-      const studentCreateResponse: StudentCreateResponse = StudentCreateResponse.from(savedStudent);
-      studentService.createStudent.mockResolvedValue(studentCreateResponse);
+      const data = TestStudentDataFactory.createData();
+      const request: Request = new MockRequestBuilder().body(data).build();
+      const response: Response = MockResponseFactory.create();
+
+      const responseData: StudentCreateResponse = new StudentCreateResponse(1, data.nickname, data.email);
+      mockStudentFacade.createStudent.mockResolvedValueOnce(responseData);
 
       // when
-      await studentController.createStudent(mockRequest as Request, mockResponse as Response);
+      await sut.createStudent(request, response);
 
       // then
-      expect(mockResponse.status).toBeCalledWith(HttpStatus.CREATED);
-      expect(mockResponse.json).toBeCalledWith(studentCreateResponse);
+      expect(response.status).toBeCalledWith(HttpStatus.CREATED);
+      expect(response.json).toBeCalledWith(responseData);
     });
   });
 
   describe('deleteStudent', () => {
-    it('학생 삭제 요청을 처리한다.', async () => {
+    it('[Success] 학생 삭제를 요청한다', async () => {
       // given
-      const studentId = '1';
-      mockRequest.params = { id: studentId };
+      const id = 1;
+      const request: Request = new MockRequestBuilder().params({ id }).build();
+      const response: Response = MockResponseFactory.create();
 
       // when
-      await studentController.deleteStudent(mockRequest as Request, mockResponse as Response);
+      await sut.deleteStudent(request, response);
 
       // then
-      expect(mockResponse.status).toBeCalledWith(HttpStatus.OK);
+      expect(response.status).toBeCalledWith(HttpStatus.OK);
+    });
+
+    it('[Failure] 학생 id가 숫자가 아닌 경우 예외를 던진다', async () => {
+      // given
+      const id = 'a';
+      const request: Request = new MockRequestBuilder().params({ id }).build();
+      const response: Response = MockResponseFactory.create();
+
+      // when, then
+      await expect(sut.deleteStudent(request, response)).rejects.toThrow(IllegalArgumentException);
+    });
+
+    it('[Failure] 학생 id가 1보다 작은 경우 예외를 던진다', async () => {
+      // given
+      const id = 0;
+      const request: Request = new MockRequestBuilder().params({ id }).build();
+      const response: Response = MockResponseFactory.create();
+
+      // when, then
+      await expect(sut.deleteStudent(request, response)).rejects.toThrow(IllegalArgumentException);
     });
   });
+
 });
