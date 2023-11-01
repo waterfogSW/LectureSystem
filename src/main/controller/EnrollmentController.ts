@@ -22,7 +22,7 @@ export class EnrollmentController {
     const enrollmentCreateResponse: EnrollmentCreateResponse = await this._enrollmentFacade.createEnrollments(enrollmentCreateRequest);
 
     response
-      .status(HttpStatus.OK)
+      .status(HttpStatus.CREATED)
       .json(enrollmentCreateResponse);
   }
 }
