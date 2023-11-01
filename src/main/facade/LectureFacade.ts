@@ -118,7 +118,7 @@ export class LectureFacade {
   ): Promise<LectureBulkCreateResponseItem> {
     try {
       const response: LectureCreateResponse = await this.createLecture(request, connection);
-      return LectureBulkCreateResponseItem.createWithSuccess(response.id, response.title);
+      return LectureBulkCreateResponseItem.createWithSuccess(response.getId(), response.getTitle());
     } catch (error) {
       if (error instanceof Error) {
         const status: HttpStatus = errorStatusMappings.find((mapping): boolean => error instanceof mapping.type)?.status || HttpStatus.INTERNAL_SERVER_ERROR;
