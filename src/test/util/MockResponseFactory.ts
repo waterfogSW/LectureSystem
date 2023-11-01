@@ -7,6 +7,7 @@ export class MockResponseFactory {
     const responseObject: any = {
       status: jest.fn().mockImplementation(() => responseObject),
       json: jest.fn().mockImplementation(() => responseObject),
+      send: jest.fn().mockImplementation(() => responseObject),
     };
 
     return responseObject as Response;

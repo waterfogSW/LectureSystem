@@ -11,6 +11,7 @@ import { MockRequestFactory } from '../util/MockRequestFactory';
 import { MockResponseFactory } from '../util/MockResponseFactory';
 import { LectureCreateResponse } from '../../main/controller/dto/LectureCreateResponse';
 import { LectureCategory, LectureOrderType, LectureSearchType } from '../../main/domain/LectureEnums';
+import { MockRequestBuilder } from '../util/MockRequestBuilder';
 
 describe('LectureController', () => {
 
@@ -155,47 +156,47 @@ describe('LectureController', () => {
   });
 
   describe('createMultipleLectures', () => {
-      it.each([1,10])(`[Success] 강의를 %i개 생성한다`, async (count: number) => {
-        // given
-        const data: Array<any> = TestLectureDataFactory.createMultipleData(count);
-        const items = { items : data };
-        const [mockRequest, mockResponse]: [Request, Response] = [MockRequestFactory.createWithBody(items), MockResponseFactory.create()];
+    it.each([1, 10])(`[Success] 강의를 %i개 생성한다`, async (count: number) => {
+      // given
+      const data: Array<any> = TestLectureDataFactory.createMultipleData(count);
+      const items = { items: data };
+      const [mockRequest, mockResponse]: [Request, Response] = [MockRequestFactory.createWithBody(items), MockResponseFactory.create()];
 
-        // when
-        await sut.createMultipleLectures(mockRequest, mockResponse);
+      // when
+      await sut.createMultipleLectures(mockRequest, mockResponse);
 
-        // then
-        expect(mockResponse.status).toBeCalledWith(HttpStatus.OK);
-      });
+      // then
+      expect(mockResponse.status).toBeCalledWith(HttpStatus.OK);
+    });
 
-      it('[Failure] 최대 10개까지 요청 가능하다', async () => {
-        // given
-        const data: Array<any> = TestLectureDataFactory.createMultipleData(11);
-        const items = { items : data };
-        const [mockRequest, mockResponse]: [Request, Response] = [MockRequestFactory.createWithBody(items), MockResponseFactory.create()];
+    it('[Failure] 최대 10개까지 요청 가능하다', async () => {
+      // given
+      const data: Array<any> = TestLectureDataFactory.createMultipleData(11);
+      const items = { items: data };
+      const [mockRequest, mockResponse]: [Request, Response] = [MockRequestFactory.createWithBody(items), MockResponseFactory.create()];
 
-        // when, then
-        await expect(sut.createMultipleLectures(mockRequest, mockResponse)).rejects.toThrowError(IllegalArgumentException);
-      });
+      // when, then
+      await expect(sut.createMultipleLectures(mockRequest, mockResponse)).rejects.toThrowError(IllegalArgumentException);
+    });
 
-      it('[Failure] 최소 1개 이상 요청 가능하다', async () => {
-        // given
-        const data: Array<any> = TestLectureDataFactory.createMultipleData(0);
-        const items = { items : data };
-        const [mockRequest, mockResponse]: [Request, Response] = [MockRequestFactory.createWithBody(items), MockResponseFactory.create()];
+    it('[Failure] 최소 1개 이상 요청 가능하다', async () => {
+      // given
+      const data: Array<any> = TestLectureDataFactory.createMultipleData(0);
+      const items = { items: data };
+      const [mockRequest, mockResponse]: [Request, Response] = [MockRequestFactory.createWithBody(items), MockResponseFactory.create()];
 
-        // when, then
-        await expect(sut.createMultipleLectures(mockRequest, mockResponse)).rejects.toThrowError(IllegalArgumentException);
-      });
+      // when, then
+      await expect(sut.createMultipleLectures(mockRequest, mockResponse)).rejects.toThrowError(IllegalArgumentException);
+    });
 
-      it('[Failure] 배열 형식이 아니면 예외를 던진다', async () => {
-        // given
-        const data: any = { items : 'notArray' };
-        const [mockRequest, mockResponse]: [Request, Response] = [MockRequestFactory.createWithBody(data), MockResponseFactory.create()];
+    it('[Failure] 배열 형식이 아니면 예외를 던진다', async () => {
+      // given
+      const data: any = { items: 'notArray' };
+      const [mockRequest, mockResponse]: [Request, Response] = [MockRequestFactory.createWithBody(data), MockResponseFactory.create()];
 
-        // when, then
-        await expect(sut.createMultipleLectures(mockRequest, mockResponse)).rejects.toThrowError(IllegalArgumentException);
-      });
+      // when, then
+      await expect(sut.createMultipleLectures(mockRequest, mockResponse)).rejects.toThrowError(IllegalArgumentException);
+    });
   });
 
   describe('detailLecture', () => {
@@ -229,5 +230,49 @@ describe('LectureController', () => {
       await expect(sut.detailLecture(mockRequest, mockResponse)).rejects.toThrowError(IllegalArgumentException);
     });
 
+  });
+
+  describe('updateLecture', () => {
+    it('[Success] 강의 정보를 수정한다', async () => {
+      // given
+      const request: Request = new MockRequestBuilder()
+        .params({ id: 1 })
+        .body({ title: 'newTitle', introduction: 'newIntroduction', price: 10000 })
+        .build();
+
+      const response: Response = MockResponseFactory.create();
+
+      // when
+      await sut.updateLecture(request, response);
+
+      // then
+      expect(response.status).toBeCalledWith(HttpStatus.OK);
+    });
+
+    it('[Failure] id가 숫자가 아니면 예외를 던진다', async () => {
+      // given
+      const request: Request = new MockRequestBuilder()
+        .params({ id: 'notNumber' })
+        .body({ title: 'newTitle', introduction: 'newIntroduction', price: 10000 })
+        .build();
+
+      const response: Response = MockResponseFactory.create();
+
+      // when, then
+      await expect(sut.updateLecture(request, response)).rejects.toThrowError(IllegalArgumentException);
+    });
+
+    it('[Failure] id가 0보다 작으면 예외를 던진다', async () => {
+      // given
+      const request: Request = new MockRequestBuilder()
+        .params({ id: -1 })
+        .body({ title: 'newTitle', introduction: 'newIntroduction', price: 10000 })
+        .build();
+
+      const response: Response = MockResponseFactory.create();
+
+      // when, then
+      await expect(sut.updateLecture(request, response)).rejects.toThrowError(IllegalArgumentException);
+    });
   });
 });
