@@ -2,7 +2,7 @@ import { createPool, Pool, PoolConnection } from 'mysql2/promise';
 import { injectable } from 'inversify';
 
 const connectionPoolConfig = {
-  host: 'localhost',
+  host: 'db',
   port: 3306,
   database: 'lecture_system',
   user: 'root',
