@@ -1,4 +1,3 @@
-
 import { Student } from '../../domain/Student';
 import { Enrollment } from '../../domain/Enrollment';
 import { Lecture } from '../../domain/Lecture';
@@ -13,7 +12,7 @@ export class LectureDetailResponse {
   private readonly createdAt: Date;
   private readonly updatedAt: Date;
   private readonly studentCount: number;
-  private readonly students: Array<LectureDetailResponseStudentItem>;
+  private readonly students: Array<StudentItem>;
 
   constructor(
     title: string,
@@ -23,7 +22,7 @@ export class LectureDetailResponse {
     createdAt: Date,
     updatedAt: Date,
     studentCount: number,
-    students: Array<LectureDetailResponseStudentItem>,
+    students: Array<StudentItem>,
   ) {
     this.title = title;
     this.introduction = introduction;
@@ -38,8 +37,11 @@ export class LectureDetailResponse {
   public static of(
     lecture: Lecture,
     studentCount: number,
-    students: Array<LectureDetailResponseStudentItem>,
+    enrollment: Array<Enrollment>,
+    students: Array<Student | null>,
   ): LectureDetailResponse {
+    const studentItems: Array<StudentItem> =
+      enrollment.map((enrollment: Enrollment, index: number) => StudentItem.of(enrollment, students[index]));
     return new LectureDetailResponse(
       lecture.title,
       lecture.introduction,
@@ -48,13 +50,13 @@ export class LectureDetailResponse {
       lecture.createdAt,
       lecture.updatedAt,
       studentCount,
-      students,
+      studentItems,
     );
   }
 
 }
 
-export class LectureDetailResponseStudentItem {
+class StudentItem {
 
   private readonly nickname: string;
   private readonly enrolledAt: Date;
@@ -70,8 +72,8 @@ export class LectureDetailResponseStudentItem {
   public static of(
     enrollment: Enrollment,
     student: Student | null,
-  ): LectureDetailResponseStudentItem {
-    return new LectureDetailResponseStudentItem(
+  ): StudentItem {
+    return new StudentItem(
       student?.nickname ?? '탈퇴한 회원',
       enrollment.createdAt,
     );

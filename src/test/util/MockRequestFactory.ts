@@ -1,16 +1,16 @@
+import { Request } from 'express';
 
-import { Request } from "express";
 export class MockRequestFactory {
 
   public static createWithBody(data: any): Request {
     return {
-      body: data
+      body: data,
     } as Request;
   }
 
   public static createWithQuery(data: any): Request {
     return {
-      query: data
+      query: data,
     } as Request;
   }
 }

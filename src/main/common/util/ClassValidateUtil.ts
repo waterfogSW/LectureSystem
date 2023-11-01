@@ -2,7 +2,8 @@ import {
   registerDecorator,
   validateSync,
   ValidationArguments,
-  ValidationError, ValidationOptions,
+  ValidationError,
+  ValidationOptions,
   ValidatorConstraint,
   ValidatorConstraintInterface,
 } from 'class-validator';
@@ -29,7 +30,10 @@ class IsPositiveNumberArrayValidator implements ValidatorConstraintInterface {
 }
 
 export function IsPositiveNumberArray(validationOptions?: ValidationOptions) {
-  return function (object: Record<string, any>, propertyName: string) {
+  return function (
+    object: Record<string, any>,
+    propertyName: string,
+  ) {
     registerDecorator({
       target: object.constructor,
       propertyName: propertyName,

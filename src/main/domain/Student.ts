@@ -32,10 +32,14 @@ export class Student extends BaseEntity {
     return this._email;
   }
 
-  static create(
+  public static create(
     nickname: string,
     email: string,
   ): Student {
     return new Student(undefined, nickname, email);
+  }
+
+  public static createDeletedStudent(): Student {
+    return new Student(undefined, "탈퇴한 회원입니다.", "notexist@email.com");
   }
 }

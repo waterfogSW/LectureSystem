@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import { LectureController } from '../../main/controller/LectureController';
-import { LectureService } from '../../main/service/LectureService';
+import { LectureFacade } from '../../main/facade/LectureFacade';
 import { MockFactory } from '../util/MockFactory';
 import { Request, Response } from 'express';
 import { HttpStatus } from '../../main/common/constant/HttpStatus';
@@ -14,11 +14,11 @@ import { LectureCategory, LectureOrderType, LectureSearchType } from '../../main
 
 describe('LectureController', () => {
 
-  let mockLectureService: jest.Mocked<LectureService>;
+  let mockLectureService: jest.Mocked<LectureFacade>;
   let sut: LectureController;
 
   beforeEach(() => {
-    mockLectureService = MockFactory.create<LectureService>();
+    mockLectureService = MockFactory.create<LectureFacade>();
     sut = new LectureController(mockLectureService);
   });
 
@@ -33,7 +33,7 @@ describe('LectureController', () => {
       const data = TestLectureDataFactory.createData();
       const [mockRequest, mockResponse]: [Request, Response] = [MockRequestFactory.createWithBody(data), MockResponseFactory.create()];
 
-      const response : LectureCreateResponse = new LectureCreateResponse(1, data.title);
+      const response: LectureCreateResponse = new LectureCreateResponse(1, data.title);
       mockLectureService.createLecture.mockResolvedValue(response);
 
       // when
@@ -98,7 +98,7 @@ describe('LectureController', () => {
 
       // then
       expect(mockResponse.status).toBeCalledWith(HttpStatus.OK);
-    })
+    });
 
     it('[Failure] 유효하지 않은 정렬 타입이 들어오면 예외를 던진다', async () => {
       // given
@@ -146,7 +146,7 @@ describe('LectureController', () => {
 
     it('[Failure] 유효하지 않은 검색 타입이 들어오면 예외를 던진다', async () => {
       // given
-      const data: any = { page: 1, pageSize: 20, searchType: 'INVALID_SEARCH_TYPE', searchKeyword: 'searchKeyword'};
+      const data: any = { page: 1, pageSize: 20, searchType: 'INVALID_SEARCH_TYPE', searchKeyword: 'searchKeyword' };
       const [mockRequest, mockResponse]: [Request, Response] = [MockRequestFactory.createWithQuery(data), MockResponseFactory.create()];
 
       // when, then

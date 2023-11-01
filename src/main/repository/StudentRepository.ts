@@ -57,7 +57,7 @@ export class StudentRepository {
     return exist[0].exist === 1;
   }
 
-  public async delete(
+  public async deleteById(
     id: number,
     connection: PoolConnection,
   ): Promise<boolean> {

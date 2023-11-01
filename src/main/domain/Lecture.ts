@@ -25,7 +25,7 @@ export class Lecture extends BaseEntity {
   private readonly _price: number;
 
   @IsBoolean({ message: '잘못된 강의 공개여부 형식입니다.' })
-  private readonly _is_published: boolean;
+  private readonly _isPublished: boolean;
 
   constructor(
     id: Id,
@@ -44,7 +44,7 @@ export class Lecture extends BaseEntity {
     this._introduction = introduction;
     this._price = price;
     this._category = category;
-    this._is_published = is_published || false;
+    this._isPublished = is_published || false;
     validateClass(this);
   }
 
@@ -68,8 +68,8 @@ export class Lecture extends BaseEntity {
     return this._price;
   }
 
-  public get is_published(): boolean {
-    return this._is_published;
+  public get isPublished(): boolean {
+    return this._isPublished;
   }
 
   public static create(
@@ -96,11 +96,15 @@ export class Lecture extends BaseEntity {
       price ? price : this.price,
       this.createdAt,
       new Date(),
-      this.is_published,
+      this.isPublished,
     );
   }
 
   public publish(): Lecture {
+    if (this.isPublished) {
+      throw new Error('이미 공개된 강의입니다.');
+    }
+
     return new Lecture(
       this.id,
       this.title,

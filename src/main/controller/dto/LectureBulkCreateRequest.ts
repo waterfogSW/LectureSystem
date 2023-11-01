@@ -22,7 +22,7 @@ export class LectureBulkCreateRequest {
     const { items } = request.body;
     const requests: Array<LectureCreateRequest> = items.map((item: any) => {
       const { title, introduction, instructorId, category, price } = item;
-      return new LectureCreateRequest(title, introduction, instructorId, category, price);
+      return LectureCreateRequest.of(title, introduction, instructorId, category, price);
     });
 
     return new LectureBulkCreateRequest(requests);

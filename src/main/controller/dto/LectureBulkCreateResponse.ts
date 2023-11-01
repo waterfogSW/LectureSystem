@@ -36,16 +36,16 @@ export class LectureBulkCreateResponseItem {
 
   public static createWithSuccess(
     id: Id,
-    title: string
+    title: string,
   ): LectureBulkCreateResponseItem {
     return new LectureBulkCreateResponseItem(id, title, HttpStatus.CREATED, '');
   }
 
   public static createWithFail(
     title: string,
-    error: Error
+    status: HttpStatus,
+    message: string,
   ): LectureBulkCreateResponseItem {
-    const status: HttpStatus = error instanceof NotFoundException ? HttpStatus.BAD_REQUEST : HttpStatus.INTERNAL_SERVER_ERROR;
-    return new LectureBulkCreateResponseItem(undefined, title, status, error.message);
+    return new LectureBulkCreateResponseItem(undefined, title, status, message);
   }
 }

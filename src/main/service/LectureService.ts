@@ -1,221 +1,160 @@
+import 'reflect-metadata';
+
 import { inject, injectable } from 'inversify';
-import { LectureRepository } from '../repository/LectureRepository';
 import { BindingTypes } from '../common/constant/BindingTypes';
-import { Lecture } from '../domain/Lecture';
 import { PoolConnection } from 'mysql2/promise';
-import { transactional } from '../common/decorator/Transactional';
-import { InstructorRepository } from '../repository/InstructorRepository';
-import { Instructor } from '../domain/Instructor';
+import { Lecture } from '../domain/Lecture';
 import { NotFoundException } from '../common/exception/NotFoundException';
-import { LectureCreateRequest } from '../controller/dto/LectureCreateRequest';
-import { LectureCreateResponse } from '../controller/dto/LectureCreateResponse';
-import { LectureListRequest } from '../controller/dto/LectureListRequest';
-import { LectureListItem, LectureListResponse } from '../controller/dto/LectureListResponse';
+import { Id } from '../common/entity/BaseEntity';
 import { LectureStudentCountRepository } from '../repository/LectureStudentCountRepository';
-import { LectureBulkCreateRequest } from '../controller/dto/LectureBulkCreateRequest';
-import { LectureBulkCreateResponse, LectureBulkCreateResponseItem } from '../controller/dto/LectureBulkCreateResponse';
-import { LectureDetailRequest } from '../controller/dto/LectureDetailRequest';
-import { LectureDetailResponse, LectureDetailResponseStudentItem } from '../controller/dto/LectureDetailResponse';
-import { StudentRepository } from '../repository/StudentRepository';
-import { Enrollment } from '../domain/Enrollment';
-import { EnrollmentRepository } from '../repository/EnrollmentRepository';
-import { Student } from '../domain/Student';
+import { LectureRepository } from '../repository/LectureRepository';
+import { LectureCreateRequest } from '../controller/dto/LectureCreateRequest';
+import { IllegalArgumentException } from '../common/exception/IllegalArgumentException';
+import { LectureListRequest } from '../controller/dto/LectureListRequest';
+import { LectureListItem } from '../controller/dto/LectureListResponse';
 import { LectureUpdateRequest } from '../controller/dto/LectureUpdateRequest';
 import { LectureDeleteRequest } from '../controller/dto/LectureDeleteRequest';
 import { LecturePublishRequest } from '../controller/dto/LecturePublishRequest';
-import { IllegalArgumentException } from '../common/exception/IllegalArgumentException';
-
 
 @injectable()
 export class LectureService {
-
   constructor(
     @inject(BindingTypes.LectureRepository)
     private readonly _lectureRepository: LectureRepository,
     @inject(BindingTypes.LectureStudentCountRepository)
     private readonly _lectureStudentCountRepository: LectureStudentCountRepository,
-    @inject(BindingTypes.InstructorRepository)
-    private readonly _instructorRepository: InstructorRepository,
-    @inject(BindingTypes.EnrollmentRepository)
-    private readonly _enrollmentRepository: EnrollmentRepository,
-    @inject(BindingTypes.StudentRepository)
-    private readonly _studentRepository: StudentRepository,
   ) {}
 
-  @transactional()
-  public async createLecture(
-    request: LectureCreateRequest,
-    connection?: PoolConnection,
-  ): Promise<LectureCreateResponse> {
-    const { title, introduction, instructorId, category, price }: LectureCreateRequest = request;
 
-    await Promise.all([
-      this._validateInstructorExists(instructorId, connection!),
-      this._validateLectureTitleNotExists(title, connection!),
-    ]);
-
-    const lecture: Lecture = Lecture.create(title, introduction, instructorId, category, price);
-    const createdLecture: Lecture = await this._lectureRepository.save(lecture, connection!);
-    await this._lectureStudentCountRepository.create(createdLecture.id!, connection!);
-
-    return LectureCreateResponse.from(createdLecture);
-  }
-
-  @transactional()
-  public async listLecture(
-    request: LectureListRequest,
-    connection?: PoolConnection,
-  ): Promise<LectureListResponse> {
-    const { page, pageSize, order, category, searchType, searchKeyword }: LectureListRequest = request;
-    const [lectureListItems, lectureCount]: [Array<LectureListItem>, number] = await Promise.all([
-      this._lectureRepository.findByPage(
-        connection!,
-        page,
-        pageSize,
-        order,
-        category,
-        searchType,
-        searchKeyword,
-      ),
-      this._lectureRepository.count(
-        connection!,
-        category,
-        searchType,
-        searchKeyword,
-      ),
-    ]) as [Array<LectureListItem>, number];
-
-    return LectureListResponse.of(lectureListItems, page, pageSize, lectureCount);
-  }
-
-  @transactional()
-  public async createMultipleLectures(
-    request: LectureBulkCreateRequest,
-    connection?: PoolConnection,
-  ): Promise<LectureBulkCreateResponse> {
-    const createItemWithHandlingError = async (request: LectureCreateRequest): Promise<LectureBulkCreateResponseItem> => {
-      try {
-        const response: LectureCreateResponse = await this.createLecture(request, connection);
-        return LectureBulkCreateResponseItem.createWithSuccess(response.id, response.title);
-      } catch (error) {
-        if (error instanceof Error) {
-          return LectureBulkCreateResponseItem.createWithFail(request.title, error);
-        }
-        return LectureBulkCreateResponseItem.createWithFail(request.title, new Error('알 수 없는 에러'));
-      }
-    };
-
-    const responseItems: Array<LectureBulkCreateResponseItem> = await Promise.all(request.items.map(createItemWithHandlingError));
-    return LectureBulkCreateResponse.from(responseItems);
-  }
-
-  @transactional()
-  public async detailLecture(
-    { lectureId }: LectureDetailRequest,
-    connection?: PoolConnection,
-  ): Promise<LectureDetailResponse> {
-    const lecture: Lecture | null = await this._lectureRepository.findById(lectureId, connection!);
-    if (!lecture) {
-      throw new NotFoundException(`존재하지 않는 강의 ID(${ lectureId }) 입니다`);
+  public async findById(
+    id: number,
+    connection: PoolConnection,
+  ): Promise<Lecture> {
+    const lecture: Lecture | null = await this._lectureRepository.findById(id, connection);
+    if (lecture === null) {
+      throw new NotFoundException(`존재하지 않는 강의(id=${ id })입니다`);
     }
-
-    const [studentCount, enrollments]: [number, Array<Enrollment>] = await Promise.all([
-      this._lectureStudentCountRepository.getStudentCount(lectureId, connection!),
-      this._enrollmentRepository.findAllByLectureId(lectureId, connection!),
-    ]);
-
-    const studentItems: Array<Student | null> = await Promise.all(
-      enrollments.map((enrollment: Enrollment) =>
-        this._studentRepository.findById(enrollment.studentId, connection!),
-      ),
-    );
-
-    const lectureStudents: Array<LectureDetailResponseStudentItem> = enrollments.map((
-        enrollment,
-        index,
-      ) =>
-        LectureDetailResponseStudentItem.of(enrollment, studentItems[index]),
-    );
-
-    return LectureDetailResponse.of(lecture, studentCount, lectureStudents);
+    return lecture;
   }
 
-  @transactional()
-  public async updateLecture(
+  public async findAll(
+    request: LectureListRequest,
+    connection: PoolConnection,
+  ): Promise<[Array<LectureListItem>, number]> {
+    const { category, searchType, searchKeyword }: LectureListRequest = request;
+    return await Promise.all([
+      this._lectureRepository.findByPage(request, connection),
+      this._lectureRepository.count(connection, category, searchType, searchKeyword),
+    ]);
+  }
+
+  public async create(
+    { title, introduction, instructorId, category, price }: LectureCreateRequest,
+    connection: PoolConnection,
+  ): Promise<Lecture> {
+    await this.validateLectureTitleExists(title, connection!);
+    const lecture: Lecture = Lecture.create(title, introduction, instructorId, category, price);
+
+    const savedLecture: Lecture = await this._lectureRepository.save(lecture, connection);
+    await this._lectureStudentCountRepository.create(savedLecture.id!, connection);
+    return savedLecture;
+  }
+
+  public async update(
     request: LectureUpdateRequest,
-    connection?: PoolConnection,
+    connection: PoolConnection,
   ): Promise<void> {
     const { lectureId, title, introduction, price }: LectureUpdateRequest = request;
-    const lecture: Lecture | null = await this._lectureRepository.findById(lectureId, connection!);
-    if (!lecture) {
-      throw new NotFoundException(`존재하지 않는 강의 ID(${ lectureId }) 입니다`);
-    }
+    const lecture: Lecture = await this.findById(lectureId, connection!);
 
     if (title) {
-      const findTitleLecture: Lecture | null = await this._lectureRepository.findByTitle(title, connection!);
-      if (findTitleLecture !== null) {
-        throw new IllegalArgumentException(`이미 존재하는 강의 제목(${ title }) 입니다`);
-      }
+      await this.validateLectureTitleExists(title, connection!);
     }
-
 
     const updatedLecture: Lecture = lecture.update(title, introduction, price);
     await this._lectureRepository.update(updatedLecture, connection!);
   }
 
-  @transactional()
-  public async deleteLecture(
-    request: LectureDeleteRequest,
-    connection?: PoolConnection,
-  ): Promise<void> {
-    const { lectureId }: LectureDeleteRequest = request;
-    const lecture: Lecture | null = await this._lectureRepository.findById(lectureId, connection!);
-    if (!lecture) {
-      throw new NotFoundException(`존재하지 않는 강의 ID(${ lectureId }) 입니다`);
-    }
-
-    await Promise.all([
-      this._lectureRepository.delete(lectureId, connection!),
-      this._lectureStudentCountRepository.delete(lectureId, connection!),
-    ]);
+  public async getLectureStudentCount(
+    lectureId: number,
+    connection: PoolConnection,
+  ): Promise<number> {
+    return await this._lectureStudentCountRepository.getStudentCount(lectureId, connection);
   }
 
-  @transactional()
-  public async publishLecture(
-    request: LecturePublishRequest,
-    connection?: PoolConnection,
-  ): Promise<void> {
-    const { lectureId }: LecturePublishRequest = request;
-    const lecture: Lecture | null = await this._lectureRepository.findById(lectureId, connection!);
-    if (!lecture) {
-      throw new NotFoundException(`존재하지 않는 강의 ID(${ lectureId }) 입니다`);
-    }
-
-    if (lecture.is_published) {
-      throw new IllegalArgumentException(`이미 공개된 강의입니다.`);
-    }
-
-    const publishedLecture: Lecture = lecture.publish();
-    await this._lectureRepository.update(publishedLecture, connection!);
-  }
-
-  private async _validateInstructorExists(
-    instructorId: number,
+  public async validateAllLecturesPublished(
+    lectureIds: Array<number>,
     connection: PoolConnection,
   ): Promise<void> {
-    const instructor: Instructor | null = await this._instructorRepository.findById(instructorId, connection);
-    if (instructor === null) {
-      throw new NotFoundException(`존재하지 않는 강사 ID(${ instructorId }) 입니다`);
+    const lectures: Array<Lecture> = await this.findAllByIds(lectureIds, connection);
+    const unpublishedLectures: Array<Lecture> = lectures.filter((lecture: Lecture) => !lecture.isPublished);
+    if (unpublishedLectures.length > 0) {
+      throw new IllegalArgumentException(`존재하지 않는 강의(id=${ unpublishedLectures.map((lecture: Lecture) => lecture.id).join(',') })가 포함되어 있습니다.`);
     }
   }
 
-  private async _validateLectureTitleNotExists(
+  public async findAllByIds(
+    lectureIds: Array<number>,
+    connection: PoolConnection,
+  ): Promise<Array<Lecture>> {
+    const lectures: Array<Lecture | null> = await Promise.all(
+      lectureIds.map((lectureId: number) => this._lectureRepository.findById(lectureId, connection)),
+    );
+    const foundLectures: Array<Lecture> = lectures.filter((lecture: Lecture | null): lecture is Lecture => lecture !== null);
+    if (foundLectures.length !== lectureIds.length) {
+      throw new NotFoundException(`존재하지 않는 강의(id=${ lectureIds.filter((lectureId: number) => !foundLectures.some((lecture: Lecture) => lecture.id === lectureId)).join(',') })가 포함되어 있습니다.`);
+    }
+    return foundLectures;
+  }
+
+  public async validateLectureExists(
+    lectureId: number,
+    connection: PoolConnection,
+  ): Promise<void> {
+    const lecture: Lecture | null = await this._lectureRepository.findById(lectureId, connection);
+    if (lecture === null) {
+      throw new NotFoundException(`존재하지 않는 강의(id=${ lectureId })입니다`);
+    }
+  }
+
+  public async validateLectureTitleExists(
     title: string,
     connection: PoolConnection,
   ): Promise<void> {
     const lecture: Lecture | null = await this._lectureRepository.findByTitle(title, connection);
     if (lecture !== null) {
       throw new IllegalArgumentException(`이미 존재하는 강의 제목(${ title }) 입니다`);
+    }
+  }
+
+  public async delete(
+    request: LectureDeleteRequest,
+    connection: PoolConnection,
+  ): Promise<void> {
+    const { lectureId }: LectureDeleteRequest = request;
+    await this.validateLectureExists(lectureId, connection);
+    await Promise.all([
+      this._lectureRepository.delete(lectureId, connection!),
+      this._lectureStudentCountRepository.delete(lectureId, connection!),
+    ]);
+  }
+
+  public async publish(
+    request: LecturePublishRequest,
+    connection: PoolConnection,
+  ): Promise<void> {
+    const { lectureId }: LecturePublishRequest = request;
+    const lecture: Lecture = await this.findById(lectureId, connection!);
+    const publishedLecture: Lecture = lecture.publish();
+    await this._lectureRepository.update(publishedLecture, connection!);
+  }
+
+  public async validateNoDuplicateLectureIds(
+    lectureIds: Array<number>,
+  ): Promise<void> {
+    const set: Set<Id> = new Set(lectureIds);
+    if (set.size !== lectureIds.length) {
+      throw new IllegalArgumentException('중복된 강의가 포함되어 있습니다.');
     }
   }
 }

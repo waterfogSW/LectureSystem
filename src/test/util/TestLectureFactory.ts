@@ -25,6 +25,6 @@ export class TestLectureFactory {
       this.TEST_LECTURE_DATA.instructorId,
       this.TEST_LECTURE_DATA.category,
       this.TEST_LECTURE_DATA.price,
-    )
+    );
   }
 }

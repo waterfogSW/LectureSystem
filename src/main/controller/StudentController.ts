@@ -1,5 +1,5 @@
 import { inject, injectable } from 'inversify';
-import { StudentService } from '../service/StudentService';
+import { StudentFacade } from '../facade/StudentFacade';
 import { type Request, type Response } from 'express';
 import { HttpStatus } from '../common/constant/HttpStatus';
 import { StudentCreateResponse } from './dto/StudentCreateResponse';
@@ -9,7 +9,8 @@ import { StudentCreateRequest } from './dto/StudentCreateRequest';
 @injectable()
 export class StudentController {
   constructor(
-    @inject(BindingTypes.StudentService) private readonly _studentService: StudentService,
+    @inject(BindingTypes.StudentFacade)
+    private readonly _studentFacade: StudentFacade,
   ) {}
 
   public async createStudent(
@@ -17,7 +18,7 @@ export class StudentController {
     response: Response,
   ): Promise<void> {
     const studentCreateRequest: StudentCreateRequest = StudentCreateRequest.from(request);
-    const studentCreateResponse: StudentCreateResponse = await this._studentService.createStudent(studentCreateRequest);
+    const studentCreateResponse: StudentCreateResponse = await this._studentFacade.createStudent(studentCreateRequest);
     response
       .status(HttpStatus.CREATED)
       .json(studentCreateResponse);
@@ -29,7 +30,7 @@ export class StudentController {
   ): Promise<void> {
     const { id } = request.params;
     const parsedId: number = parseInt(id, 10);
-    await this._studentService.deleteStudent(parsedId);
+    await this._studentFacade.deleteStudent(parsedId);
     response
       .status(HttpStatus.OK)
       .send();

@@ -3,6 +3,7 @@ import { Lecture } from '../domain/Lecture';
 import { FieldPacket, PoolConnection, ResultSetHeader, RowDataPacket } from 'mysql2/promise';
 import { LectureCategory, LectureOrderType, LectureSearchType } from '../domain/LectureEnums';
 import { LectureListItem } from '../controller/dto/LectureListResponse';
+import { LectureListRequest } from '../controller/dto/LectureListRequest';
 
 @injectable()
 export class LectureRepository {
@@ -99,7 +100,7 @@ export class LectureRepository {
                                  WHERE id = ?`;
     await connection.execute(
       updateQuery,
-      [lecture.title, lecture.introduction, lecture.instructorId, lecture.category, lecture.price, lecture.is_published, lecture.updatedAt, lecture.id],
+      [lecture.title, lecture.introduction, lecture.instructorId, lecture.category, lecture.price, lecture.isPublished, lecture.updatedAt, lecture.id],
     );
   }
 
@@ -131,13 +132,8 @@ export class LectureRepository {
   }
 
   public async findByPage(
+    { page, pageSize, order, category, searchType, searchKeyword }: LectureListRequest,
     connection: PoolConnection,
-    page: number,
-    pageSize: number,
-    order: LectureOrderType,
-    category?: LectureCategory,
-    searchType?: LectureSearchType,
-    searchKeyword?: string,
   ): Promise<Array<LectureListItem>> {
     const queryParams: (string | number)[] = [];
     const query: string = `
@@ -154,8 +150,6 @@ export class LectureRepository {
             ${ this._buildWhereClause(queryParams, category, searchType, searchKeyword) } ${ this._buildOrderClause(order) }
             ${ this._buildPaginationClause(queryParams, page, pageSize) }
     `;
-
-    console.log(query);
 
     const [rows]: [RowDataPacket[], FieldPacket[]] = await connection.execute(query, queryParams);
     return rows.map((row: RowDataPacket) => {

@@ -64,7 +64,18 @@ export class LectureCreateRequest {
       introduction,
       instructorId,
       parseEnum(category.toUpperCase(), LectureCategory),
-      price
+      price,
     );
+  }
+
+  public static of(
+    title: string,
+    introduction: string,
+    instructorId: number,
+    category: string,
+    price: number,
+  ): LectureCreateRequest {
+    const categoryEnum: LectureCategory = parseEnum(category.toUpperCase(), LectureCategory);
+    return new LectureCreateRequest(title, introduction, instructorId, categoryEnum, price);
   }
 }

@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import { StudentController } from '../../main/controller/StudentController';
-import { StudentService } from '../../main/service/StudentService';
+import { StudentFacade } from '../../main/facade/StudentFacade';
 import { Student } from '../../main/domain/Student';
 import { MockFactory } from '../util/MockFactory';
 import { Request, Response } from 'express';
@@ -13,14 +13,14 @@ import { StudentCreateResponse } from '../../main/controller/dto/StudentCreateRe
 describe('StudentController', () => {
 
   let studentController: StudentController;
-  let studentService: jest.Mocked<StudentService>;
+  let studentService: jest.Mocked<StudentFacade>;
 
   let mockRequest: Partial<Request>;
   let mockResponse: Partial<Response>;
   let responseObject: any;
 
   beforeEach(() => {
-    studentService = MockFactory.create<StudentService>();
+    studentService = MockFactory.create<StudentFacade>();
     studentController = new StudentController(studentService);
 
     responseObject = {

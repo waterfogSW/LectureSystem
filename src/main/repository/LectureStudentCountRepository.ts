@@ -12,6 +12,14 @@ export class LectureStudentCountRepository {
     await connection.execute(insertQuery, [lectureId]);
   }
 
+  public async increment(
+    lectureId: number,
+    connection: PoolConnection,
+  ): Promise<void> {
+    const updateQuery: string = 'UPDATE lecture_student_counts SET count = count + 1 WHERE lecture_id = ?';
+    await connection.execute(updateQuery, [lectureId]);
+  }
+
   public async getStudentCount(
     lectureId: number,
     connection: PoolConnection,
@@ -24,7 +32,7 @@ export class LectureStudentCountRepository {
   public async delete(
     lectureId: number,
     poolConnection: PoolConnection,
-  ):Promise<void> {
+  ): Promise<void> {
     const deleteQuery: string = 'UPDATE lecture_student_counts SET is_deleted = 1 WHERE lecture_id = ?';
     await poolConnection.execute(deleteQuery, [lectureId]);
   }

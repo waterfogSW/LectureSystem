@@ -8,7 +8,7 @@ interface ErrorStatusMapping {
   status: HttpStatus;
 }
 
-const errorStatusMappings: ErrorStatusMapping[] = [
+export const errorStatusMappings: ErrorStatusMapping[] = [
   { type: NotFoundException, status: HttpStatus.NOT_FOUND },
   { type: IllegalArgumentException, status: HttpStatus.BAD_REQUEST },
   { type: Error, status: HttpStatus.INTERNAL_SERVER_ERROR },

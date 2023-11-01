@@ -10,7 +10,7 @@ describe('Lecture', () => {
 
     it('[Success] 새로운 강의를 생성한다.', () => {
       // given
-      const { title, introduction, instructorId, category, price } = TestLectureDataFactory.createData()
+      const { title, introduction, instructorId, category, price } = TestLectureDataFactory.createData();
 
       // when
       const lecture: Lecture = Lecture.create(title, introduction, instructorId, category, price);
@@ -59,6 +59,6 @@ describe('Lecture', () => {
       // when, then
       expect(() => Lecture.create(title, introduction, instructorId, category, price)).toThrowError(IllegalArgumentException);
     });
-  })
+  });
 
 });

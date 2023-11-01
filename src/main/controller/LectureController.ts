@@ -1,6 +1,6 @@
 import { inject, injectable } from 'inversify';
 import { BindingTypes } from '../common/constant/BindingTypes';
-import { LectureService } from '../service/LectureService';
+import { LectureFacade } from '../facade/LectureFacade';
 import { LectureCreateResponse } from './dto/LectureCreateResponse';
 import { type Request, type Response } from 'express';
 import { HttpStatus } from '../common/constant/HttpStatus';
@@ -19,7 +19,8 @@ import { LecturePublishRequest } from './dto/LecturePublishRequest';
 export class LectureController {
 
   constructor(
-    @inject(BindingTypes.LectureService) private readonly _lectureService: LectureService,
+    @inject(BindingTypes.LectureFacade)
+    private readonly _lectureFacade: LectureFacade,
   ) {}
 
   public async createLecture(
@@ -27,7 +28,7 @@ export class LectureController {
     response: Response,
   ): Promise<void> {
     const lectureCreateRequest: LectureCreateRequest = LectureCreateRequest.from(request);
-    const lectureCreateResponse: LectureCreateResponse = await this._lectureService.createLecture(lectureCreateRequest);
+    const lectureCreateResponse: LectureCreateResponse = await this._lectureFacade.createLecture(lectureCreateRequest);
     response
       .status(HttpStatus.CREATED)
       .json(lectureCreateResponse);
@@ -38,7 +39,7 @@ export class LectureController {
     response: Response,
   ): Promise<void> {
     const lectureListRequest: LectureListRequest = LectureListRequest.from(request);
-    const lectureListResponse: LectureListResponse = await this._lectureService.listLecture(lectureListRequest);
+    const lectureListResponse: LectureListResponse = await this._lectureFacade.listLecture(lectureListRequest);
     response
       .status(HttpStatus.OK)
       .json(lectureListResponse);
@@ -49,7 +50,7 @@ export class LectureController {
     response: Response,
   ): Promise<void> {
     const lectureBulkCreateRequest: LectureBulkCreateRequest = LectureBulkCreateRequest.from(request);
-    const lectureBulkCreateResponse: LectureBulkCreateResponse = await this._lectureService.createMultipleLectures(lectureBulkCreateRequest);
+    const lectureBulkCreateResponse: LectureBulkCreateResponse = await this._lectureFacade.createMultipleLectures(lectureBulkCreateRequest);
     response
       .status(HttpStatus.CREATED)
       .json(lectureBulkCreateResponse);
@@ -60,7 +61,7 @@ export class LectureController {
     response: Response,
   ): Promise<void> {
     const lectureDetailRequest: LectureDetailRequest = LectureDetailRequest.from(request);
-    const lectureDetailResponse: LectureDetailResponse = await this._lectureService.detailLecture(lectureDetailRequest);
+    const lectureDetailResponse: LectureDetailResponse = await this._lectureFacade.detailLecture(lectureDetailRequest);
     response
       .status(HttpStatus.OK)
       .json(lectureDetailResponse);
@@ -71,7 +72,7 @@ export class LectureController {
     response: Response,
   ): Promise<void> {
     const lectureUpdateRequest: LectureUpdateRequest = LectureUpdateRequest.from(request);
-    await this._lectureService.updateLecture(lectureUpdateRequest);
+    await this._lectureFacade.updateLecture(lectureUpdateRequest);
     response
       .status(HttpStatus.OK)
       .send();
@@ -80,9 +81,9 @@ export class LectureController {
   public async deleteLecture(
     request: Request,
     response: Response,
-  ):Promise<void> {
+  ): Promise<void> {
     const lectureDeleteRequest: LectureDeleteRequest = LectureDeleteRequest.from(request);
-    await this._lectureService.deleteLecture(lectureDeleteRequest);
+    await this._lectureFacade.deleteLecture(lectureDeleteRequest);
     response
       .status(HttpStatus.OK)
       .send();
@@ -93,7 +94,7 @@ export class LectureController {
     response: Response,
   ): Promise<void> {
     const lecturePublishRequest: LecturePublishRequest = LecturePublishRequest.from(request);
-    await this._lectureService.publishLecture(lecturePublishRequest);
+    await this._lectureFacade.publishLecture(lecturePublishRequest);
     response
       .status(HttpStatus.OK)
       .send();
