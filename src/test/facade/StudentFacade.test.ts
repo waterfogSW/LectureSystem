@@ -1,7 +1,6 @@
-import { beforeEach, afterEach, describe, jest, it, expect } from '@jest/globals';
+import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { EnrollmentService } from '../../main/service/EnrollementSerivce';
 import { StudentService } from '../../main/service/StudentService';
-import { EnrollmentFacade } from '../../main/facade/EnrollmentFacade';
 import { initializeMockTransactionContext } from '../util/MockTransaction';
 import { MockFactory } from '../util/MockFactory';
 import { TestStudentFactory } from '../util/TestStudentFactory';
@@ -22,7 +21,7 @@ describe('StudentFacade', () => {
     initializeMockTransactionContext();
     mockEnrollmentService = MockFactory.create<EnrollmentService>();
     mockStudentService = MockFactory.create<StudentService>();
-    sut = new StudentFacade(mockEnrollmentService, mockStudentService)
+    sut = new StudentFacade(mockEnrollmentService, mockStudentService);
   });
 
   afterEach(() => {

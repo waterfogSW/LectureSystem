@@ -5,7 +5,6 @@ import { StudentService } from '../../main/service/StudentService';
 import { EnrollmentService } from '../../main/service/EnrollementSerivce';
 import { EnrollmentFacade } from '../../main/facade/EnrollmentFacade';
 import { MockFactory } from '../util/MockFactory';
-import { TestStudentFactory } from '../util/TestStudentFactory';
 import { EnrollmentCreateRequest } from '../../main/controller/dto/EnrollmentCreateRequest';
 import { TestEnrollmentFactory } from '../util/TestEnrollmentFactory';
 import { initializeMockTransactionContext } from '../util/MockTransaction';
