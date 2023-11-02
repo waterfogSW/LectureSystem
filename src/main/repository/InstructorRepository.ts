@@ -26,19 +26,4 @@ export class InstructorRepository {
       new Date(instructor.updated_at),
     );
   }
-
-  public async findNameById(
-    id: number,
-    connection: PoolConnection,
-  ): Promise<string | null> {
-    const selectQuery: string = 'SELECT name FROM active_instructors WHERE id = ?';
-    const [instructors]: [RowDataPacket[], FieldPacket[]] = await connection.execute<RowDataPacket[]>(
-      selectQuery,
-      [id],
-    );
-    if (instructors.length === 0) {
-      return null;
-    }
-    return instructors[0].name;
-  }
 }
