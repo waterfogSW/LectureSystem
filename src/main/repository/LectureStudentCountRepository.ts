@@ -20,6 +20,14 @@ export class LectureStudentCountRepository {
     await connection.execute(updateQuery, [lectureId]);
   }
 
+  public async decrement(
+    lectureId: number,
+    connection: PoolConnection,
+  ): Promise<void> {
+    const updateQuery: string = 'UPDATE active_lecture_student_counts SET count = count - 1 WHERE lecture_id = ?';
+    await connection.execute(updateQuery, [lectureId]);
+  }
+
   public async getStudentCount(
     lectureId: number,
     connection: PoolConnection,

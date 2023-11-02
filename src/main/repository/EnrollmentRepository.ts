@@ -1,6 +1,6 @@
 import { injectable } from 'inversify';
 import { Enrollment } from '../domain/Enrollment';
-import { FieldPacket, PoolConnection, RowDataPacket } from 'mysql2/promise';
+import { FieldPacket, PoolConnection, ResultSetHeader, RowDataPacket } from 'mysql2/promise';
 
 @injectable()
 export class EnrollmentRepository {
@@ -67,6 +67,35 @@ export class EnrollmentRepository {
       newEnrollment.studentId,
       newEnrollment.createdAt,
       newEnrollment.updatedAt,
+    );
+  }
+
+  async findAllByStudentId(
+    studentId: number,
+    connection: PoolConnection,
+  ): Promise<Array<Enrollment>> {
+    const selectQuery: string = 'SELECT * FROM active_enrollments WHERE student_id = ?';
+    const [enrollments]: [RowDataPacket[], FieldPacket[]] = await connection.execute(
+      selectQuery,
+      [studentId],
+    );
+    return enrollments.map((enrollment: RowDataPacket) => new Enrollment(
+      enrollment.id,
+      enrollment.lecture_id,
+      enrollment.student_id,
+      enrollment.created_at,
+      enrollment.updated_at,
+    ));
+  }
+
+  public async deleteById(
+    id: number,
+    connection: PoolConnection,
+  ): Promise<void> {
+    const deleteQuery: string = 'UPDATE enrollments SET is_deleted = 1 WHERE id = ?'
+    const [deleted]: [ResultSetHeader, FieldPacket[]] = await connection.execute<ResultSetHeader>(
+      deleteQuery,
+      [id],
     );
   }
 }

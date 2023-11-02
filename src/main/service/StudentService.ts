@@ -49,7 +49,7 @@ export class StudentService {
     return StudentCreateResponse.from(createdStudent);
   }
 
-  public async delete(
+  public async deleteById(
     id: number,
     connection: PoolConnection,
   ): Promise<void> {

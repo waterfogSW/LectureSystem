@@ -61,7 +61,7 @@ export class StudentRepository {
     id: number,
     connection: PoolConnection,
   ): Promise<boolean> {
-    const deleteQuery: string = 'UPDATE students SET is_deleted = 1 WHERE id = ?';
+    const deleteQuery: string = 'UPDATE active_students SET is_deleted = 1 WHERE id = ?';
     const [deleted]: [ResultSetHeader, FieldPacket[]] = await connection.execute<ResultSetHeader>(
       deleteQuery,
       [id],
