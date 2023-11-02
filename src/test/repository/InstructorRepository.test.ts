@@ -35,7 +35,8 @@ describe('InstructorRepository', () => {
 
       // when
       await sut.findById(instructor.id!, connection);
-// then
+
+      // then
       expect(connection.execute).toBeCalledWith(
         'SELECT * FROM active_instructors WHERE id = ?',
         [instructor.id],
