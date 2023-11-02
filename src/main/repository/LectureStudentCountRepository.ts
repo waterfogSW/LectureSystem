@@ -1,5 +1,5 @@
 import { injectable } from 'inversify';
-import { FieldPacket, PoolConnection, RowDataPacket } from 'mysql2/promise';
+import { FieldPacket, PoolConnection, ResultSetHeader, RowDataPacket } from 'mysql2/promise';
 
 @injectable()
 export class LectureStudentCountRepository {
@@ -9,7 +9,13 @@ export class LectureStudentCountRepository {
     connection: PoolConnection,
   ): Promise<void> {
     const insertQuery: string = 'INSERT INTO lecture_student_counts (lecture_id, count) VALUES (?, 0)';
-    await connection.execute(insertQuery, [lectureId]);
+    const [inserted]: [ResultSetHeader, FieldPacket[]] = await connection.execute<ResultSetHeader>(
+      insertQuery,
+      [lectureId],
+    );
+    if (inserted.affectedRows === 0) {
+      throw new Error('수강생 수 정보 생성에 실패했습니다.');
+    }
   }
 
   public async increment(
@@ -17,7 +23,10 @@ export class LectureStudentCountRepository {
     connection: PoolConnection,
   ): Promise<void> {
     const updateQuery: string = 'UPDATE lecture_student_counts SET count = count + 1 WHERE lecture_id = ?';
-    await connection.execute(updateQuery, [lectureId]);
+    const [updated]: [ResultSetHeader, FieldPacket[]] = await connection.execute(updateQuery, [lectureId]);
+    if (updated.affectedRows === 0) {
+      throw new Error('수강생 수 변경에 실패했습니다.');
+    }
   }
 
   public async decrement(
@@ -25,7 +34,10 @@ export class LectureStudentCountRepository {
     connection: PoolConnection,
   ): Promise<void> {
     const updateQuery: string = 'UPDATE active_lecture_student_counts SET count = count - 1 WHERE lecture_id = ?';
-    await connection.execute(updateQuery, [lectureId]);
+    const [updated]: [ResultSetHeader, FieldPacket[]] = await connection.execute(updateQuery, [lectureId]);
+    if (updated.affectedRows === 0) {
+      throw new Error('수강생 수 변경에 실패했습니다.');
+    }
   }
 
   public async getStudentCount(
@@ -42,6 +54,12 @@ export class LectureStudentCountRepository {
     poolConnection: PoolConnection,
   ): Promise<void> {
     const deleteQuery: string = 'UPDATE lecture_student_counts SET is_deleted = 1 WHERE lecture_id = ?';
-    await poolConnection.execute(deleteQuery, [lectureId]);
+    const [deleted]: [ResultSetHeader, FieldPacket[]] = await poolConnection.execute<ResultSetHeader>(
+      deleteQuery,
+      [lectureId],
+    );
+    if (deleted.affectedRows === 0) {
+      throw new Error('수강생 수 정보 삭제에 실패했습니다.');
+    }
   }
 }

@@ -61,6 +61,10 @@ export class EnrollmentRepository {
       ],
     );
 
+    if (insertResult.affectedRows === 0) {
+      throw new Error('수강신청 생성에 실패했습니다.');
+    }
+
     return new Enrollment(
       insertResult.insertId,
       newEnrollment.lectureId,
@@ -97,5 +101,9 @@ export class EnrollmentRepository {
       deleteQuery,
       [id],
     );
+
+    if (deleted.affectedRows === 0) {
+      throw new Error('수강신청 삭제에 실패했습니다.');
+    }
   }
 }

@@ -14,6 +14,10 @@ export class StudentRepository {
       [student.nickname, student.email],
     );
 
+    if (inserted.affectedRows === 0) {
+      throw new Error('학생 생성에 실패했습니다.');
+    }
+
     return new Student(
       inserted.insertId,
       student.nickname,
@@ -60,12 +64,14 @@ export class StudentRepository {
   public async deleteById(
     id: number,
     connection: PoolConnection,
-  ): Promise<boolean> {
+  ): Promise<void> {
     const deleteQuery: string = 'UPDATE active_students SET is_deleted = 1 WHERE id = ?';
     const [deleted]: [ResultSetHeader, FieldPacket[]] = await connection.execute<ResultSetHeader>(
       deleteQuery,
       [id],
     );
-    return deleted.affectedRows === 1;
+    if (deleted.affectedRows === 0) {
+      throw new Error('학생 삭제에 실패했습니다.')
+    }
   }
 }

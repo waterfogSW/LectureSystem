@@ -73,6 +73,11 @@ export class LectureRepository {
       [lecture.title, lecture.introduction, lecture.instructorId, lecture.category, lecture.price],
     );
 
+    if (inserted.affectedRows === 0) {
+      throw new Error('강의 생성에 실패했습니다.');
+    }
+
+
     return new Lecture(
       inserted.insertId,
       lecture.title,
@@ -98,10 +103,23 @@ export class LectureRepository {
                                      is_published  = ?,
                                      updated_at    = ?
                                  WHERE id = ?`;
-    await connection.execute(
+    const [updated]: [ResultSetHeader, FieldPacket[]] = await connection.execute<ResultSetHeader>(
       updateQuery,
-      [lecture.title, lecture.introduction, lecture.instructorId, lecture.category, lecture.price, lecture.isPublished, lecture.updatedAt, lecture.id],
+      [
+        lecture.title,
+        lecture.introduction,
+        lecture.instructorId,
+        lecture.category,
+        lecture.price,
+        lecture.isPublished,
+        lecture.updatedAt,
+        lecture.id,
+      ],
     );
+
+    if (updated.affectedRows === 0) {
+      throw new Error('강의 업데이트에 실패했습니다.');
+    }
   }
 
   public async count(
@@ -128,7 +146,14 @@ export class LectureRepository {
     poolConnection: PoolConnection,
   ): Promise<void> {
     const deleteQuery: string = 'UPDATE lectures SET is_deleted = true WHERE id = ?';
-    await poolConnection.execute(deleteQuery, [lectureId]);
+    const [deleted]: [ResultSetHeader, FieldPacket[]] = await poolConnection.execute<ResultSetHeader>(
+      deleteQuery,
+      [lectureId],
+    );
+
+    if (deleted.affectedRows === 0) {
+      throw new Error('강의 삭제에 실패했습니다.');
+    }
   }
 
   public async findByPage(
