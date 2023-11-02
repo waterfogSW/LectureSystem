@@ -1,47 +1,60 @@
-import 'reflect-metadata';
-import { beforeEach, describe, expect, it, jest } from '@jest/globals';
+import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals';
+import { EnrollmentRepository } from '../../main/repository/EnrollmentRepository';
+import { FieldPacket, PoolConnection, RowDataPacket } from 'mysql2/promise';
+import { MockFactory } from '../util/MockFactory';
 import { InstructorRepository } from '../../main/repository/InstructorRepository';
 import { Instructor } from '../../main/domain/Instructor';
 
 
-describe('InstructorRepository', () => {
-  let instructorRepository: InstructorRepository;
-  let mockConnection: any;
+describe('EnrollmentRepository', () => {
+
+  let connection: jest.Mocked<PoolConnection>;
+  let sut: InstructorRepository;
 
   beforeEach(() => {
-    instructorRepository = new InstructorRepository();
-    mockConnection = { execute: jest.fn() };
+    connection = MockFactory.create<PoolConnection>();
+    sut = new InstructorRepository();
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   describe('findById', () => {
 
-    it('ID값에 해당하는 강사가 없다면 null을 반환한다.', async () => {
+    it('[Success] 주어진 ID를 가진 Instructor를 찾는다.', async () => {
       // given
-      mockConnection.execute.mockResolvedValue([[], []]);
+      const instructor: Instructor = new Instructor(1, 'nickname');
+      const data: [RowDataPacket[], FieldPacket[]] = [[{
+        id: instructor.id,
+        name: instructor.name,
+        created_at: instructor.createdAt,
+        updated_at: instructor.updatedAt,
+      }], []] as any;
+
+      connection.execute.mockResolvedValue(data);
 
       // when
-      const instructor: Instructor | null = await instructorRepository.findById(1, mockConnection);
+      const foundInstructor = await sut.findById(instructor.id!, connection);
 
       // then
-      expect(instructor).toBeNull();
+      expect(connection.execute).toBeCalledWith(
+        'SELECT * FROM active_instructors WHERE id = ?',
+        [instructor.id],
+      );
     });
 
-    it('ID값에 해당하는 강사를 반환한다', async () => {
+    it('[Success] 해당하는 데이터가 없으면 null을 반환한다.', async () => {
       // given
-      const findId: number = 1;
-      const mockInstructorData: any = [{
-        id: findId,
-        name: 'Test Instructor',
-        created_at: '2021-08-01 00:00:00',
-        updated_at: '2021-08-01 00:00:00',
-      }];
-      mockConnection.execute.mockResolvedValue([mockInstructorData, []]);
+      const instructor: Instructor = new Instructor(1, 'nickname');
+      const data: [RowDataPacket[], FieldPacket[]] = [[], []] as any;
+      connection.execute.mockResolvedValue(data);
 
       // when
-      const instructor: Instructor | null = await instructorRepository.findById(findId, mockConnection);
+      const foundInstructor = await sut.findById(instructor.id!, connection);
 
       // then
-      expect(instructor?.id!!).toBe(findId);
+      expect(foundInstructor).toBeNull();
     });
   });
 });
