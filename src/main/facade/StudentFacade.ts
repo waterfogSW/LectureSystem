@@ -33,7 +33,9 @@ export class StudentFacade {
     { studentId }: StudentDeleteRequest,
     connection?: PoolConnection,
   ): Promise<void> {
-    await this._enrollmentService.deleteAllByStudentId(studentId, connection!);
-    await this._studentService.deleteById(studentId, connection!);
+    await Promise.all([
+      this._enrollmentService.deleteAllByStudentId(studentId, connection!),
+      this._studentService.deleteById(studentId, connection!),
+    ]);
   }
 }
