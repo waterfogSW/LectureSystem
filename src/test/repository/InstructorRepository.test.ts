@@ -1,12 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals';
-import { EnrollmentRepository } from '../../main/repository/EnrollmentRepository';
 import { FieldPacket, PoolConnection, RowDataPacket } from 'mysql2/promise';
 import { MockFactory } from '../util/MockFactory';
 import { InstructorRepository } from '../../main/repository/InstructorRepository';
 import { Instructor } from '../../main/domain/Instructor';
 
 
-describe('EnrollmentRepository', () => {
+describe('InstructorRepository', () => {
 
   let connection: jest.Mocked<PoolConnection>;
   let sut: InstructorRepository;
