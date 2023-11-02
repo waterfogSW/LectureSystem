@@ -150,4 +150,26 @@ describe('Lecture', () => {
       expect(() => lecture.update(undefined, undefined, testPrice)).toThrowError(IllegalArgumentException);
     });
   });
+
+  describe('publish', () => {
+    it('[Success] 강의를 공개한다.', () => {
+      // given
+      const lecture: Lecture = TestLectureFactory.create();
+
+      // when
+      const publishedLecture: Lecture = lecture.publish();
+
+      // then
+      expect(publishedLecture.isPublished).toBe(true);
+    });
+
+    it('[Failure] 이미 공개된 강의인 경우 예외를 던진다.', () => {
+      // given
+      const lecture: Lecture = TestLectureFactory.create();
+      const publishedLecture: Lecture = lecture.publish();
+
+      // when, then
+      expect(() => publishedLecture.publish()).toThrowError(IllegalArgumentException);
+    });
+  });
 });
