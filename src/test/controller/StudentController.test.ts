@@ -1,13 +1,11 @@
 import 'reflect-metadata';
 import { StudentController } from '../../main/controller/StudentController';
 import { StudentFacade } from '../../main/facade/StudentFacade';
-import { Student } from '../../main/domain/Student';
 import { MockFactory } from '../util/MockFactory';
 import { Request, Response } from 'express';
 import { HttpStatus } from '../../main/common/constant/HttpStatus';
 import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { TestStudentDataFactory } from '../util/TestStudentDataFactory';
-import { TestStudentFactory } from '../util/TestStudentFactory';
 import { StudentCreateResponse } from '../../main/controller/dto/StudentCreateResponse';
 import { MockRequestBuilder } from '../util/MockRequestBuilder';
 import { MockResponseFactory } from '../util/MockResponseFactory';
