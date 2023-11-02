@@ -2,6 +2,7 @@ import { BaseEntity, Id } from '../common/entity/BaseEntity';
 import { IsBoolean, IsEnum, IsNumber, IsPositive, IsString, Length } from 'class-validator';
 import { LectureCategory } from './LectureEnums';
 import { validateClass } from '../common/util/ClassValidateUtil';
+import { IllegalArgumentException } from '../common/exception/IllegalArgumentException';
 
 export class Lecture extends BaseEntity {
 
@@ -102,7 +103,7 @@ export class Lecture extends BaseEntity {
 
   public publish(): Lecture {
     if (this.isPublished) {
-      throw new Error('이미 공개된 강의입니다.');
+      throw new IllegalArgumentException('이미 공개된 강의입니다.');
     }
 
     return new Lecture(
