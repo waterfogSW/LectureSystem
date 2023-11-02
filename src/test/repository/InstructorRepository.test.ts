@@ -34,9 +34,8 @@ describe('InstructorRepository', () => {
       connection.execute.mockResolvedValue(data);
 
       // when
-      const foundInstructor = await sut.findById(instructor.id!, connection);
-
-      // then
+      await sut.findById(instructor.id!, connection);
+// then
       expect(connection.execute).toBeCalledWith(
         'SELECT * FROM active_instructors WHERE id = ?',
         [instructor.id],
