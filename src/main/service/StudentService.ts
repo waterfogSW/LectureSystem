@@ -37,7 +37,7 @@ export class StudentService {
   public async create(
     request: StudentCreateRequest,
     connection: PoolConnection,
-  ): Promise<StudentCreateResponse> {
+  ): Promise<Student> {
     const { nickname, email }: StudentCreateRequest = request;
     const student: Student = Student.create(nickname, email);
     const existsEmail: boolean = await this._studentRepository.existsByEmail(email, connection!);
@@ -45,8 +45,7 @@ export class StudentService {
       throw new IllegalArgumentException(`이미 사용중인 이메일(email=${ email }) 입니다`);
     }
 
-    const createdStudent: Student = await this._studentRepository.save(student, connection!);
-    return StudentCreateResponse.from(createdStudent);
+    return await this._studentRepository.save(student, connection!);
   }
 
   public async deleteById(

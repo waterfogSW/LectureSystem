@@ -8,6 +8,7 @@ import { StudentCreateResponse } from '../controller/dto/StudentCreateResponse';
 import { StudentService } from '../service/StudentService';
 import { EnrollmentService } from '../service/EnrollementSerivce';
 import { StudentDeleteRequest } from '../controller/dto/StudentDeleteRequest';
+import { Student } from '../domain/Student';
 
 @injectable()
 export class StudentFacade {
@@ -23,7 +24,8 @@ export class StudentFacade {
     request: StudentCreateRequest,
     connection?: PoolConnection,
   ): Promise<StudentCreateResponse> {
-    return await this._studentService.create(request, connection!);
+    const student: Student = await this._studentService.create(request, connection!);
+    return StudentCreateResponse.from(student)
   }
 
   @transactional()
