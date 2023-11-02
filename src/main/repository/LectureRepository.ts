@@ -172,9 +172,13 @@ export class LectureRepository {
         FROM active_lectures as lectures
                  JOIN active_instructors as instructors ON lectures.instructor_id = instructors.id
                  JOIN lecture_student_counts as counts ON lectures.id = counts.lecture_id
-            ${ this._buildWhereClause(queryParams, category, searchType, searchKeyword) } ${ this._buildOrderClause(order) }
+            ${ this._buildWhereClause(queryParams, category, searchType, searchKeyword) }
+            ${ this._buildOrderClause(order) }
             ${ this._buildPaginationClause(queryParams, page, pageSize) }
     `;
+
+    console.log(query);
+    console.log(queryParams)
 
     const [rows]: [RowDataPacket[], FieldPacket[]] = await connection.execute(query, queryParams);
     return rows.map((row: RowDataPacket) => {
@@ -198,6 +202,11 @@ export class LectureRepository {
   ): string {
     const conditions: string[] = [];
 
+    const publishedWhereClause: string = this._buildWherePublishedClause(queryParams);
+    if (publishedWhereClause) {
+      conditions.push(publishedWhereClause);
+    }
+
     const categoryWhereClause: string = this._buildWhereCategoryClause(queryParams, category);
     if (categoryWhereClause) {
       conditions.push(categoryWhereClause);
@@ -211,13 +220,24 @@ export class LectureRepository {
     return conditions.length > 0 ? `WHERE ${ conditions.join(' AND ') }` : '';
   }
 
+  private _buildWherePublishedClause(
+    queryParams: (string | number)[],
+    isPublished: boolean = true,
+  ): string {
+    if (isPublished !== undefined) {
+      queryParams.push(isPublished ? 1 : 0);
+      return 'is_published = ?';
+    }
+    return '';
+  }
+
   private _buildWhereCategoryClause(
     queryParams: (string | number)[],
     category?: LectureCategory,
   ): string {
     if (category) {
       queryParams.push(category);
-      return ' category = ?';
+      return 'category = ?';
     }
     return '';
   }
