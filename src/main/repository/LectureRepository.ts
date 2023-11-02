@@ -66,11 +66,19 @@ export class LectureRepository {
     lecture: Lecture,
     connection: PoolConnection,
   ): Promise<Lecture> {
-    const saveQuery: string = `INSERT INTO lectures (title, introduction, instructor_id, category, price)
-                               VALUES (?, ?, ?, ?, ?)`;
+    const saveQuery: string = `INSERT INTO lectures (title, introduction, instructor_id, category, price, created_at, updated_at, is_published) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
     const [inserted]: [ResultSetHeader, FieldPacket[]] = await connection.execute<ResultSetHeader>(
       saveQuery,
-      [lecture.title, lecture.introduction, lecture.instructorId, lecture.category, lecture.price],
+      [
+        lecture.title,
+        lecture.introduction,
+        lecture.instructorId,
+        lecture.category,
+        lecture.price,
+        lecture.createdAt,
+        lecture.updatedAt,
+        lecture.isPublished,
+      ],
     );
 
     if (inserted.affectedRows === 0) {
