@@ -21,7 +21,7 @@ export class Lecture extends BaseEntity {
   private readonly _category: LectureCategory;
 
   @IsNumber({ allowNaN: false, allowInfinity: false }, { message: '강의 가격은 숫자여야 합니다.' })
-  @IsPositive({ message: '강의 가격은 0보다 커야 합니다.' })
+  @IsPositive({ message: '강의 가격은 0이상이어야 합니다.' })
   private readonly _price: number;
 
   @IsBoolean({ message: '잘못된 강의 공개여부 형식입니다.' })
@@ -89,11 +89,11 @@ export class Lecture extends BaseEntity {
   ): Lecture {
     return new Lecture(
       this.id,
-      title ? title : this.title,
-      introduction ? introduction : this.introduction,
+      title !== undefined ? title : this.title,
+      introduction !== undefined ? introduction : this.introduction,
       this.instructorId,
       this.category,
-      price ? price : this.price,
+      price !== undefined ? price : this.price,
       this.createdAt,
       new Date(),
       this.isPublished,
