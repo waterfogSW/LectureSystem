@@ -4,9 +4,11 @@ services:
     image: mysql:8.0.32
     ports:
       - "3306:3306"
+    env_file:
+      - .env
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: lecture_system
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
     command:
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_unicode_ci
@@ -21,8 +23,8 @@ services:
   app:
     image: node:16
     working_dir: /usr/src/app
-    environment:
-      - NODE_ENV=development
+    env_file:
+      - .env
     volumes:
       - .:/usr/src/app
     command: bash -c "npm install -g nodemon && npm install && nodemon --exec ts-node src/main/index.ts"

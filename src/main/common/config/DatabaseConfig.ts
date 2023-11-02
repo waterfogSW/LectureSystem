@@ -2,19 +2,19 @@ import { createPool, Pool, PoolConnection } from 'mysql2/promise';
 import { injectable } from 'inversify';
 
 const connectionPoolConfig = {
-  host: 'db',
-  port: 3306,
-  database: 'lecture_system',
-  user: 'root',
-  password: 'root',
-  timezone: '+09:00', // 한국 시간
-  waitForConnections: true,
-  connectionLimit: 10,
-  maxIdle: 10,
-  idleTimeout: 60000,
-  queueLimit: 0,
-  enableKeepAlive: true,
-  keepAliveInitialDelay: 0,
+  host: process.env.DB_HOST,
+  port: Number(process.env.DB_PORT),
+  database: process.env.DB_NAME,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  timezone: process.env.DB_TIMEZONE || '+00:00',
+  waitForConnections: Boolean(process.env.DB_WAIT_FOR_CONNECTIONS) || true,
+  connectionLimit: Number(process.env.DB_CONNECTION_LIMIT) || 10,
+  maxIdle: Number(process.env.DB_MAX_IDLE) || 10,
+  idleTimeout: Number(process.env.DB_IDLE_TIMEOUT) || 60000,
+  queueLimit: Number(process.env.DB_QUEUE_LIMIT) || 0,
+  enableKeepAlive: Boolean(process.env.DB_KEEPALIVE) || true,
+  keepAliveInitialDelay: Number(process.env.DB_KEEPALIVE_INITIAL_DELAY) || 0,
 };
 
 @injectable()
