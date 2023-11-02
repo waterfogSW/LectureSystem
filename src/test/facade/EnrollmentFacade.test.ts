@@ -58,7 +58,7 @@ describe('EnrollmentFacade', () => {
       // given
       const request: EnrollmentCreateRequest = new EnrollmentCreateRequest([1], 1);
 
-      mockStudentService.validateStudentExists.mockRejectedValueOnce(new Error());
+      mockStudentService.findById.mockRejectedValueOnce(new Error());
 
       // when, then
       await expect(sut.createEnrollments(request)).rejects.toThrowError();

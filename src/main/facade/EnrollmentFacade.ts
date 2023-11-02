@@ -31,7 +31,7 @@ export class EnrollmentFacade {
 
     await Promise.all([
       this._lectureService.validateNoDuplicateLectureIds(lectureIds),
-      this._studentService.validateStudentExists(studentId, connection!),
+      this._studentService.findById(studentId, connection!),
       this._lectureService.validateAllLecturesPublished(lectureIds, connection!),
       this._enrollmentService.validateNoEnrollmentAlreadyExists(lectureIds, studentId, connection!),
     ]);

@@ -16,6 +16,16 @@ export class StudentService {
     private readonly _studentRepository: StudentRepository,
   ) {}
 
+  public async findById(
+    id: number,
+    connection: PoolConnection,
+  ): Promise<void> {
+    const student: Student | null = await this._studentRepository.findById(id, connection);
+    if (student === null) {
+      throw new NotFoundException(`존재하지 않는 학생(id=${ id })입니다`);
+    }
+  }
+
   public async findByIdOrReturnUnknown(
     id: number,
     connection: PoolConnection,
@@ -25,13 +35,6 @@ export class StudentService {
       return Student.createUnknown();
     }
     return student;
-  }
-
-  public async findById(
-    id: number,
-    connection: PoolConnection,
-  ): Promise<Student | null> {
-    return await this._studentRepository.findById(id, connection);
   }
 
   public async create(
@@ -54,16 +57,6 @@ export class StudentService {
   ): Promise<void> {
     await this.findById(id, connection);
     await this._studentRepository.deleteById(id, connection);
-  }
-
-  public async validateStudentExists(
-    id: number,
-    connection: PoolConnection,
-  ): Promise<void> {
-    const student: Student | null = await this.findById(id, connection);
-    if (student === null) {
-      throw new NotFoundException(`존재하지 않는 학생(id=${ id })입니다`);
-    }
   }
 
 }
