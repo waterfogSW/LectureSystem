@@ -39,7 +39,7 @@ export class Student extends BaseEntity {
     return new Student(undefined, nickname, email);
   }
 
-  public static createDeletedStudent(): Student {
-    return new Student(undefined, "탈퇴한 회원입니다.", "notexist@email.com");
+  public static createUnknown(): Student {
+    return new Student(undefined, "알수없음.", "unknown@email.com");
   }
 }
