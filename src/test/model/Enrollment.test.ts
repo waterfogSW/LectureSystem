@@ -8,7 +8,7 @@ describe('Enrollment', () => {
 
     it('[Success] 새로운 수강 신청을 생성한다.', () => {
       // given
-      const { lectureId, studentId } = { lectureId: 1, studentId: 1 }
+      const { lectureId, studentId } = { lectureId: 1, studentId: 1 };
 
       // when
       const enrollment: Enrollment = Enrollment.create(lectureId, studentId);
@@ -21,7 +21,7 @@ describe('Enrollment', () => {
     it('[Failure] 강의 아이디가 1이상이 아니면 예외를 던진다.', () => {
       // given
       const testLectureId: number = 0;
-      const { lectureId, studentId } = { lectureId: testLectureId, studentId: 1 }
+      const { lectureId, studentId } = { lectureId: testLectureId, studentId: 1 };
 
       // when, then
       expect(() => Enrollment.create(lectureId, studentId)).toThrowError(IllegalArgumentException);
@@ -30,10 +30,10 @@ describe('Enrollment', () => {
     it('[Failure] 수강 신청자의 아이디가 1이상이 아니면 예외를 던진다.', () => {
       // given
       const testStudentId: number = 0;
-      const { lectureId, studentId } = { lectureId: 1, studentId: testStudentId }
+      const { lectureId, studentId } = { lectureId: 1, studentId: testStudentId };
 
       // when, then
       expect(() => Enrollment.create(lectureId, studentId)).toThrowError(IllegalArgumentException);
     });
-  })
+  });
 });

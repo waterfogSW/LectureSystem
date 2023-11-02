@@ -17,7 +17,6 @@ import { LectureBulkCreateResponse } from '../../main/controller/dto/LectureBulk
 import { LectureBulkCreateRequest } from '../../main/controller/dto/LectureBulkCreateRequest';
 import { HttpStatus } from '../../main/common/constant/HttpStatus';
 import { errorStatusMappings } from '../../main/common/middleware/ExceptionHandler';
-import { TestEnrollmentFactory } from '../util/TestEnrollmentFactory';
 import { Enrollment } from '../../main/domain/Enrollment';
 import { LectureDeleteRequest } from '../../main/controller/dto/LectureDeleteRequest';
 import { LectureDetailRequest } from '../../main/controller/dto/LectureDetailRequest';
@@ -97,8 +96,11 @@ describe('LectureFacade', () => {
         TestLectureDataFactory.createData(),
       ]);
 
-      const expectedResponses = request.items.map((item, index) =>
-        LectureCreateResponse.from(TestLectureFactory.createWithId(index + 1))
+      const expectedResponses = request.items.map((
+          item,
+          index,
+        ) =>
+          LectureCreateResponse.from(TestLectureFactory.createWithId(index + 1)),
       );
 
       mockCreateLecture.mockResolvedValueOnce(expectedResponses[0]);
@@ -106,7 +108,7 @@ describe('LectureFacade', () => {
 
       // when
       const response = await sut.createMultipleLectures(request);
-      const items = Reflect.get(response, 'items')
+      const items = Reflect.get(response, 'items');
 
       // then
       expect(response).toBeInstanceOf(LectureBulkCreateResponse);
@@ -123,8 +125,11 @@ describe('LectureFacade', () => {
         TestLectureDataFactory.createData(),
       ]);
 
-      const expectedResponses = request.items.map((item, index) =>
-        LectureCreateResponse.from(TestLectureFactory.createWithId(index + 1))
+      const expectedResponses = request.items.map((
+          item,
+          index,
+        ) =>
+          LectureCreateResponse.from(TestLectureFactory.createWithId(index + 1)),
       );
 
       mockCreateLecture.mockResolvedValueOnce(expectedResponses[0]);
@@ -132,7 +137,7 @@ describe('LectureFacade', () => {
 
       // when
       const response = await sut.createMultipleLectures(request);
-      const items = Reflect.get(response, 'items')
+      const items = Reflect.get(response, 'items');
 
       // then
       expect(response).toBeInstanceOf(LectureBulkCreateResponse);
@@ -149,7 +154,7 @@ describe('LectureFacade', () => {
       const lecture: Lecture = TestLectureFactory.createWithId(1);
       const enrollments: Array<Enrollment> = [
         new Enrollment(1, request.lectureId, 2),
-        new Enrollment(2, request.lectureId, 3)
+        new Enrollment(2, request.lectureId, 3),
       ];
       const lectureStudentCount: number = enrollments.length;
       const students: Array<Student> = [
@@ -210,7 +215,7 @@ describe('LectureFacade', () => {
       const lecture: Lecture = TestLectureFactory.createWithId(1);
       const enrollments: Array<Enrollment> = [
         new Enrollment(1, request.lectureId, 2),
-        new Enrollment(2, request.lectureId, 3)
+        new Enrollment(2, request.lectureId, 3),
       ];
       const lectureStudentCount: number = enrollments.length;
       const students: Array<Student> = [

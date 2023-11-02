@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { EnrollmentController } from '../../main/controller/EnrollmentController';
 import { EnrollmentFacade } from '../../main/facade/EnrollmentFacade';
-import { afterEach, beforeEach, describe, jest, expect, it } from '@jest/globals';
+import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { MockFactory } from '../util/MockFactory';
 import { MockRequestBuilder } from '../util/MockRequestBuilder';
 import { Request, Response } from 'express';
@@ -81,7 +81,7 @@ describe('EnrollmentController', () => {
 
     it('[Failure] lectureIds 가 배열이 아니면 예외를 던진다', async () => {
       // given
-      const lectureIds = "123";
+      const lectureIds = '123';
       const studentId: number = 1;
       const data = { lectureIds: lectureIds, studentId: studentId };
 

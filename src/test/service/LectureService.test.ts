@@ -411,7 +411,6 @@ describe('LectureService', () => {
     it('[Success] 중복되는 LectureId가 없으면 예외를 던지지 않는다.', async () => {
       // given
       const lectureIds: Array<number> = [1, 2, 3];
-      const studentId: number = 1;
 
       // when
       const actual: Promise<void> = sut.validateNoDuplicateLectureIds(lectureIds);
@@ -423,7 +422,6 @@ describe('LectureService', () => {
     it('[Failure] 중복되는 LectureId가 있으면 예외를 던진다.', async () => {
       // given
       const lectureIds: Array<number> = [1, 2, 3, 3];
-      const studentId: number = 1;
 
       // when
       const actual: Promise<void> = sut.validateNoDuplicateLectureIds(lectureIds);

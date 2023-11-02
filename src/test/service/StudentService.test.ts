@@ -8,7 +8,6 @@ import { Student } from '../../main/domain/Student';
 import { TestStudentDataFactory } from '../util/TestStudentDataFactory';
 import { NotFoundException } from '../../main/common/exception/NotFoundException';
 import { IllegalArgumentException } from '../../main/common/exception/IllegalArgumentException';
-import exp from 'constants';
 
 describe('StudentService', () => {
 
