@@ -185,9 +185,6 @@ export class LectureRepository {
             ${ this._buildPaginationClause(queryParams, page, pageSize) }
     `;
 
-    console.log(query);
-    console.log(queryParams)
-
     const [rows]: [RowDataPacket[], FieldPacket[]] = await connection.execute(query, queryParams);
     return rows.map((row: RowDataPacket) => {
       return LectureListItem.of(
