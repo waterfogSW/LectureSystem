@@ -141,7 +141,7 @@ describe('EnrollmentRepository', () => {
 
       // then
       expect(connection.execute).toBeCalledWith(
-        'DELETE FROM enrollments WHERE id = ?',
+        'UPDATE enrollments SET is_deleted = 1 WHERE id = ?',
         [id],
       );
     });
