@@ -2,10 +2,10 @@ version: '3.8'
 services:
   db:
     image: mysql:8.0.32
-    ports:
-      - "3306:3306"
     env_file:
       - .env
+    ports:
+      - ${DB_PORT}:${DB_PORT}
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
       MYSQL_DATABASE: ${DB_NAME}
