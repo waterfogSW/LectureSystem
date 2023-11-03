@@ -7,7 +7,6 @@ import { Student } from '../domain/Student';
 import { NotFoundException } from '../common/exception/NotFoundException';
 import { StudentCreateRequest } from '../controller/dto/StudentCreateRequest';
 import { IllegalArgumentException } from '../common/exception/IllegalArgumentException';
-import { StudentCreateResponse } from '../controller/dto/StudentCreateResponse';
 
 @injectable()
 export class StudentService {

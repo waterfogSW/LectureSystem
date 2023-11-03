@@ -1,4 +1,4 @@
-import { describe, jest, beforeEach, it, expect, afterEach } from '@jest/globals';
+import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { EnrollmentRepository } from '../../main/repository/EnrollmentRepository';
 import { FieldPacket, PoolConnection, RowDataPacket } from 'mysql2/promise';
 import { MockFactory } from '../util/MockFactory';
@@ -24,7 +24,7 @@ describe('EnrollmentRepository', () => {
     it('[Success] LectureId를 가진 모든 Enrollment 조회를 요청한다.', async () => {
       // given
       const lectureId: number = 1;
-      const data: [Array<RowDataPacket>, Array<FieldPacket>] = [[],[]]
+      const data: [Array<RowDataPacket>, Array<FieldPacket>] = [[], []];
       connection.execute.mockResolvedValue(data);
 
       // when

@@ -71,7 +71,7 @@ export class StudentRepository {
       [id],
     );
     if (deleted.affectedRows === 0) {
-      throw new Error('학생 삭제에 실패했습니다.')
+      throw new Error('학생 삭제에 실패했습니다.');
     }
   }
 }

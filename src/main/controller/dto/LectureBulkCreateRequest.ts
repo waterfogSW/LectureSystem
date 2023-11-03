@@ -22,7 +22,7 @@ export class LectureBulkCreateRequest {
 
   public static from(request: Request): LectureBulkCreateRequest {
     const { items } = request.body;
-    if(!items || !Array.isArray(items)) {
+    if (!items || !Array.isArray(items)) {
       throw new IllegalArgumentException('잘못된 요청 형식입니다.');
     }
 

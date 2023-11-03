@@ -212,13 +212,13 @@ describe('LectureRepository', () => {
         [LectureSearchType.TITLE]: 'title LIKE ?',
         [LectureSearchType.INSTRUCTOR]: 'name LIKE ?',
         [LectureSearchType.STUDENT_ID]: 'lectures.id IN (SELECT enrollments.lecture_id FROM active_enrollments as enrollments WHERE enrollments.student_id = ?)',
-      }
+      };
 
       const expectedSearchQueryParamsMapping: { [key in LectureSearchType]: (string | number)[] } = {
         [LectureSearchType.TITLE]: [1, `%${ searchKeyword }%`],
         [LectureSearchType.INSTRUCTOR]: [1, `%${ searchKeyword }%`],
         [LectureSearchType.STUDENT_ID]: [1, searchKeyword],
-      }
+      };
 
       const expectedQuery: string =
         `
@@ -232,41 +232,41 @@ describe('LectureRepository', () => {
         connection.execute.mock.calls[0][0].toString().replace(/\s+/g, ' ').trim();
 
       expect(receivedQuery).toEqual(expectedQuery);
-      expect(connection.execute).toBeCalledWith(expect.any(String), expectedSearchQueryParamsMapping[searchType],);
+      expect(connection.execute).toBeCalledWith(expect.any(String), expectedSearchQueryParamsMapping[searchType]);
     });
   });
 
   describe('delete', () => {
 
-      it('[Success] Lecture를 삭제한다.', async () => {
-        // given
-        const id: number = 1;
+    it('[Success] Lecture를 삭제한다.', async () => {
+      // given
+      const id: number = 1;
 
-        const data: [any, any] = [[], []] as any;
-        connection.execute.mockResolvedValue(data);
+      const data: [any, any] = [[], []] as any;
+      connection.execute.mockResolvedValue(data);
 
-        // when
-        await sut.delete(id, connection);
+      // when
+      await sut.delete(id, connection);
 
-        // then
-        expect(connection.execute).toBeCalledWith(
-          'UPDATE lectures SET is_deleted = true WHERE id = ?',
-          [id],
-        );
-      });
+      // then
+      expect(connection.execute).toBeCalledWith(
+        'UPDATE lectures SET is_deleted = true WHERE id = ?',
+        [id],
+      );
+    });
 
-      it('[Failure] Lecture를 삭제하는데 실패하면 예외를 던진다.', async () => {
-        // given
-        const id: number = 1;
+    it('[Failure] Lecture를 삭제하는데 실패하면 예외를 던진다.', async () => {
+      // given
+      const id: number = 1;
 
-        const data: [ResultSetHeader, FieldPacket[]] = [{ affectedRows : 0 }, []] as any;
-        connection.execute.mockResolvedValue(data);
+      const data: [ResultSetHeader, FieldPacket[]] = [{ affectedRows: 0 }, []] as any;
+      connection.execute.mockResolvedValue(data);
 
-        // when
-        const actual: Promise<void> = sut.delete(id, connection);
+      // when
+      const actual: Promise<void> = sut.delete(id, connection);
 
-        // then
-        await expect(actual).rejects.toThrowError(Error);
-      });
+      // then
+      await expect(actual).rejects.toThrowError(Error);
+    });
   });
 });

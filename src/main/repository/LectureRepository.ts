@@ -66,7 +66,9 @@ export class LectureRepository {
     lecture: Lecture,
     connection: PoolConnection,
   ): Promise<Lecture> {
-    const saveQuery: string = `INSERT INTO lectures (title, introduction, instructor_id, category, price, created_at, updated_at, is_published) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+    const saveQuery: string = `INSERT INTO lectures (title, introduction, instructor_id, category, price, created_at,
+                                                     updated_at, is_published)
+                               VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
     const [inserted]: [ResultSetHeader, FieldPacket[]] = await connection.execute<ResultSetHeader>(
       saveQuery,
       [
@@ -180,8 +182,7 @@ export class LectureRepository {
         FROM active_lectures as lectures
                  JOIN active_instructors as instructors ON lectures.instructor_id = instructors.id
                  JOIN lecture_student_counts as counts ON lectures.id = counts.lecture_id
-            ${ this._buildWhereClause(queryParams, category, searchType, searchKeyword) }
-            ${ this._buildOrderClause(order) }
+            ${ this._buildWhereClause(queryParams, category, searchType, searchKeyword) } ${ this._buildOrderClause(order) }
             ${ this._buildPaginationClause(queryParams, page, pageSize) }
     `;
 

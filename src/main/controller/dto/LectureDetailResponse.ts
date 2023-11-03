@@ -41,7 +41,10 @@ export class LectureDetailResponse {
     students: Array<Student | null>,
   ): LectureDetailResponse {
     const studentItems: Array<StudentItem> =
-      enrollment.map((enrollment: Enrollment, index: number) => StudentItem.of(enrollment, students[index]));
+      enrollment.map((
+        enrollment: Enrollment,
+        index: number,
+      ) => StudentItem.of(enrollment, students[index]));
     return new LectureDetailResponse(
       lecture.title,
       lecture.introduction,

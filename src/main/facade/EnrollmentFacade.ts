@@ -37,7 +37,7 @@ export class EnrollmentFacade {
     ]);
 
     const createdEnrollments: Array<Enrollment> = await Promise.all(
-      lectureIds.map((lectureId: number) => this._enrollmentService.create(lectureId, studentId, connection!))
+      lectureIds.map((lectureId: number) => this._enrollmentService.create(lectureId, studentId, connection!)),
     );
     return EnrollmentCreateResponse.from(createdEnrollments);
   }

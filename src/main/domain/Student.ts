@@ -40,6 +40,6 @@ export class Student extends BaseEntity {
   }
 
   public static createUnknown(): Student {
-    return new Student(undefined, "알수없음.", "unknown@email.com");
+    return new Student(undefined, '알수없음.', 'unknown@email.com');
   }
 }

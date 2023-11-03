@@ -83,10 +83,10 @@ export class EnrollmentService {
     const enrollments: Array<Enrollment> = await this._enrollmentRepository.findAllByStudentId(studentId, connection);
 
     const lectureDecrementTasks: Array<Promise<void>> = enrollments.map((enrollment) =>
-      this._lectureStudentCountRepository.decrement(enrollment.lectureId, connection)
+      this._lectureStudentCountRepository.decrement(enrollment.lectureId, connection),
     );
     const deleteByIdTasks: Array<Promise<void>> = enrollments.map((enrollment) =>
-      this._enrollmentRepository.deleteById(enrollment.id!, connection)
+      this._enrollmentRepository.deleteById(enrollment.id!, connection),
     );
 
     await Promise.all([...lectureDecrementTasks, ...deleteByIdTasks]);

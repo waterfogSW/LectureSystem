@@ -96,7 +96,7 @@ export class EnrollmentRepository {
     id: number,
     connection: PoolConnection,
   ): Promise<void> {
-    const deleteQuery: string = 'UPDATE enrollments SET is_deleted = 1 WHERE id = ?'
+    const deleteQuery: string = 'UPDATE enrollments SET is_deleted = 1 WHERE id = ?';
     const [deleted]: [ResultSetHeader, FieldPacket[]] = await connection.execute<ResultSetHeader>(
       deleteQuery,
       [id],

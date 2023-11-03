@@ -14,15 +14,15 @@ export class LectureCreateResponse {
     this.title = title;
   }
 
+  public static from(lecture: Lecture): LectureCreateResponse {
+    return new LectureCreateResponse(lecture.id!, lecture.title);
+  }
+
   public getId(): Id {
     return this.id;
   }
 
   public getTitle(): string {
     return this.title;
-  }
-
-  public static from(lecture: Lecture): LectureCreateResponse {
-    return new LectureCreateResponse(lecture.id!, lecture.title);
   }
 }

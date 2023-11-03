@@ -25,7 +25,7 @@ export class StudentFacade {
     connection?: PoolConnection,
   ): Promise<StudentCreateResponse> {
     const student: Student = await this._studentService.create(request, connection!);
-    return StudentCreateResponse.from(student)
+    return StudentCreateResponse.from(student);
   }
 
   @transactional()
