@@ -3,7 +3,7 @@ import { type PoolConnection } from 'mysql2/promise';
 import { container } from '../config/ContainerConfig';
 import { BindingTypes } from '../constant/BindingTypes';
 
-export function transactional() {
+export function transactional(isReadonly: boolean = false) {
   return function (
     target: any,
     methodName: string,
@@ -14,6 +14,14 @@ export function transactional() {
     descriptor.value = async function (...args: any[]): Promise<any> {
       const connectionPool: ConnectionPool = container.get<ConnectionPool>(BindingTypes.ConnectionPool);
       const connection: PoolConnection = await connectionPool.getConnection();
+
+      if (isReadonly) {
+        try {
+          return await originalMethod.apply(this, [...args, connection]);
+        } finally {
+          connection.release();
+        }
+      }
 
       try {
         await connection.beginTransaction();

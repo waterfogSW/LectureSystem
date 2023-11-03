@@ -49,7 +49,7 @@ export class LectureFacade {
     return LectureCreateResponse.from(createdLecture);
   }
 
-  @transactional()
+  @transactional(true)
   public async listLecture(
     request: LectureListRequest,
     connection?: PoolConnection,
@@ -70,7 +70,7 @@ export class LectureFacade {
     return LectureBulkCreateResponse.from(responseItems);
   }
 
-  @transactional()
+  @transactional(true)
   public async detailLecture(
     { lectureId }: LectureDetailRequest,
     connection?: PoolConnection,
