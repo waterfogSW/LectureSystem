@@ -1,11 +1,407 @@
 # 강의 시스템 API
 
-## 사용 라이브러리
-- express
-- typescript
-- node-mysql2
-- jest
-- class-validator
-- winston
-- nodemon
-- eslint
+## 실행 방법
+
+---
+
+docker-compose.yaml 파일이 위치한 디렉토리에서 다음 명령을 실행
+
+```bash
+docker-compose up -d
+```
+
+## API 설계
+
+---
+
+### 강의
+
+- **강의 목록 조회**
+
+  **GET : /api/lectures**
+
+  **Query Params**
+
+    - **page -** 페이지 번호
+        - default - 1
+    - **pageSize -** 페이지 크기
+        - default - 10
+    - **order -** 정렬 순서(Optional)
+        - recent - 최신순
+        - enrollments - 수강생순
+    - **category** - 카테고리 검색필터(Optional)
+        - web, app, game, algorithm, infra, database
+    - **searchType** - 검색 타입(Optional)
+        - title - 강의명
+        - instructor - 강사명
+        - student_id - 학생 ID
+    - **searchKeyword** - 검색어(Optional)
+        - 검색 타입에 해당하는 검색어
+
+  **Response**
+
+    - Status : 200 OK
+    - Response Body
+
+    ```json
+    {
+      "items": [
+        {
+          "id": "<integer>",
+          "category": "database",
+          "title": "<string>",
+          "instructor": "<string>",
+          "price": "<integer>",
+          "studentCount": "<integer>",
+          "createdAt": "<dateTime>"
+        },
+        {
+          "id": "<integer>",
+          "category": "algorithm",
+          "title": "<string>",
+          "instructor": "<string>",
+          "price": "<integer>",
+          "studentCount": "<integer>",
+          "createdAt": "<dateTime>"
+        }
+      ],
+      "total": "<integer>",
+      "page": "<integer>",
+      "pageSize": "<integer>"
+    }
+    ```
+
+- **강의 상세 조회**
+
+  **GET : /api/lectures/:id**
+
+  **Request Path**
+
+    - id : 강의 아이디 (0보다 큰 숫자)
+
+  **Response**
+
+    - Status: 200 OK
+    - Response Body
+
+    ```json
+    {
+      "title": "<string>",
+      "introduction": "<string>",
+      "category": "web",
+      "price": "<integer>",
+      "createdAt": "<dateTime>",
+      "updatedAt": "<dateTime>",
+      "students": [
+        {
+          "nickname": "<string>",
+          "enrolledAt": "<dateTime>"
+        },
+        {
+          "nickname": "<string>",
+          "enrolledAt": "<dateTime>"
+        }
+      ],
+      "studentCount": "<integer>"
+    }
+    ```
+
+- **강의 등록**
+
+  **POST : /api/lectures**
+
+  **Request Body**
+
+    ```json
+    {
+      "title": "<string>",
+      "introduction": "<string>",
+      "instructorId": "<integer>",
+      "category": "database",
+      "price": "<integer>"
+    }
+    ```
+
+  **Response**
+
+    - Status : 201 CREATED
+    - Body
+
+    ```json
+    {
+      "id": "<integer>",
+      "title": "<string>"
+    }
+    ```
+
+- **강의 대량 등록**
+
+  **POST : /api/lectures/bulk**
+
+  **Request**
+
+  Body
+
+    ```json
+    {
+      "items": [
+        {
+          "title": "testTitle1",
+          "introduction": "<string123>",
+          "instructorId": 13,
+          "category": "APP",
+          "price": 12000
+        },
+        {
+          "title": "testTitle2",
+          "introduction": "<string>",
+          "instructorId": 152,
+          "category": "app",
+          "price": 12000
+        }
+      ]
+    }
+    ```
+
+  **Response**
+
+    - Status : 200 OK
+
+    ```json
+    {
+        "items": [
+            {
+                "id": 37,
+                "title": "testTitle1",
+                "status": 201,
+                "message": ""
+            },
+            {
+                "title": "testTitle2",
+                "status": 404,
+                "message": "존재하지 않는 강사(id=152)입니다"
+            }
+        ]
+    }
+    ```
+
+- **강의 오픈**
+
+  **POST : /api/lectures/:id/publish**
+
+  **Response**
+
+  Status 200 OK
+
+- **강의 삭제**
+
+  **DELETE : /api/lectures/:id**
+
+  **Request Path**
+
+    - id : 강의 아이디 (0보다 큰 숫자)
+
+  **Response**
+
+    - status : 200 OK
+
+### 수강생
+
+- **수강생 가입**
+
+  **POST : /api/students**
+
+  **Body**
+
+    ```json
+    {
+      "email": "<email>",
+      "nickname": "<string>"
+    }
+    ```
+
+  **Response**
+
+    - Status : 201 CREATED
+
+    ```json
+    {
+      "id": "<integer>",
+      "nickname": "<string>"
+    }
+    ```
+
+- **수강생 탈퇴**
+
+  **DELETE : /api/students/:id**
+
+  **Request Path**
+
+    - id : 수강생 아이디 (0보다 큰 숫자)
+
+  **Response**
+
+    - status : 200 OK
+
+### 수강 신청
+
+- **수강 신청**
+
+  POST : /api/enrollments
+
+  **Request**
+
+    ```json
+    {
+      "lectureIds": [
+        5, 2, 3
+      ],
+      "studentId": 1
+    }
+    ```
+
+  **Response**
+
+    - status : 201 CREATED
+
+    ```
+    {
+        "items": [
+            {
+                "id": 44,
+                "lectureId": 5,
+                "studentId": 1
+            },
+            {
+                "id": 45,
+                "lectureId": 2,
+                "studentId": 1
+            },
+            {
+                "id": 46,
+                "lectureId": 3,
+                "studentId": 1
+            }
+        ]
+    }
+    ```
+
+## DB 설계
+
+---
+
+### ERD
+
+### 테이블 구성
+
+- 실제 DB에서는 외래키를 걸지않고, 인덱스만 걸었어요.
+- **수강생 삭제처리 soft delete vs hard delete**
+    - 학생의 경우 사용자와 직접적으로 연결되는 민감한 데이터들을 다루고 있어요.
+    - 유저가 실수로 아이디를 삭제한 경우, 빠른 복구를 위해 soft delete를 선택하는것으로 했어요.
+    - 이외에도 일관성을 위해 모든 도메인 엔티티에 대해 soft delete를 적용했어요.
+- 여부 컬럼의 경우 MySQL에서는 native boolean을 지원하지 않기 때문에 **tinyint 타입 컬럼**을 사용했어요.
+
+### 인덱스 구성
+
+1. **students (수강생) 테이블**
+    - **`email`**: 수강생의 이메일은 로그인 및 개인 식별 정보로 자주 사용되므로 인덱스를 설정해요
+2. **lectures (강의) 테이블**
+    - **`instructor_id`**: 어떤 강사가 강의를 개설했는지 빠르게 찾기위해 인덱스를 설정해요.
+    - **`title`**: 강의 제목으로 검색하기 위해 자주 사용되므로 인덱스를 설정해요.
+        - 강의 제목에 포함하는 단어를 기준으로 검색할경우 인덱스가 동작하지 않으니 추가적인 개선이 필요해요.
+    - **`category`**: 강의 카테고리별로 검색하기 위해 자주 사용되므로 인덱스를 설정해요.
+    - **`is_published`**: 공개된 강의만을 필터링하여 조회하기 위해 자주 사용되므로 인덱스를 설정해요.
+    - `**created_at**`: 강의를 최신순으로 조회하기위해 자주 사용되므로 인덱스를 설정해요
+3. **instructors (강사) 테이블**
+    - **`name`**: 강사의 이름으로 검색하기 위해 자주 사용되므로 인덱스를 설정해요.
+4. **enrollments (수강 내역) 테이블**
+    - **`student_id`**: 어떤 수강생이 어떤 강의를 수강했는지 빠르게 찾기 위해 인덱스를 설정해요.
+    - **`lecture_id`**: 어떤 강의를 어떤 수강생이 수강했는지 빠르게 찾기 위해 인덱스를 설정해요
+    - (**`student_id`**, **`lecture_id`**): 특정 수강생이 특정 강의를 등록했는지 빠르게 찾기위해 인덱스를 설정해요.
+
+## 고민한점
+
+---
+
+### 코드 아키텍처
+
+typescript에 대한 숙련도가 높지 않기도 하고 현재 프로젝트의 규모가 크지 않기 때문에 복잡성이 낮고, 익숙한 **계층형 아키텍처를 선택**하는 것이 좋겠다고 판단했어요.
+
+계층형 아키텍처의 경우 다음과 같이 구성했어요.
+
+- Controller : 요청 파싱, 응답 구성
+- Facade : 서비스 조합, 트랜잭션의 시작점
+- Service : 각 도메인에 대한 비즈니스 로직 수행
+- Repostiory : DB접근
+
+의존성 : Controller → Facade → Service → Repository
+
+전체 계층의 의존성은 Repository를 향하며, 일정부분의 보일러 플레이트가 생기는것을 감안하더라도 **일관성을 위해 계층을 뛰어넘는 호출이 없도록** 했어요
+
+기존에는 Controller, Service, Repository의 구조로 시작했어요. Service에 비즈니스 로직이 추가될수록 각 Service가 점점 더 많은 도메인의 Repository에 대한 의존성을 가지게
+되었고, 각 서비스 메서드들의 역할이 커졌어요.
+
+구조를 개선하고자 Facade Layer를 도입하였고, **Facade Layer에서는 요청에 대해 필요한 도메인별 서비스를 호출**하도록 하게 만들었고, **Service 레이어에서는 해당 도메인과 관련된 비즈니스
+로직만 수행**하도록 역할을 분리했어요.
+
+Facade Layer를 도입하면서 코드의 복잡도는 많이 개선되었지만, 아키텍처의 복잡도가 증가하기도 했고, 보일러 플레이트 코드가 일정부분 생성되었다는점 등은 단점이라 생각해요.
+
+### 테스트 전략
+
+테스트 전략으로는 기존에 익숙했던 Mockist 방식을 선택했어요.
+
+다만 매번 Mock객체를 사용할때마다 느끼는것이지만, 테스트가 구현에 강하게 결합되는 경향이 있어서 이러한 결합이 리팩토링의 방해요소가 된다고 생각해요.
+
+### Enrollment 도메인
+
+기존 테이블 스키마 설계는 강사(Instructors), 강의(Lectures), 수강생(Students)를 중심으로, 수강신청의 비즈니스 로직을 처리하기 위해 등록(Enrollments)라는 강의와 수강생의
+연결테이블을 만들었어요.
+
+이후 애플리케이션을 구현하는 과정에서 Layered architecture의 특성상 의존성이 DB를 향하다 보니, enrollment객체를 만들고 이와 관련한 레이어들을 만들게 되었어요.
+
+이후 리팩토링 하는 과정에서 연결테이블을 위한 도메인 객체가 나와도 되나에 대한 의문을 품게되었고, 현재의 요구사항 안에서는 Enrollment와 관련한 추가적인 비즈니스 로직이 없기에 오히려 복잡도를 향상시켰지만,
+추후에 성적관리와 같은 비즈니스가 추가된다면 Enrollment도메인의 쓰임새가 있을것 같아요.
+
+### 강의당 수강생의 숫자 저장
+
+강의에 등록한 학생수를 조회하는 쿼리가 자주 발생했어요.
+
+강의 등록은 빈번하게 발생하는 요청이고, 그만큼 강의 등록 테이블의 row는 빠르게 쌓이게 될거에요. 이때 count쿼리를 통해 강의당 등록된 학생수를 조회한다면, 성능문제가 발생할것이라 생각했어요.
+
+따라서 별도의 강의당 학생수를 저장하는 테이블을 두고 강의당 등록 학생수를 조회하는 경우 해당 테이블을 조회하도록 구현했어요.
+
+성능은 개선할 수 있겠지만, 학생 탈퇴, 강의 삭제, 수강신청 등 강의당 학생수와 관련된 요청에 대해서 추가적인 구현과 관리가 필요하다는 점은 단점으로 보여요.
+
+추후에는 강의 등록 이벤트가 발생하면, 강의를 저장하고, 강의당 등록된 학생수를 증가시키는 형태의 이벤트 기반 설계로 개선할 수 있을것 같아요.
+
+### 강의 대량등록, 수강신청 - Partial Success vs All or Nothing
+
+두 API모두 여러개의 row를 생성하는 API에요.
+
+요청을 처리하는 과정에서 하나라도 실패하면 모두 롤백할지, 부분성공을 가능하게 할지 여부를 고민했어요
+
+- All or Nothing : 하나라도 실패하면 모두 롤백해요
+- Partial Success : 성공, 실패케이스에 대해 각각 응답해요.
+
+**강의 대량등록 API**의 경우 사용자가 직접 모든 정보를 입력해야하는만큼, 부분성공으로 처리하는것이 **더 나은 사용자 경험**을 제공할 것이라 생각해 **Partial Success방식**을 채택했어요
+
+반면 **수강신청 API의 경우** 사용자가 입력해야하는 데이터가 적고, 결제와 관련될 수 있는 API이기에, 부분성공으로 처리하기보단 **데이터 일관성을 위해 All or Nothing 방식**을 채택했어요.
+
+### 트랜잭션 데코레이터
+
+connectionPool에서 connection을 가져와 로직을 수행하고, 에러가 발생하면 롤백하는 로직이 facade레이어 전반에서 반복해서 구현되었어요.
+
+이러한 횡단 관심사를 별도의 트랜잭션 데코레이터를 구현, 분리하여 트랜잭션의 시작점인 facade레이어가 본연의 관심사에 집중할 수 있게끔 개선했어요.
+
+### 검색시 대소문자 구분
+
+- MySQL에서는 대소문자를 구분하지 않고 조회가 가능해요.
+    - 만약 PostgreSQL을 사용한다면 `Like` 대신 `ILike` 를 사용해야 해요.
+
+## 삽질한점
+
+- jest에서 데코레이터를 사용할때 not a function 에러가 발생했어요.
+    - jest.config.js에 `experimentalDecorators`를 추가했음에도 불구하고 에러가 지속되었어요.
+    - babel.config.js에 `@babel/plugin-proposal-decorators`를 추가하고, babel jest를 통해 테스트하니 해결되었어요.
+- Webstorm의 OpenAPI Specification의 테스트 베드를 활용할때, 400번대 응답일 경우 response body가 테스트 베드에서 보이지 않아요.
+  - POSTMAN으로 정상적으로 응답을 확인할 수 있었어요.
