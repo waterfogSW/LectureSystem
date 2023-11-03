@@ -133,10 +133,81 @@ connectionPool에서 connection을 가져와 로직을 수행하고, 에러가 �
 - MySQL에서는 대소문자를 구분하지 않고 조회가 가능해요.
     - 만약 PostgreSQL을 사용한다면 `Like` 대신 `ILike` 를 사용해야 해요.
 
-## 삽질한점
+### 검색시 Like %검색어% 케이스에 대한 성능 개선
 
-- jest에서 데코레이터를 사용할때 not a function 에러가 발생했어요.
-    - jest.config.js에 `experimentalDecorators`를 추가했음에도 불구하고 에러가 지속되었어요.
-    - babel.config.js에 `@babel/plugin-proposal-decorators`를 추가하고, babel jest를 통해 테스트하니 해결되었어요.
-- Webstorm의 OpenAPI Specification의 테스트 베드를 활용할때, 400번대 응답일 경우 response body가 테스트 베드에서 보이지 않아요.
-  - POSTMAN으로 정상적으로 응답을 확인할 수 있었어요.
+기존에는 
+
+```mysql
+CREATE INDEX idx_lectures_title ON lectures (title);
+```
+
+위와같이 타이틀에 인덱스를 설정해 두었어요.
+
+중간값을 포함한 Like %검색어% 케이스에서 성능저하가 우려가 되어서, 실제 애플리케이션에서 활용될 다음 쿼리를 통해 실행계획을 확인해 보았어요.
+
+```mysql
+EXPLAIN
+SELECT lectures.id         as id,
+       lectures.category   as category,
+       lectures.title      as title,
+       instructors.name    as instructor_name,
+       lectures.price      as price,
+       counts.count        as student_count,
+       lectures.created_at as created_at
+FROM active_lectures as lectures
+         JOIN active_instructors as instructors ON lectures.instructor_id = instructors.id
+         JOIN lecture_student_counts as counts ON lectures.id = counts.lecture_id
+WHERE title Like '%kotlin%';
+```
+
+```mysql
+1,SIMPLE,counts,,ALL,idx_lecture_student_counts_lecture_id,,,,1,100,
+1,SIMPLE,lectures,,eq_ref,"PRIMARY,idx_lectures_instructor_id",PRIMARY,8,lecture_system.counts.lecture_id,1,5,Using where
+1,SIMPLE,instructors,,eq_ref,PRIMARY,PRIMARY,8,lecture_system.lectures.instructor_id,1,10,Using where
+```
+
+결과는 위와 같이 인덱스를 활용하지 못하고 있음을 알 수 있었어요. 
+
+이를 개선하기 위해 기존 title 인덱스를 제거하고 title 풀텍스트 인덱스를 추가하고 쿼리를 변경한후 테스트 했어요.
+
+
+```mysql
+EXPLAIN
+SELECT lectures.id         as id,
+       lectures.category   as category,
+       lectures.title      as title,
+       instructors.name    as instructor_name,
+       lectures.price      as price,
+       counts.count        as student_count,
+       lectures.created_at as created_at
+FROM active_lectures as lectures
+         JOIN active_instructors as instructors ON lectures.instructor_id = instructors.id
+         JOIN lecture_student_counts as counts ON lectures.id = counts.lecture_id
+WHERE MATCH(title) AGAINST('kotlin');
+```
+
+결과는
+```mysql
+1,SIMPLE,lectures,,fulltext,"PRIMARY,idx_lectures_instructor_id,title",title,0,const,1,10,Using where; Ft_hints: sorted
+1,SIMPLE,counts,,ref,idx_lecture_student_counts_lecture_id,idx_lecture_student_counts_lecture_id,8,lecture_system.lectures.id,1,100,
+1,SIMPLE,instructors,,eq_ref,PRIMARY,PRIMARY,8,lecture_system.lectures.instructor_id,1,10,Using where
+```
+
+위와 같이 풀텍스트 인덱스를 사용하고 있음을 확인 할 수 있었고, EXPLAIN ANALYZE 구문을 통해 확인한 cost 도 0.72에서 0.33으로 개선되었어요.
+
+하지만 이러한 변경으로 인해 공백으로 명확히 구분되지 않는 단어의 경우 검색이 되지 않는 문제가 발생했어요.
+
+예를들어 '자바스크립트로 알아보는 함수형 프로그래밍' 이라는 강의를 검색하고 싶은 경우 AGAINST('함수형')으로 검색하면 해당강의를 조회할 수 있었지만,
+AGAINST('함수')로 검색하면 조회되지 않았어요.
+
+이는 Fulltext index 가 공백을 기준으로 토큰화하여 인덱싱 하기 때문에 발생하는 문제인데요, 이를 해결하기 위해 n-gram 알고리즘을 사용해 풀텍스트 인덱스를 구성했어요.
+
+```mysql
+ALTER TABLE lectures ADD FULLTEXT INDEX idx_lectures_title (title) WITH PARSER ngram;
+```
+
+이후 정상적으로 검색이 되는것을 확인할 수 있었고, 동일하게 강사의 이름을 기준으로 검색하는 경우에도 풀텍스트 인덱스를 사용할 수 있게 변경하여 성능을 개선할 수 있었어요.
+
+최종적으로는 IN BOOLEAN MODE를 사용해 검색어가 포함된 타이틀을 검색할 수 있게 구현했고, 토큰의 최소길이인 ngram_token_size가 2로되어있기에 2글자 이상의 검색만 허용하도록 validation 로직을 추가했어요. 
+
+
