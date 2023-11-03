@@ -257,10 +257,10 @@ export class LectureRepository {
       switch (searchType) {
         case LectureSearchType.TITLE:
           queryParams.push(`%${ searchKeyword }%`);
-          return 'title LIKE ?';
+          return `MATCH(title) AGAINST(+? IN BOOLEAN MODE)`;
         case LectureSearchType.INSTRUCTOR:
           queryParams.push(`%${ searchKeyword }%`);
-          return 'name LIKE ?';
+          return `MATCH(instructors.name) AGAINST(+? IN BOOLEAN MODE)`
         case LectureSearchType.STUDENT_ID:
           queryParams.push(searchKeyword);
           return 'lectures.id IN (SELECT enrollments.lecture_id FROM active_enrollments as enrollments WHERE enrollments.student_id = ?)';

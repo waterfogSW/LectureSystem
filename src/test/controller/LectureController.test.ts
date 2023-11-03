@@ -163,6 +163,16 @@ describe('LectureController', () => {
       // when, then
       await expect(sut.listLecture(request, response)).rejects.toThrowError(IllegalArgumentException);
     });
+
+    it('[Failure] 검색어가 2글자 미만이면 예외를 던진다', async () => {
+      // given
+      const data: any = { page: 1, pageSize: 20, searchType: LectureSearchType.TITLE, searchKeyword: '1' };
+      const request: Request = new MockRequestBuilder().query(data).build();
+      const response: Response = MockResponseFactory.create();
+
+      // when, then
+      await expect(sut.listLecture(request, response)).rejects.toThrowError(IllegalArgumentException);
+    });
   });
 
   describe('createMultipleLectures', () => {

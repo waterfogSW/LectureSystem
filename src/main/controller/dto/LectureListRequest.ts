@@ -1,6 +1,6 @@
 import { LectureCategory, LectureOrderType, LectureSearchType } from '../../domain/LectureEnums';
 import { Request } from 'express';
-import { IsEnum, IsOptional, IsPositive, IsString } from 'class-validator';
+import { IsEnum, IsOptional, IsPositive, IsString, Length, MinLength } from 'class-validator';
 import { validateClass } from '../../common/util/ClassValidateUtil';
 import { parseEnum } from '../../common/util/EnumUtil';
 
@@ -28,6 +28,7 @@ export class LectureListRequest {
 
   @IsOptional()
   @IsString({ message: '검색어는 문자열이어야 합니다.' })
+  @MinLength(2, { message: '검색어는 2글자 이상이어야 합니다.' })
   private readonly _searchKeyword?: string;
 
   constructor(
