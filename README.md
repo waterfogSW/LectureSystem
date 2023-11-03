@@ -288,9 +288,8 @@ docker-compose up -d
 
 ## DB 설계
 
----
-
 ### ERD
+![erd.png](erd.png)
 
 ### 테이블 구성
 
