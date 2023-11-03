@@ -1,8 +1,5 @@
 INSERT INTO lecture_student_counts (lecture_id, count)
-SELECT
-    lecture_id,
-    COUNT(*) as count
-FROM
-    active_enrollments
-GROUP BY
-    lecture_id;
+SELECT lectures.id, COUNT(enrollments.lecture_id) as count
+FROM lectures
+         LEFT JOIN enrollments ON lectures.id = enrollments.lecture_id
+GROUP BY lectures.id;
