@@ -209,8 +209,8 @@ describe('LectureRepository', () => {
 
       // then
       const expectedSearchWhereClauseMapping: { [key in LectureSearchType]: string } = {
-        [LectureSearchType.TITLE]: 'title LIKE ?',
-        [LectureSearchType.INSTRUCTOR]: 'name LIKE ?',
+        [LectureSearchType.TITLE]: 'MATCH(title) AGAINST(+? IN BOOLEAN MODE)',
+        [LectureSearchType.INSTRUCTOR]: 'MATCH(instructors.name) AGAINST(+? IN BOOLEAN MODE)',
         [LectureSearchType.STUDENT_ID]: 'lectures.id IN (SELECT enrollments.lecture_id FROM active_enrollments as enrollments WHERE enrollments.student_id = ?)',
       };
 
