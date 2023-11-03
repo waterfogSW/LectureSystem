@@ -1,6 +1,6 @@
 import { LectureCategory, LectureOrderType, LectureSearchType } from '../../domain/LectureEnums';
 import { Request } from 'express';
-import { IsEnum, IsOptional, IsPositive, IsString, Length, MinLength } from 'class-validator';
+import { IsEnum, IsOptional, IsPositive, IsString, MinLength } from 'class-validator';
 import { validateClass } from '../../common/util/ClassValidateUtil';
 import { parseEnum } from '../../common/util/EnumUtil';
 
