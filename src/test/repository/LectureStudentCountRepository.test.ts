@@ -97,7 +97,7 @@ describe('LectureStudentCountRepository', () => {
 
       // then
       expect(connection.execute).toBeCalledWith(
-        'UPDATE active_lecture_student_counts SET count = count - 1 WHERE lecture_id = ?',
+        'UPDATE lecture_student_counts SET count = count - 1 WHERE lecture_id = ?',
         [lectureId],
       );
     });
@@ -129,7 +129,7 @@ describe('LectureStudentCountRepository', () => {
 
       // then
       expect(connection.execute).toBeCalledWith(
-        'SELECT count FROM active_lecture_student_counts WHERE lecture_id = ?',
+        'SELECT count FROM lecture_student_counts WHERE lecture_id = ?',
         [lectureId],
       );
     });
@@ -148,7 +148,7 @@ describe('LectureStudentCountRepository', () => {
 
       // then
       expect(connection.execute).toBeCalledWith(
-        'UPDATE lecture_student_counts SET is_deleted = 1 WHERE lecture_id = ?',
+        'DELETE FROM lecture_student_counts WHERE lecture_id = ?',
         [lectureId],
       );
     });

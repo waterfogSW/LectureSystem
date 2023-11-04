@@ -18,11 +18,12 @@ export class StudentService {
   public async findById(
     id: number,
     connection: PoolConnection,
-  ): Promise<void> {
+  ): Promise<Student> {
     const student: Student | null = await this._studentRepository.findById(id, connection);
     if (student === null) {
       throw new NotFoundException(`존재하지 않는 학생(id=${ id })입니다`);
     }
+    return student;
   }
 
   public async findByIdOrReturnUnknown(
@@ -54,8 +55,11 @@ export class StudentService {
     id: number,
     connection: PoolConnection,
   ): Promise<void> {
-    await this.findById(id, connection);
-    await this._studentRepository.deleteById(id, connection);
+    const student: Student = await this.findById(id, connection);
+    await Promise.all([
+      this._studentRepository.deleteById(id, connection),
+      this._studentRepository.createDeletedStudent(student, connection)
+    ]);
   }
 
 }

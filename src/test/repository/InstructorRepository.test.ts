@@ -38,7 +38,7 @@ describe('InstructorRepository', () => {
 
       // then
       expect(connection.execute).toBeCalledWith(
-        'SELECT * FROM active_instructors WHERE id = ?',
+        'SELECT * FROM instructors WHERE id = ?',
         [instructor.id],
       );
     });

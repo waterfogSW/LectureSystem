@@ -31,7 +31,7 @@ describe('StudentRepository', () => {
 
       // then
       expect(connection.execute).toBeCalledWith(
-        'INSERT INTO active_students (nickname, email) VALUES (?, ?)',
+        'INSERT INTO students (nickname, email) VALUES (?, ?)',
         [student.nickname, student.email],
       );
       expect(savedStudent).toBeInstanceOf(Student);
@@ -71,7 +71,7 @@ describe('StudentRepository', () => {
 
       // then
       expect(connection.execute).toBeCalledWith(
-        'SELECT * FROM active_students WHERE id = ?',
+        'SELECT * FROM students WHERE id = ?',
         [student.id],
       );
       expect(foundStudent).toEqual(expect.any(Student));
@@ -105,7 +105,7 @@ describe('StudentRepository', () => {
 
       // then
       expect(connection.execute).toBeCalledWith(
-        'SELECT EXISTS(SELECT * FROM active_students WHERE email = ?) as exist',
+        'SELECT EXISTS(SELECT * FROM students WHERE email = ?) as exist',
         [email],
       );
       expect(doesExist).toBe(true);
@@ -138,7 +138,7 @@ describe('StudentRepository', () => {
 
       // then
       expect(connection.execute).toBeCalledWith(
-        'UPDATE active_students SET is_deleted = 1 WHERE id = ?',
+        'DELETE FROM students WHERE id = ?',
         [id],
       );
     });

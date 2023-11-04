@@ -92,4 +92,17 @@ export class EnrollmentService {
     await Promise.all([...lectureDecrementTasks, ...deleteByIdTasks]);
   }
 
+  public async deleteAllByLectureId(
+    lectureId: number,
+    connection: PoolConnection,
+  ): Promise<void> {
+    const enrollments: Array<Enrollment> = await this._enrollmentRepository.findAllByLectureId(lectureId, connection);
+
+    const deleteByIdTasks: Array<Promise<void>> = enrollments.map((enrollment) =>
+      this._enrollmentRepository.deleteById(enrollment.id!, connection),
+    );
+
+    await Promise.all(deleteByIdTasks);
+  }
+
 }

@@ -14,7 +14,7 @@ export class LectureRepository {
     id: number,
     connection: PoolConnection,
   ): Promise<Lecture | null> {
-    const selectQuery: string = 'SELECT * FROM active_lectures WHERE id = ?';
+    const selectQuery: string = 'SELECT * FROM lectures WHERE id = ?';
     const [lectures]: [RowDataPacket[], FieldPacket[]] = await connection.execute<RowDataPacket[]>(
       selectQuery,
       [id],
@@ -40,7 +40,7 @@ export class LectureRepository {
     title: string,
     connection: PoolConnection,
   ): Promise<Lecture | null> {
-    const selectQuery: string = 'SELECT * FROM active_lectures WHERE title = ?';
+    const selectQuery: string = 'SELECT * FROM lectures WHERE title = ?';
     const [lectures]: [RowDataPacket[], FieldPacket[]] = await connection.execute<RowDataPacket[]>(
       selectQuery,
       [title],
@@ -141,8 +141,8 @@ export class LectureRepository {
     const queryParams: (string | number)[] = [];
     const query: string = `
         SELECT COUNT(lectures.id) as count
-        FROM active_lectures as lectures
-                 JOIN active_instructors as instructors ON lectures.instructor_id = instructors.id
+        FROM lectures
+                 JOIN instructors ON lectures.instructor_id = instructors.id
                  JOIN lecture_student_counts as counts ON lectures.id = counts.lecture_id
             ${ this._buildWhereClause(queryParams, category, searchType, searchKeyword) }
     `;
@@ -155,7 +155,7 @@ export class LectureRepository {
     lectureId: number,
     poolConnection: PoolConnection,
   ): Promise<void> {
-    const deleteQuery: string = 'UPDATE lectures SET is_deleted = true WHERE id = ?';
+    const deleteQuery: string = 'DELETE FROM lectures WHERE id = ?';
     const [deleted]: [ResultSetHeader, FieldPacket[]] = await poolConnection.execute<ResultSetHeader>(
       deleteQuery,
       [lectureId],
@@ -179,8 +179,8 @@ export class LectureRepository {
                lectures.price      as price,
                counts.count        as student_count,
                lectures.created_at as created_at
-        FROM active_lectures as lectures
-                 JOIN active_instructors as instructors ON lectures.instructor_id = instructors.id
+        FROM lectures
+                 JOIN instructors ON lectures.instructor_id = instructors.id
                  JOIN lecture_student_counts as counts ON lectures.id = counts.lecture_id
             ${ this._buildWhereClause(queryParams, category, searchType, searchKeyword) } ${ this._buildOrderClause(order) }
             ${ this._buildPaginationClause(queryParams, page, pageSize) }
@@ -263,7 +263,7 @@ export class LectureRepository {
           return `MATCH(instructors.name) AGAINST(+? IN BOOLEAN MODE)`
         case LectureSearchType.STUDENT_ID:
           queryParams.push(searchKeyword);
-          return 'lectures.id IN (SELECT enrollments.lecture_id FROM active_enrollments as enrollments WHERE enrollments.student_id = ?)';
+          return 'lectures.id IN (SELECT enrollments.lecture_id FROM enrollments WHERE enrollments.student_id = ?)';
       }
     }
     return '';

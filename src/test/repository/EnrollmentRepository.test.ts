@@ -32,7 +32,7 @@ describe('EnrollmentRepository', () => {
 
       // then
       expect(connection.execute).toBeCalledWith(
-        'SELECT * FROM active_enrollments WHERE lecture_id = ?',
+        'SELECT * FROM enrollments WHERE lecture_id = ?',
         [lectureId],
       );
     });
@@ -52,7 +52,7 @@ describe('EnrollmentRepository', () => {
 
       // then
       expect(connection.execute).toBeCalledWith(
-        'SELECT * FROM active_enrollments WHERE lecture_id = ? AND student_id = ?',
+        'SELECT * FROM enrollments WHERE lecture_id = ? AND student_id = ?',
         [lectureId, studentId],
       );
     });
@@ -122,7 +122,7 @@ describe('EnrollmentRepository', () => {
 
       // then
       expect(connection.execute).toBeCalledWith(
-        'SELECT * FROM active_enrollments WHERE student_id = ?',
+        'SELECT * FROM enrollments WHERE student_id = ?',
         [studentId],
       );
     });
@@ -141,7 +141,7 @@ describe('EnrollmentRepository', () => {
 
       // then
       expect(connection.execute).toBeCalledWith(
-        'UPDATE enrollments SET is_deleted = 1 WHERE id = ?',
+        'DELETE FROM enrollments WHERE id = ?',
         [id],
       );
     });

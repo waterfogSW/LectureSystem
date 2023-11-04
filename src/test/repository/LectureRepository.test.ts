@@ -40,7 +40,7 @@ describe('LectureRepository', () => {
 
       // then
       expect(connection.execute).toBeCalledWith(
-        'SELECT * FROM active_lectures WHERE id = ?',
+        'SELECT * FROM lectures WHERE id = ?',
         [lecture.id],
       );
     });
@@ -84,7 +84,7 @@ describe('LectureRepository', () => {
 
       // then
       expect(connection.execute).toBeCalledWith(
-        'SELECT * FROM active_lectures WHERE title = ?',
+        'SELECT * FROM lectures WHERE title = ?',
         [lecture.title],
       );
     });
@@ -211,7 +211,7 @@ describe('LectureRepository', () => {
       const expectedSearchWhereClauseMapping: { [key in LectureSearchType]: string } = {
         [LectureSearchType.TITLE]: 'MATCH(title) AGAINST(+? IN BOOLEAN MODE)',
         [LectureSearchType.INSTRUCTOR]: 'MATCH(instructors.name) AGAINST(+? IN BOOLEAN MODE)',
-        [LectureSearchType.STUDENT_ID]: 'lectures.id IN (SELECT enrollments.lecture_id FROM active_enrollments as enrollments WHERE enrollments.student_id = ?)',
+        [LectureSearchType.STUDENT_ID]: 'lectures.id IN (SELECT enrollments.lecture_id FROM enrollments WHERE enrollments.student_id = ?)',
       };
 
       const expectedSearchQueryParamsMapping: { [key in LectureSearchType]: (string | number)[] } = {
@@ -222,8 +222,8 @@ describe('LectureRepository', () => {
 
       const expectedQuery: string =
         `
-        SELECT COUNT(lectures.id) as count FROM active_lectures as lectures
-        JOIN active_instructors as instructors ON lectures.instructor_id = instructors.id
+        SELECT COUNT(lectures.id) as count FROM lectures
+        JOIN instructors ON lectures.instructor_id = instructors.id
         JOIN lecture_student_counts as counts ON lectures.id = counts.lecture_id
         WHERE is_published = ? AND ${ expectedSearchWhereClauseMapping[searchType] }
         `.replace(/\s+/g, ' ').trim();
@@ -250,7 +250,7 @@ describe('LectureRepository', () => {
 
       // then
       expect(connection.execute).toBeCalledWith(
-        'UPDATE lectures SET is_deleted = true WHERE id = ?',
+        'DELETE FROM lectures WHERE id = ?',
         [id],
       );
     });

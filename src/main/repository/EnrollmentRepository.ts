@@ -9,7 +9,7 @@ export class EnrollmentRepository {
     lectureId: number,
     connection: PoolConnection,
   ): Promise<Array<Enrollment>> {
-    const selectQuery: string = 'SELECT * FROM active_enrollments WHERE lecture_id = ?';
+    const selectQuery: string = 'SELECT * FROM enrollments WHERE lecture_id = ?';
     const [enrollments]: [RowDataPacket[], FieldPacket[]] = await connection.execute(
       selectQuery,
       [lectureId],
@@ -28,7 +28,7 @@ export class EnrollmentRepository {
     studentId: number,
     connection: PoolConnection,
   ): Promise<Enrollment | null> {
-    const selectQuery: string = 'SELECT * FROM active_enrollments WHERE lecture_id = ? AND student_id = ?';
+    const selectQuery: string = 'SELECT * FROM enrollments WHERE lecture_id = ? AND student_id = ?';
     const [enrollments]: [RowDataPacket[], FieldPacket[]] = await connection.execute(
       selectQuery,
       [lectureId, studentId],
@@ -78,7 +78,7 @@ export class EnrollmentRepository {
     studentId: number,
     connection: PoolConnection,
   ): Promise<Array<Enrollment>> {
-    const selectQuery: string = 'SELECT * FROM active_enrollments WHERE student_id = ?';
+    const selectQuery: string = 'SELECT * FROM enrollments WHERE student_id = ?';
     const [enrollments]: [RowDataPacket[], FieldPacket[]] = await connection.execute(
       selectQuery,
       [studentId],
@@ -96,7 +96,7 @@ export class EnrollmentRepository {
     id: number,
     connection: PoolConnection,
   ): Promise<void> {
-    const deleteQuery: string = 'UPDATE enrollments SET is_deleted = 1 WHERE id = ?';
+    const deleteQuery: string = 'DELETE FROM enrollments WHERE id = ?';
     const [deleted]: [ResultSetHeader, FieldPacket[]] = await connection.execute<ResultSetHeader>(
       deleteQuery,
       [id],

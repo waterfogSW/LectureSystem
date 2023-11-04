@@ -8,7 +8,7 @@ export class StudentRepository {
     student: Student,
     connection: PoolConnection,
   ): Promise<Student> {
-    const insertQuery: string = 'INSERT INTO active_students (nickname, email) VALUES (?, ?)';
+    const insertQuery: string = 'INSERT INTO students (nickname, email) VALUES (?, ?)';
     const [inserted]: [ResultSetHeader, FieldPacket[]] = await connection.execute<ResultSetHeader>(
       insertQuery,
       [student.nickname, student.email],
@@ -31,7 +31,7 @@ export class StudentRepository {
     id: number,
     connection: PoolConnection,
   ): Promise<Student | null> {
-    const selectQuery: string = 'SELECT * FROM active_students WHERE id = ?';
+    const selectQuery: string = 'SELECT * FROM students WHERE id = ?';
     const [students]: [RowDataPacket[], FieldPacket[]] = await connection.execute<RowDataPacket[]>(
       selectQuery,
       [id],
@@ -53,7 +53,7 @@ export class StudentRepository {
     email: string,
     connection: PoolConnection,
   ): Promise<boolean> {
-    const existQuery: string = 'SELECT EXISTS(SELECT * FROM active_students WHERE email = ?) as exist';
+    const existQuery: string = 'SELECT EXISTS(SELECT * FROM students WHERE email = ?) as exist';
     const [exist]: [RowDataPacket[], FieldPacket[]] = await connection.execute<RowDataPacket[]>(
       existQuery,
       [email],
@@ -65,13 +65,28 @@ export class StudentRepository {
     id: number,
     connection: PoolConnection,
   ): Promise<void> {
-    const deleteQuery: string = 'UPDATE active_students SET is_deleted = 1 WHERE id = ?';
+    const deleteQuery: string = 'DELETE FROM students WHERE id = ?';
     const [deleted]: [ResultSetHeader, FieldPacket[]] = await connection.execute<ResultSetHeader>(
       deleteQuery,
       [id],
     );
     if (deleted.affectedRows === 0) {
-      throw new Error('학생 삭제에 실패했습니다.');
+      throw new Error('수강생 삭제에 실패했습니다.');
+    }
+  }
+
+  public async createDeletedStudent(
+    student: Student,
+    connection: PoolConnection,
+  ): Promise<void> {
+    const { id, email, nickname }: Student = student;
+    const insertQuery: string = 'INSERT INTO deleted_students (student_id, email, nickname) VALUES (?, ?, ?)';
+    const [inserted]: [ResultSetHeader, FieldPacket[]] = await connection.execute<ResultSetHeader>(
+      insertQuery,
+      [id, email, nickname],
+    );
+    if (inserted.affectedRows === 0) {
+      throw new Error('삭제 수강생 정보 생성에 실패했습니다.');
     }
   }
 }

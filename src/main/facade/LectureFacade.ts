@@ -59,13 +59,9 @@ export class LectureFacade {
     return LectureListResponse.of(lectureListItems, page, pageSize, lectureCount);
   }
 
-  @transactional()
-  public async createMultipleLectures(
-    request: LectureBulkCreateRequest,
-    connection?: PoolConnection,
-  ): Promise<LectureBulkCreateResponse> {
+  public async createMultipleLectures(request: LectureBulkCreateRequest): Promise<LectureBulkCreateResponse> {
     const responseItems: Array<LectureBulkCreateResponseItem> = await Promise.all(
-      request.items.map((item: LectureCreateRequest) => this.createItemWithHandlingError(item, connection)),
+      request.items.map((item: LectureCreateRequest) => this.createItemWithHandlingError(item)),
     );
     return LectureBulkCreateResponse.from(responseItems);
   }
@@ -101,7 +97,10 @@ export class LectureFacade {
     request: LectureDeleteRequest,
     connection?: PoolConnection,
   ): Promise<void> {
-    await this._lectureService.delete(request, connection!);
+    await Promise.all([
+      this._enrollmentService.deleteAllByLectureId(request.lectureId, connection!),
+      this._lectureService.delete(request, connection!)
+    ]);
   }
 
   @transactional()
@@ -112,12 +111,9 @@ export class LectureFacade {
     await this._lectureService.publish(request, connection!);
   }
 
-  private async createItemWithHandlingError(
-    request: LectureCreateRequest,
-    connection?: PoolConnection,
-  ): Promise<LectureBulkCreateResponseItem> {
+  private async createItemWithHandlingError(request: LectureCreateRequest): Promise<LectureBulkCreateResponseItem> {
     try {
-      const response: LectureCreateResponse = await this.createLecture(request, connection);
+      const response: LectureCreateResponse = await this.createLecture(request);
       return LectureBulkCreateResponseItem.createWithSuccess(response.getId(), response.getTitle());
     } catch (error) {
       if (error instanceof Error) {

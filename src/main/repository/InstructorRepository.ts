@@ -10,7 +10,7 @@ export class InstructorRepository {
     id: number,
     connection: PoolConnection,
   ): Promise<Instructor | null> {
-    const selectQuery: string = 'SELECT * FROM active_instructors WHERE id = ?';
+    const selectQuery: string = 'SELECT * FROM instructors WHERE id = ?';
     const [instructors]: [RowDataPacket[], FieldPacket[]] = await connection.execute<RowDataPacket[]>(
       selectQuery,
       [id],
