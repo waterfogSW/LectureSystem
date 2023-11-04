@@ -331,10 +331,24 @@ RECORD LOCKS space id 8 page no 5 n bits 104 index idx_unique_title_lectures of 
 
 ```
 
-실제로 존재하지 않는 record에 대해 조회하는 select … for update는 레코드락이 아닌 갭락을 만들어내요.
+실제로 존재하지 않는 record에 대해 조회하는 select … for update는 Record Lock이 아닌 Gap Lock을 만들어내요.
 
 이때 삽입시 얻으려고하는 INSERT Intention Gap Lock은 Gap Lock과 호환되지 않기 때문에, 
 1번 트랜잭션의 INSERT는 2번 트랜잭션이 가진 Gap Lock을 기다리게 되고, 
 2번 트랜잭션의 INSERT는 1번 트랜잭션이 가진 Gap Lock을 기다리게 되어서 Dead Lock 상황이 발생하게 된거에요.
 
-이러한 문제점을 해결하기 위해서 애플리케이션 레벨에서의 락을 구현해 해결했어요.
+이는 쓰기 잠금을 거는 애플리케이션 레벨의 로직에 락을 구현해 해결할 수 있었어요.
+
+결과적으로는 순차적으로 처리하는 방식(1번)과 병렬처리 + 쓰기잠금 방식(3번)의 성능 차이는 크게 나지 않았지만, 
+DB에 저장된 데이터가 많아지면, 병렬처리를 통한 이점이 더욱 커질것이라 생각되어서 3번 방식을 선택했어요.
+
+
+## 개선할 점
+
+- eslint 적용
+- 너무 많이 생성된 test 데이터 생성 팩토리 클래스 정리
+- 메서드 명에 따른 로직 일관성 개선
+- lock try-catch => 데코레이터로 변경
+- RoutConfig 제거 컨트롤러별 데코레이터화, 컴포넌트 스캔 구현 => 관리포인트 줄이기
+- 확장성이 떨어지는 계층에 따른 패키지 구조
+- 응집도 낮은 도메인, 미비된 몇몇 테스트 코드 등등...
