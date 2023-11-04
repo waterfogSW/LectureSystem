@@ -15,6 +15,7 @@ import { LectureListItem } from '../controller/dto/LectureListResponse';
 import { LectureUpdateRequest } from '../controller/dto/LectureUpdateRequest';
 import { LectureDeleteRequest } from '../controller/dto/LectureDeleteRequest';
 import { LecturePublishRequest } from '../controller/dto/LecturePublishRequest';
+import { lock } from '../common/util/Lock';
 
 @injectable()
 export class LectureService {
@@ -52,12 +53,17 @@ export class LectureService {
     { title, introduction, instructorId, category, price }: LectureCreateRequest,
     connection: PoolConnection,
   ): Promise<Lecture> {
-    await this.validateLectureTitleExists(title, connection!);
-    const lecture: Lecture = Lecture.create(title, introduction, instructorId, category, price);
+    await lock.lock();
+    try {
+      await this.validateLectureTitleExists(title, connection!);
+      const lecture: Lecture = Lecture.create(title, introduction, instructorId, category, price);
 
-    const savedLecture: Lecture = await this._lectureRepository.save(lecture, connection);
-    await this._lectureStudentCountRepository.create(savedLecture.id!, connection);
-    return savedLecture;
+      const savedLecture: Lecture = await this._lectureRepository.save(lecture, connection);
+      await this._lectureStudentCountRepository.create(savedLecture.id!, connection);
+      return savedLecture;
+    } finally {
+      lock.unlock();
+    }
   }
 
   public async update(
