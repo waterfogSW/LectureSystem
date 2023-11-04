@@ -40,7 +40,7 @@ export class LectureRepository {
     title: string,
     connection: PoolConnection,
   ): Promise<Lecture | null> {
-    const selectQuery: string = 'SELECT * FROM lectures WHERE title = ?';
+    const selectQuery: string = 'SELECT * FROM lectures WHERE title = ? FOR UPDATE';
     const [lectures]: [RowDataPacket[], FieldPacket[]] = await connection.execute<RowDataPacket[]>(
       selectQuery,
       [title],

@@ -84,7 +84,7 @@ describe('LectureRepository', () => {
 
       // then
       expect(connection.execute).toBeCalledWith(
-        'SELECT * FROM lectures WHERE title = ?',
+        'SELECT * FROM lectures WHERE title = ? FOR UPDATE',
         [lecture.title],
       );
     });

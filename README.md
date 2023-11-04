@@ -14,7 +14,7 @@ docker-compose up -d
 
 ---
 
-- [OpenAPI Specification](OpenAPI-Specification.json)
+- [OpenAPI Specification](docs/api_spec.json)
 - [Postman Published API 문서](https://documenter.getpostman.com/view/30873839/2s9YXe7PVA)
 
 
@@ -23,7 +23,7 @@ docker-compose up -d
 ---
 
 ### ERD
-![erd.png](erd.png)
+![erd.png](docs/erd.png)
 
 - 실제 DB에서는 외래키를 걸지않고, 인덱스만 걸었어요.
 - 여부 컬럼의 경우 MySQL에서는 native boolean을 지원하지 않기 때문에 **tinyint 타입 컬럼**을 사용했어요.
@@ -166,13 +166,13 @@ SELECT lectures.id         as id,
        lectures.price      as price,
        counts.count        as student_count,
        lectures.created_at as created_at
-FROM active_lectures as lectures
-         JOIN active_instructors as instructors ON lectures.instructor_id = instructors.id
+FROM lectures
+         JOIN instructors ON lectures.instructor_id = instructors.id
          JOIN lecture_student_counts as counts ON lectures.id = counts.lecture_id
 WHERE title Like '%kotlin%';
 ```
 
-```mysql
+```text
 1,SIMPLE,counts,,ALL,idx_lecture_student_counts_lecture_id,,,,1,100,
 1,SIMPLE,lectures,,eq_ref,"PRIMARY,idx_lectures_instructor_id",PRIMARY,8,lecture_system.counts.lecture_id,1,5,Using where
 1,SIMPLE,instructors,,eq_ref,PRIMARY,PRIMARY,8,lecture_system.lectures.instructor_id,1,10,Using where
@@ -192,18 +192,14 @@ SELECT lectures.id         as id,
        lectures.price      as price,
        counts.count        as student_count,
        lectures.created_at as created_at
-FROM active_lectures as lectures
-         JOIN active_instructors as instructors ON lectures.instructor_id = instructors.id
+FROM lectures
+         JOIN instructors ON lectures.instructor_id = instructors.id
          JOIN lecture_student_counts as counts ON lectures.id = counts.lecture_id
 WHERE MATCH(title) AGAINST('kotlin');
 ```
 
 결과는
-```mysql
-1,SIMPLE,lectures,,fulltext,"PRIMARY,idx_lectures_instructor_id,title",title,0,const,1,10,Using where; Ft_hints: sorted
-1,SIMPLE,counts,,ref,idx_lecture_student_counts_lecture_id,idx_lecture_student_counts_lecture_id,8,lecture_system.lectures.id,1,100,
-1,SIMPLE,instructors,,eq_ref,PRIMARY,PRIMARY,8,lecture_system.lectures.instructor_id,1,10,Using where
-```
+![img.png](docs/img.png)
 
 위와 같이 풀텍스트 인덱스를 사용하고 있음을 확인 할 수 있었고, EXPLAIN ANALYZE 구문을 통해 확인한 cost 도 0.72에서 0.33으로 개선되었어요.
 
@@ -220,6 +216,125 @@ ALTER TABLE lectures ADD FULLTEXT INDEX idx_lectures_title (title) WITH PARSER n
 
 이후 정상적으로 검색이 되는것을 확인할 수 있었고, 동일하게 강사의 이름을 기준으로 검색하는 경우에도 풀텍스트 인덱스를 사용할 수 있게 변경하여 성능을 개선할 수 있었어요.
 
-최종적으로는 IN BOOLEAN MODE를 사용해 검색어가 포함된 타이틀을 검색할 수 있게 구현했고, 토큰의 최소길이인 ngram_token_size가 2로되어있기에 2글자 이상의 검색만 허용하도록 validation 로직을 추가했어요. 
+최종적으로는 IN BOOLEAN MODE를 사용해 검색어가 포함된 타이틀을 검색할 수 있게 구현했고, 토큰의 최소길이인 ngram_token_size가 2로되어있기에 2글자 이상의 검색만 허용하도록 validation 로직을 추가했어요.
+
+### 강의 대량생성 데드락 이슈
+
+강의 대량생성 요청의 경우 Partial Success 방식을 사용하기로 결정했기에, 각 요청에 대해 별도의 트랜잭션을 사용하고 발생한 예외는 핸들링하여 응답에 포함시키도록 구현했어요.
+
+이때 Promise.all을 사용한 병렬처리를 통해 성능을 개선하고자 했는데, 단건 강의 생성요청때와는 달리 중복된 title의 강의가 존재하는지 확인하는 validation 로직이 정상적으로 동작하지않아 DB의 unique 제약조건 위반 예외가 그대로 응답에 포함되었어요.
+
+예를들어 다음과 같은 대량생성 요청을 보내는 경우
+
+```json
+{
+  "items": [
+    {
+      "title": "Kafka 기초",
+      "introduction": "<string>",
+      "instructorId": 14,
+      "category": "infra",
+      "price": 120000
+    },
+    {
+      "title": "Kafka 기초",
+      "introduction": "<string>",
+      "instructorId": 14,
+      "category": "infra",
+      "price": 120000
+    }
+  ]
+}
+```
+
+기대되는 응답
+
+```json
+{
+    "items": [
+       {
+          "id": 39,
+          "title": "Kafka 기초",
+          "status": 201,
+          "message": ""
+       },
+       {
+          "title": "Kafka 기초",
+          "status": 400,
+          "message": "이미 존재하는 강의 제목(Kafka 기초) 입니다"
+       }
+    ]
+}
+```
+
+실제응답
 
 
+```json
+{
+    "items": [
+        {
+            "title": "Kafka 기초",
+            "status": 500,
+            "message": "Duplicate entry 'Kafka 기초' for key 'lectures.idx_unique_title_lectures'"
+        },
+        {
+            "id": 39,
+            "title": "Kafka 기초",
+            "status": 201,
+            "message": ""
+        }
+    ]
+}
+```
+
+REPEATABLE READ 격리수준을 사용하는 현재 방식에서는 A 트랜잭션에서 새로운 lecture를 생성하고 커밋하기 이전에 B 트랜잭션에서 title의 중복여부를 위해 조회를 한다면, A 트랜잭션의 시작전 데이터를 기준으로 조회하게 되기 때문에 중복된 title을 확인할 수 없어요. Pantom Read에 의해 INSERT를 중복으로 실행하게 되었고, Duplicated Key로 인한 예외가 발생하는 상황이었어요.
+
+결과적으로 A트랜잭션과 B트랜잭션이 동일한 title의 lecture를 생성하더라도 애플리케이션 레벨에서의 validation이 동작하지 않는것이죠.
+
+이를 해결하기 위해 생각한 방법들은 다음과 같아요.
+
+1. Promise.all 을 제거하고 순차적으로 처리
+2. transaction 격리수준을 serializable로 변경
+3. Promise.all 을 사용하되 쓰기 잠금 걸기
+
+두번째 방법은 현재 클라이언트 세션의 격리수준을 모두 serializable로 변경해야 하기 때문에, 다른 API의 성능에도 영향을 미칠것이라 생각되어서 사용하지 않았어요.
+
+그렇다면 남은방법은 1번과 3번인데 1번 방식의 경우 정상적으로 실행됨을 확인했기에 3번방법이 보다 나은 성능을 보여줄수 있는지 확인해 보았어요.
+
+쓰기잠금을 위해 생성하려는 강의 title이 이미 있는지 확인하는 쿼리에 FOR UPDATE를 추가해 주었어요.
+```mysql
+SELECT * FROM lectures WHERE title = ? FOR UPDATE
+```
+쓰기 잠금을 걸고 해당 API 를 테스트 해보니 데드락이 발생해 다음과 같은 에러가 발생하는 경우가 생겼어요.
+
+```text
+Deadlock found when trying to get lock; try restarting transaction
+```
+
+이때 데드락 로그를 통해 문제점을 확인해 볼 수 있었어요.
+
+```text
+[트랜잭션 1]
+*** (1) HOLDS THE LOCK(S):
+RECORD LOCKS space id 8 page no 5 n bits 104 index idx_unique_title_lectures of table `lecture_system`.`lectures` trx id 2073 lock_mode X locks gap before rec
+
+*** (1) WAITING FOR THIS LOCK TO BE GRANTED:
+RECORD LOCKS space id 8 page no 5 n bits 104 index idx_unique_title_lectures of table `lecture_system`.`lectures` trx id 2073 lock_mode X locks gap before rec insert intention waiting
+
+[트랜잭션 2]
+*** (2) HOLDS THE LOCK(S):
+RECORD LOCKS space id 8 page no 5 n bits 104 index idx_unique_title_lectures of table `lecture_system`.`lectures` trx id 2072 lock_mode X locks gap before rec
+
+*** (2) WAITING FOR THIS LOCK TO BE GRANTED:
+RECORD LOCKS space id 8 page no 5 n bits 104 index idx_unique_title_lectures of table `lecture_system`.`lectures` trx id 2072 lock_mode X locks gap before rec insert intention waiting
+
+```
+
+실제로 존재하지 않는 record에 대해 조회하는 select … for update는 레코드락이 아닌 갭락을 만들어내요.
+
+이때 삽입시 얻으려고하는 INSERT Intention Gap Lock은 Gap Lock과 호환되지 않기 때문에, 
+1번 트랜잭션의 INSERT는 2번 트랜잭션이 가진 Gap Lock을 기다리게 되고, 
+2번 트랜잭션의 INSERT는 1번 트랜잭션이 가진 Gap Lock을 기다리게 되어서 Dead Lock 상황이 발생하게 된거에요.
+
+이러한 문제점을 해결하기 위해서 애플리케이션 레벨에서의 락을 구현해 해결했어요.
