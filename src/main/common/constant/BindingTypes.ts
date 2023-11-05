@@ -1,5 +1,3 @@
-import { EnrollmentRepository } from '../../repository/EnrollmentRepository';
-
 export const BindingTypes = {
   ConnectionPool: Symbol('ConnectionPool'),
 

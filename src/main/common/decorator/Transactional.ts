@@ -1,14 +1,14 @@
-import { type ConnectionPool } from '../config/DatabaseConfig';
 import { type PoolConnection } from 'mysql2/promise';
+import { type ConnectionPool } from '../config/DatabaseConfig';
 import { container } from '../config/ContainerConfig';
 import { BindingTypes } from '../constant/BindingTypes';
 
 export function transactional(isReadonly: boolean = false) {
-  return function (
+  return (
     target: any,
     methodName: string,
     descriptor: PropertyDescriptor,
-  ) {
+  ) => {
     const originalMethod = descriptor.value;
 
     descriptor.value = async function (...args: any[]): Promise<any> {

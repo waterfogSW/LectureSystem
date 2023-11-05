@@ -8,7 +8,7 @@ export function parseEnum<T extends Record<string, string>>(
 
   if (enumValues.includes(value)) {
     return value as T[keyof T];
-  } else {
+  } 
     throw new IllegalArgumentException(`"${ value }"는 유효한 값이 아닙니다.`);
-  }
+  
 }

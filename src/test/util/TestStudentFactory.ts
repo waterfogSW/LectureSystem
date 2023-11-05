@@ -6,7 +6,7 @@ export class TestStudentFactory {
 
   public static createWithId(id: number): any {
     return {
-      id: id,
+      id,
       nickname: this.TEST_STUDENT_DATA.nickname,
       email: this.TEST_STUDENT_DATA.email,
     };

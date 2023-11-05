@@ -1,4 +1,4 @@
-import { Enrollment } from '../../main/domain/Enrollment';
+import { Enrollment } from '../../main/enrollment/domain/Enrollment';
 
 export class TestEnrollmentFactory {
   public static createWithId(id: number): Enrollment {

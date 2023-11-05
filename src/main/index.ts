@@ -1,8 +1,8 @@
 import 'reflect-metadata';
 
 import { type Application } from 'express';
-import { Server } from './server';
 import * as bodyParser from 'body-parser';
+import { Server } from './server';
 import { configureRoutes } from './common/config/RouteConfig';
 import { ExceptionHandler } from './common/middleware/ExceptionHandler';
 import { container } from './common/config/ContainerConfig';
@@ -19,5 +19,6 @@ server.setConfig((app: Application): void => {
 const app: Application = server.build();
 
 app.listen(port, (): void => {
+  // eslint-disable-next-line no-console
   console.log(`Server is listening on :${ port }`);
 });

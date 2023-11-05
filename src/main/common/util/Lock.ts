@@ -1,5 +1,6 @@
 class Lock {
   private _locked = false;
+
   private _waiting: Array<() => void> = [];
 
   lock() {

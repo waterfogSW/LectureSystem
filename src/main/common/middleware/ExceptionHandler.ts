@@ -21,14 +21,15 @@ export function ExceptionHandler(
   response: Response,
   next: NextFunction,
 ): void {
+  // eslint-disable-next-line no-console
   console.log(`[${ new Date().toISOString() }] ${ error }`);
 
-  for (const handler of errorStatusMappings) {
-    if (error instanceof handler.type) {
-      const errorMessage = handler.defaultMessage || error.message;
-      response.status(handler.status).json({ message: errorMessage });
-      return;
-    }
+  const handler = errorStatusMappings.find(h => error instanceof h.type);
+
+  if (handler) {
+    const errorMessage = handler.defaultMessage || error.message;
+    response.status(handler.status).json({ message: errorMessage });
+    return;
   }
 
   response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: '서버 오류' });

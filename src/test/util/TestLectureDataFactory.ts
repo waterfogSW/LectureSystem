@@ -1,4 +1,4 @@
-import { LectureCategory } from '../../main/domain/LectureEnums';
+import { LectureCategory } from '../../main/lecture/domain/LectureCategory';
 
 export class TestLectureDataFactory {
 
@@ -20,11 +20,11 @@ export class TestLectureDataFactory {
     } = {},
   ): any {
     return {
-      title: title,
-      introduction: introduction,
-      instructorId: instructorId,
-      category: category,
-      price: price,
+      title,
+      introduction,
+      instructorId,
+      category,
+      price,
     };
   }
 

@@ -26,6 +26,6 @@ export class ConnectionPool {
   }
 
   public async getConnection(): Promise<PoolConnection> {
-    return await this._pool.getConnection();
+    return this._pool.getConnection();
   }
 }

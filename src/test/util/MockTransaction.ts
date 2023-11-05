@@ -6,15 +6,14 @@ export function initializeMockTransactionContext() {
   jest.spyOn(container, 'get').mockImplementation((bindingType) => {
     if (bindingType === BindingTypes.ConnectionPool) {
       return {
-        getConnection: jest.fn().mockImplementation(() => {
-          return {
+        getConnection: jest.fn().mockImplementation(() => ({
             beginTransaction: jest.fn(),
             commit: jest.fn(),
             rollback: jest.fn(),
             release: jest.fn(),
-          };
-        }),
+          })),
       };
     }
+    throw new Error(`Cannot find Connection Pool: ${ bindingType.toString() }`);
   });
 }

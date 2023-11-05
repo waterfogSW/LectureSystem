@@ -6,6 +6,7 @@ type ConfigFunction = (app: Application) => void
 
 export class Server {
   private readonly _container: Container;
+
   private readonly _instance: Application;
 
   constructor(

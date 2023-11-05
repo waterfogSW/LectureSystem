@@ -1,21 +1,21 @@
 import { Container } from 'inversify';
-import { StudentController } from '../../controller/StudentController';
-import { StudentFacade } from '../../facade/StudentFacade';
-import { StudentRepository } from '../../repository/StudentRepository';
+import { StudentController } from '../../student/controller/StudentController';
+import { StudentFacade } from '../../student/facade/StudentFacade';
+import { StudentRepository } from '../../student/repository/StudentRepository';
 import { ConnectionPool } from './DatabaseConfig';
 import { BindingTypes } from '../constant/BindingTypes';
-import { LectureRepository } from '../../repository/LectureRepository';
-import { LectureFacade } from '../../facade/LectureFacade';
-import { LectureController } from '../../controller/LectureController';
-import { InstructorRepository } from '../../repository/InstructorRepository';
-import { LectureStudentCountRepository } from '../../repository/LectureStudentCountRepository';
-import { EnrollmentRepository } from '../../repository/EnrollmentRepository';
-import { EnrollmentController } from '../../controller/EnrollmentController';
-import { EnrollmentFacade } from '../../facade/EnrollmentFacade';
-import { StudentService } from '../../service/StudentService';
-import { LectureService } from '../../service/LectureService';
-import { EnrollmentService } from '../../service/EnrollementSerivce';
-import { InstructorService } from '../../service/InstructorService';
+import { LectureRepository } from '../../lecture/repository/LectureRepository';
+import { LectureFacade } from '../../lecture/facade/LectureFacade';
+import { LectureController } from '../../lecture/controller/LectureController';
+import { InstructorRepository } from '../../instructor/repository/InstructorRepository';
+import { LectureStudentCountRepository } from '../../lecture/repository/LectureStudentCountRepository';
+import { EnrollmentRepository } from '../../enrollment/repository/EnrollmentRepository';
+import { EnrollmentController } from '../../enrollment/controller/EnrollmentController';
+import { EnrollmentFacade } from '../../enrollment/facade/EnrollmentFacade';
+import { StudentService } from '../../student/service/StudentService';
+import { LectureService } from '../../lecture/service/LectureService';
+import { EnrollmentService } from '../../enrollment/service/EnrollementSerivce';
+import { InstructorService } from '../../instructor/service/InstructorService';
 
 const container: Container = new Container({ defaultScope: 'Singleton' });
 

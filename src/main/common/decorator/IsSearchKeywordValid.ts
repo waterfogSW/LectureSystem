@@ -1,15 +1,16 @@
 import { isInt, isPositive, registerDecorator, ValidationArguments, ValidationOptions } from 'class-validator';
-import { LectureSearchType } from '../../domain/LectureEnums';
+
+import { LectureSearchType } from '../../lecture/domain/LectureSearchType';
 
 export function IsSearchKeywordValid(validationOptions?: ValidationOptions) {
-  return function(
-    object: Object,
+  return (
+    object: Record<string, any>,
     propertyName: string,
-  ) {
+  ) => {
     registerDecorator({
       name: 'isSearchKeywordValid',
       target: object.constructor,
-      propertyName: propertyName,
+      propertyName,
       options: validationOptions,
       validator: {
         validate(
