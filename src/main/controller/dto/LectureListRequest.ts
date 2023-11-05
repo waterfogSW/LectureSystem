@@ -1,8 +1,9 @@
 import { LectureCategory, LectureOrderType, LectureSearchType } from '../../domain/LectureEnums';
 import { Request } from 'express';
-import { IsEnum, IsOptional, IsPositive, IsString, MinLength } from 'class-validator';
+import { IsEnum, IsOptional, IsPositive } from 'class-validator';
 import { validateClass } from '../../common/util/ClassValidateUtil';
 import { parseEnum } from '../../common/util/EnumUtil';
+import { IsSearchKeywordValid } from '../../common/decorator/IsSearchKeywordValid';
 
 export class LectureListRequest {
 
@@ -27,8 +28,7 @@ export class LectureListRequest {
   private readonly _searchType?: LectureSearchType;
 
   @IsOptional()
-  @IsString({ message: '검색어는 문자열이어야 합니다.' })
-  @MinLength(2, { message: '검색어는 2글자 이상이어야 합니다.' })
+  @IsSearchKeywordValid()
   private readonly _searchKeyword?: string;
 
   constructor(
@@ -80,7 +80,7 @@ export class LectureListRequest {
       order ? parseEnum(order.toUpperCase(), LectureOrderType) : undefined,
       category ? parseEnum(category.toUpperCase(), LectureCategory) : undefined,
       searchType ? parseEnum(searchType.toUpperCase(), LectureSearchType) : undefined,
-      searchKeyword,
+      (searchType == LectureSearchType.STUDENT_ID) ? Number(searchKeyword) : searchKeyword,
     );
   }
 }

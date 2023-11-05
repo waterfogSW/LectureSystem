@@ -140,10 +140,9 @@ describe('LectureController', () => {
       await expect(sut.listLecture(request, response)).rejects.toThrowError(IllegalArgumentException);
     });
 
-    it.each(Object.values(LectureSearchType))
-    (`[Success] 강의 목록조회를 요청한다(page, pageSize, searchType = %s, searchKeyword)`, async (searchType: LectureSearchType) => {
+    it(`[Success] 강의 목록조회를 요청한다(page, pageSize)`, async () => {
       // given
-      const data: any = { page: 1, pageSize: 20, searchType: searchType, searchKeyword: 'searchKeyword' };
+      const data: any = { page: 1, pageSize: 20};
       const request: Request = new MockRequestBuilder().query(data).build();
       const response: Response = MockResponseFactory.create();
 
@@ -153,6 +152,51 @@ describe('LectureController', () => {
       // then
       expect(response.status).toBeCalledWith(HttpStatus.OK);
     });
+
+    it('[Success] 학생아이디로 강의 목록 검색을 요청한다.', async () => {
+      // given
+      const data: any = { page: 1, pageSize: 20, searchType: LectureSearchType.STUDENT_ID, searchKeyword: 1 };
+      const request: Request = new MockRequestBuilder().query(data).build();
+      const response: Response = MockResponseFactory.create();
+
+      // when
+      await sut.listLecture(request, response);
+
+      // then
+      expect(response.status).toBeCalledWith(HttpStatus.OK);
+    });
+
+    it('[Success] 강의명으로 강의 목록 검색을 요청한다.', async () => {
+      // given
+      const data: any = { page: 1, pageSize: 20, searchType: LectureSearchType.TITLE, searchKeyword: '자바' };
+      const request: Request = new MockRequestBuilder().query(data).build();
+      const response: Response = MockResponseFactory.create();
+
+      // when
+      await sut.listLecture(request, response);
+
+      // then
+      expect(response.status).toBeCalledWith(HttpStatus.OK);
+    });
+
+    it('[Success] 강사명으로 강의 목록 검색을 요청한다.', async () => {
+      // given
+      const data: any = {
+        page: 1,
+        pageSize: 20,
+        searchType: LectureSearchType.INSTRUCTOR,
+        searchKeyword: '감자탕',
+      };
+      const request: Request = new MockRequestBuilder().query(data).build();
+      const response: Response = MockResponseFactory.create();
+
+      // when
+      await sut.listLecture(request, response);
+
+      // then
+      expect(response.status).toBeCalledWith(HttpStatus.OK);
+    });
+
 
     it('[Failure] 유효하지 않은 검색 타입이 들어오면 예외를 던진다', async () => {
       // given
@@ -164,9 +208,30 @@ describe('LectureController', () => {
       await expect(sut.listLecture(request, response)).rejects.toThrowError(IllegalArgumentException);
     });
 
-    it('[Failure] 검색어가 2글자 미만이면 예외를 던진다', async () => {
+    it.each([LectureSearchType.TITLE, LectureSearchType.INSTRUCTOR])
+    ('[Failure] 검색타입이 %s 일때, 검색어가 2글자 미만이면 예외를 던진다', async (lectureSearchType) => {
       // given
-      const data: any = { page: 1, pageSize: 20, searchType: LectureSearchType.TITLE, searchKeyword: '1' };
+      const data: any = { page: 1, pageSize: 20, searchType: lectureSearchType, searchKeyword: '1' };
+      const request: Request = new MockRequestBuilder().query(data).build();
+      const response: Response = MockResponseFactory.create();
+
+      // when, then
+      await expect(sut.listLecture(request, response)).rejects.toThrowError(IllegalArgumentException);
+    });
+
+    it('[Failure] 검색타입이 student_id 일때, 검색어가 숫자가 아니면 예외를 던진다.', async () => {
+      // given
+      const data: any = { page: 1, pageSize: 20, searchType: LectureSearchType.STUDENT_ID, searchKeyword: 'test' };
+      const request: Request = new MockRequestBuilder().query(data).build();
+      const response: Response = MockResponseFactory.create();
+
+      // when, then
+      await expect(sut.listLecture(request, response)).rejects.toThrowError(IllegalArgumentException);
+    });
+
+    it('[Failure] 검색타입이 student_id 일때, 검색어가 양수가 아니면 예외를 던진다.', async () => {
+      // given
+      const data: any = { page: 1, pageSize: 20, searchType: LectureSearchType.STUDENT_ID, searchKeyword: '-1' };
       const request: Request = new MockRequestBuilder().query(data).build();
       const response: Response = MockResponseFactory.create();
 
