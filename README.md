@@ -31,10 +31,10 @@ docker-compose up -d
 ### 인덱스 구성
 
 1. **students (수강생) 테이블**
-    - `email`: 중복방지를 위한 unique 인덱스를 설정했어요.
+    - `email`: 중복방지를 위한 unique 인덱스를 설정해요.
 2. **lectures (강의) 테이블**
     - `instructor_id`: 어떤 강사가 강의를 개설했는지 빠르게 찾기위해 인덱스를 설정해요.
-    - `title`: 중복방지를 위한 unique, 강의 검색을 위한 fulltext인덱스를 설정해요. 
+    - `title`: 중복방지를 위한 unique, 강의 검색을 위한 fulltext(ngram) 인덱스를 설정해요. 
     - `category`: 강의 카테고리별로 검색하기 위해 자주 사용되므로 인덱스를 설정해요.
     - `is_published`: 공개된 강의만을 필터링하여 조회하기 위해 자주 사용되므로 인덱스를 설정해요.
     - `created_at`: 강의를 최신순으로 조회하기위해 자주 사용되므로 인덱스를 설정해요
@@ -42,8 +42,8 @@ docker-compose up -d
     - `name`: 강의 검색시 검색어로 활용되기에 fulltext 인덱스를 설정해요.
 4. **enrollments (수강 내역) 테이블**
     - `student_id`: 어떤 수강생이 어떤 강의를 수강했는지 빠르게 찾기 위해 인덱스를 설정해요.
-    - `lecture_id`: 어떤 강의를 어떤 수강생이 수강했는지 빠르게 찾기 위해 인덱스를 설정해요
-    - (`student_id`, `lecture_id`): 특정 수강생이 특정 강의를 등록했는지 빠르게 찾기위해 인덱스를 설정해요.
+    - `lecture_id`: 어떤 강의를 어떤 수강생이 수강했는지 빠르게 찾기 위해 인덱스를 설정해요.
+    - (`student_id`, `lecture_id`): 강의 중복 수강신청 방지를 위한 unique 인덱스를 설정해요.
 
 ## 구현방향 및 고민한점
 
@@ -78,7 +78,7 @@ Facade Layer를 도입하면서 코드의 복잡도는 많이 개선되었지만
 
 각 메서드들을 어떻게 사용할지에 대한 시나리오를 기반으로 인수 테스트를 작성했고, 의존하는 객체들에 대해서는 Mokcing을 통해 테스트를 격리했어요.
 
-다만 매번 Mock객체를 사용할때마다 느끼는것이지만, 테스트가 구현에 강하게 결합되는 경향이 있어서 이러한 결합이 리팩토링의 방해요소가 된다고 생각해요.
+매번 Mock객체를 사용할때마다 느끼는것이지만, 테스트가 구현에 강하게 결합되는 경향이 있어서 이러한 결합이 리팩토링의 방해요소가 된다고 생각해요.
 
 ### Enrollment 도메인
 
@@ -210,7 +210,7 @@ ALTER TABLE lectures ADD FULLTEXT INDEX idx_lectures_title (title) WITH PARSER n
 
 강의 대량생성 요청의 경우 Partial Success 방식을 사용하기로 결정했기에, 각 요청에 대해 별도의 트랜잭션을 사용하고 발생한 예외는 핸들링하여 응답에 포함시키도록 구현했어요.
 
-이때 Promise.all을 사용한 병렬처리를 통해 성능을 개선하고자 했는데, 단건 강의 생성요청때와는 달리 중복된 title의 강의가 존재하는지 확인하는 validation 로직이 정상적으로 동작하지않아 DB의 unique 제약조건 위반 예외가 그대로 응답에 포함되었어요.
+이때 Promise.all을 사용한 병렬처리를 통해 성능을 개선하고자 했는데, 요청 내부에 중복된 title이 존재하는 경우, title 중복여부를 체크 하는 validation 로직이 phantom read 현상으로 인해 정상적으로 동작하지않아 DB의 unique 제약조건 위반 예외가 그대로 응답에 포함되었어요.
 
 예를들어 다음과 같은 대량생성 요청을 보내는 경우
 
@@ -262,21 +262,23 @@ ALTER TABLE lectures ADD FULLTEXT INDEX idx_lectures_title (title) WITH PARSER n
 {
     "items": [
         {
-            "title": "Kafka 기초",
-            "status": 500,
-            "message": "Duplicate entry 'Kafka 기초' for key 'lectures.idx_unique_title_lectures'"
-        },
-        {
             "id": 39,
             "title": "Kafka 기초",
             "status": 201,
             "message": ""
-        }
+        },
+       {
+          "title": "Kafka 기초",
+          "status": 500,
+          "message": "알 수 없는 에러"
+       }
     ]
 }
 ```
 
-REPEATABLE READ 격리수준을 사용하는 현재 방식에서는 A 트랜잭션에서 새로운 lecture를 생성하고 커밋하기 이전에 B 트랜잭션에서 title의 중복여부를 위해 조회를 한다면, A 트랜잭션의 시작전 데이터를 기준으로 조회하게 되기 때문에 중복된 title을 확인할 수 없어요. Pantom Read에 의해 INSERT를 중복으로 실행하게 되었고, Duplicated Key로 인한 예외가 발생하는 상황이었어요.
+REPEATABLE READ 격리수준을 사용하는 현재 방식에서는 A 트랜잭션에서 새로운 lecture를 생성하고 커밋하기 이전에 B 트랜잭션에서 title의 중복여부를 위해 조회를 한다면, 
+A 트랜잭션의 시작전 데이터를 기준으로 조회하게 되기 때문에 중복된 title을 확인할 수 없어요. 
+Pantom Read에 의해 title중복여부 검사를 통과해 중복된 title을 가진 lecture의 insert를 그대로 실행하게 되었고, Duplicated Key로 인한 예외를 사용자가 응답으로 받게 되었어요.
 
 결과적으로 A트랜잭션과 B트랜잭션이 동일한 title의 lecture를 생성하더라도 애플리케이션 레벨에서의 validation이 동작하지 않는것이죠.
 
@@ -339,4 +341,5 @@ DB에 저장된 데이터가 많아지면, 병렬처리를 통한 이점이 더�
 - lock try-catch => 데코레이터로 변경
 - RoutConfig 제거 컨트롤러별 데코레이터화, 컴포넌트 스캔 구현 => 관리포인트 줄이기
 - 확장성이 떨어지는 계층에 따른 패키지 구조
+- 예외처리 handler 메시지 수정
 - 응집도 낮은 도메인, 미비된 몇몇 테스트 코드 등등...
