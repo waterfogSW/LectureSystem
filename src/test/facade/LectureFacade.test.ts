@@ -24,6 +24,7 @@ import { LectureDetailResponse } from '../../main/controller/dto/LectureDetailRe
 import { Student } from '../../main/domain/Student';
 import { TestStudentFactory } from '../util/TestStudentFactory';
 import { LecturePublishRequest } from '../../main/controller/dto/LecturePublishRequest';
+import { IllegalArgumentException } from '../../main/common/exception/IllegalArgumentException';
 
 describe('LectureFacade', () => {
 
@@ -256,14 +257,25 @@ describe('LectureFacade', () => {
       await sut.deleteLecture(request);
 
       // then
+      expect(mockEnrollmentService.validateNoEnrollmentExists).toHaveBeenCalled();
       expect(mockLectureService.delete).toHaveBeenCalled();
+    });
+
+    it('[Failure] 수강중인 학생이 존재하면 예외를 전달한다.', async () => {
+      // given
+      const request = new LectureDeleteRequest(1);
+
+      mockEnrollmentService.validateNoEnrollmentExists.mockRejectedValueOnce(new IllegalArgumentException(""));
+
+      // when, then
+      await expect(sut.deleteLecture(request)).rejects.toThrowError(IllegalArgumentException);
     });
   });
 
   describe('publishLecture', () => {
     it('[Success] 강의 정보를 공개를 요청한다.', async () => {
       // given
-      const request = new LecturePublishRequest(1);
+      const request: LecturePublishRequest = new LecturePublishRequest(1);
 
       // when
       await sut.publishLecture(request);

@@ -97,10 +97,8 @@ export class LectureFacade {
     request: LectureDeleteRequest,
     connection?: PoolConnection,
   ): Promise<void> {
-    await Promise.all([
-      this._enrollmentService.deleteAllByLectureId(request.lectureId, connection!),
-      this._lectureService.delete(request, connection!)
-    ]);
+    await this._enrollmentService.validateNoEnrollmentExists(request.lectureId, connection!);
+    await this._lectureService.delete(request, connection!)
   }
 
   @transactional()

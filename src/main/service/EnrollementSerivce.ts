@@ -92,17 +92,13 @@ export class EnrollmentService {
     await Promise.all([...lectureDecrementTasks, ...deleteByIdTasks]);
   }
 
-  public async deleteAllByLectureId(
+  public async validateNoEnrollmentExists(
     lectureId: number,
     connection: PoolConnection,
   ): Promise<void> {
     const enrollments: Array<Enrollment> = await this._enrollmentRepository.findAllByLectureId(lectureId, connection);
-
-    const deleteByIdTasks: Array<Promise<void>> = enrollments.map((enrollment) =>
-      this._enrollmentRepository.deleteById(enrollment.id!, connection),
-    );
-
-    await Promise.all(deleteByIdTasks);
+    if (enrollments.length > 0) {
+      throw new IllegalArgumentException(`강의(id=${ lectureId })에 수강중인 학생이 존재합니다.`);
+    }
   }
-
 }
