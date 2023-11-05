@@ -6,12 +6,13 @@ import { IllegalArgumentException } from '../exception/IllegalArgumentException'
 interface ErrorStatusMapping {
   type: any;
   status: HttpStatus;
+  defaultMessage?: string;
 }
 
 export const errorStatusMappings: ErrorStatusMapping[] = [
   { type: NotFoundException, status: HttpStatus.NOT_FOUND },
   { type: IllegalArgumentException, status: HttpStatus.BAD_REQUEST },
-  { type: Error, status: HttpStatus.INTERNAL_SERVER_ERROR },
+  { type: Error, status: HttpStatus.INTERNAL_SERVER_ERROR, defaultMessage: '알 수 없는 에러' },
 ];
 
 export function ExceptionHandler(
@@ -24,14 +25,11 @@ export function ExceptionHandler(
 
   for (const handler of errorStatusMappings) {
     if (error instanceof handler.type) {
-      response
-        .status(handler.status)
-        .json({ message: error.message });
+      const errorMessage = handler.defaultMessage || error.message;
+      response.status(handler.status).json({ message: errorMessage });
       return;
     }
   }
 
-  response
-    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-    .json({ message: '서버 오류' });
+  response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: '서버 오류' });
 }
