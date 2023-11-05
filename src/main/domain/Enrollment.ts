@@ -4,10 +4,10 @@ import { validateClass } from '../common/util/ClassValidateUtil';
 
 export class Enrollment extends BaseEntity {
 
-  @IsPositive({ message: '강의 아이디는 0보다 커야 합니다.' })
+  @IsPositive({ message: '강의 아이디는 0보다 큰 숫자여야 합니다.' })
   private readonly _lectureId: number;
 
-  @IsPositive({ message: '학생 아이디는 0보다 커야 합니다.' })
+  @IsPositive({ message: '학생 아이디는 0보다 큰 숫자여야 합니다.' })
   private readonly _studentId: number;
 
   constructor(

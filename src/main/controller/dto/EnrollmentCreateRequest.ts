@@ -7,10 +7,10 @@ export class EnrollmentCreateRequest {
 
   @IsArray({ message: '강의 ID는 배열이어야 합니다.' })
   @ArrayMinSize(1, { message: '강의 ID는 최소 1개 이상이어야 합니다.' })
-  @IsPositiveNumberArray({ message: '강의 ID는 0보다 커야 합니다.' })
+  @IsPositiveNumberArray({ message: '강의 ID는 0보다 큰 숫자여야 합니다' })
   private readonly _lectureIds: Array<number>;
 
-  @IsPositive({ message: '수강생 ID는 0보다 커야 합니다.' })
+  @IsPositive({ message: '수강생 ID는 0보다 큰 숫자여야 합니다.' })
   private readonly _studentId: number;
 
   constructor(

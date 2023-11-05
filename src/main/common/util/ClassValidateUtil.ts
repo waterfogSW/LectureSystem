@@ -25,7 +25,7 @@ class IsPositiveNumberArrayValidator implements ValidatorConstraintInterface {
   }
 
   defaultMessage(validationArguments?: ValidationArguments): string {
-    return '배열의 모든 요소는 0보다 커야 합니다.';
+    return '배열의 모든 요소는 0보다 큰 숫자여야 합니다.';
   }
 }
 

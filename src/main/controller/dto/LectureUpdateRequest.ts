@@ -4,7 +4,7 @@ import { Request } from 'express';
 
 export class LectureUpdateRequest {
 
-  @IsPositive({ message: '강의 아이디는 0보다 커야 합니다.' })
+  @IsPositive({ message: '강의 아이디는 0보다 큰 숫자여야 합니다.' })
   private readonly _lectureId: number;
 
   @IsOptional()
