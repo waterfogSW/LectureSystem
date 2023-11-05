@@ -61,7 +61,6 @@ CREATE INDEX idx_lectures_created_at ON lectures (created_at);
 CREATE INDEX idx_instructors_name ON instructors (name);
 CREATE INDEX idx_enrollments_student_id ON enrollments (student_id);
 CREATE INDEX idx_enrollments_lecture_id ON enrollments (lecture_id);
-CREATE INDEX idx_enrollments_student_lecture ON enrollments (student_id, lecture_id);
 
 CREATE UNIQUE INDEX idx_unique_title_lectures ON lectures (title);
 CREATE UNIQUE INDEX idx_unique_email_students ON students (email);
